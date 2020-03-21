@@ -1,13 +1,15 @@
 let express = require('express');
 let router = express.Router();
+let { COOKIES_AGE, BTN_CTRL } = require('../config');
 
 router.get('/', function(req, res, next) {
-	res.render('index', { lgbtn: true });
+	res.render('index', BTN_CTRL);
 });
 
 
 router.get('/login-signup', (req, res, next)=>{
-	res.render('login-signup', { lgbtn: false });
+	BTN_CTRL.logout = false;
+	res.render('login-signup', BTN_CTRL);
 });
 
 router.post('/login', (req, res, next)=>{
