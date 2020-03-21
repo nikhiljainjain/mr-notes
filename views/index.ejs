@@ -1,11 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<% include ./partial/header.ejs %>
+<div class="purple darken-3">
+	<div class="row" style="color:white; font-family: 'Baloo 2', cursive;">
+		<div class="col s12 m6 l8">
+			<div class="container">
+				<h3>
+					<b>
+						NJ Notes lets you work more collaboratively and get more done.
+					</b>
+				</h3>
+				<h5>
+					NJ Notes boards, lists, and cards enable you to organize and prioritize your projects in a fun, flexible, and rewarding way.
+				</h5>
+			</div>
+		</div>
+		<div class="col s12 m6 l4">
+			<img src="/img/note-34670.png" class="card-image" style="width:100%">
+		</div>
+	</div>
+</div>
+<br>
+<div class="row">
+</div>
+<br>
+<% include ./partial/footer.ejs %>
