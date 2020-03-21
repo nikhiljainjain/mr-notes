@@ -1,6 +1,7 @@
 <% include ./partial/header.ejs %>
 <div class="purple darken-3">
-	<div class="row" style="color:white; font-family: 'Baloo 2', cursive;">
+	<br>
+	<div class="row" style="color:white;">
 		<div class="col s12 m6 l8">
 			<div class="container">
 				<h3>
@@ -11,15 +12,61 @@
 				<h5>
 					NJ Notes boards, lists, and cards enable you to organize and prioritize your projects in a fun, flexible, and rewarding way.
 				</h5>
+				<br>
+				<form action="/login-signup">
+				  <div class="row">
+					<div class="input-field col s6">
+					  <input id="icon_prefix" type="email" class="validate">
+						 <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
+					</div>
+					<div class="input-field col s6">
+						<button class="waves-effect waves-light btn purple " type="submit">Sign Up - It's Free</button>
+					</div>
+				  </div>
+				</form>
 			</div>
 		</div>
 		<div class="col s12 m6 l4">
-			<img src="/img/note-34670.png" class="card-image" style="width:100%">
+				<img src="/img/note-34670.png" class="card-image" style="width:100%;margin-left: -15px;margin-top:5px;">
+			
+		</div>
+	</div>
+	
+</div>
+<br>
+<div class="section">
+	<div class="row">
+		<div class="col s12 m6 l8">
+			<div class="container">
+				<h2 style="color: #9c27b0"><b>Work with any team</b></h2>
+				<p style="color: #ba68c8; font-size: 23px">Whether it’s for work, a side project or even the next family vacation, Trello helps your team stay organized.</p>
+				<a class="waves-effect waves-light btn-large purple darken-1"><i class="material-icons right">trending_flat</i><b>Start doing</b></a>
+			</div>
+		</div>
+		<div class="col s12 m6 l4">
+			<div class="container">
+				<img src="/img/supplies-4880916.png" style="width: 100%">
+			</div>
 		</div>
 	</div>
 </div>
 <br>
-<div class="row">
+<div class="section">
+	<div class="row">
+		<div class="col s12 m6 l1"></div>
+		<div class="col s12 m6 l3">
+			<div class="container">
+				<img src="/img/user-interface-1655006-2.png" style="width:100%">
+			</div>
+		</div>
+		<div class="col s12 m6 l8">
+			<div class="container">
+				<h2 style="color: #9c27b0"><b>Information at a glance</b></h2>
+				<p style="color: #ba68c8; font-size: 23px;">Dive into the details by adding comments, attachments, due dates, and more directly to Trello cards. Collaborate on projects from beginning to end.</p>
+				
+			</div> 	
+		</div>
+	</div>
 </div>
 <br>
 <% include ./partial/footer.ejs %>
