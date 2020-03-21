@@ -1,0 +1,5 @@
+PORT=8080
+MONGODB_URL=mongodb://localhost:27017/stored
+TESTDB_URL=mongodb://localhost:27017/test
+SESSION_SECRET=DEVHACK
+JWT_TOKEN=VIRUS
