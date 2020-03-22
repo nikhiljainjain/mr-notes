@@ -1,21 +1,21 @@
+//installed packages
 let express = require('express');
 let router = express.Router();
+let bcrypt = require('bcryptjs');
+let shortid = require('shortid');
+
+//self-made
 let { COOKIES_AGE, BTN_CTRL, ERROR_MSG } = require('../config');
 let User = require('../model/users');
-let bcrypt = require('bcryptjs');
-let uuidv4 = require('uuid/v4');
 
 //home page
 router.get('/', function(req, res, next) {
-	res.render('index', BTN_CTRL);
+	res.render('index');
 });
 
 //login & signup page
 router.get('/login-signup', (req, res, next)=>{
-	if (req.query.q){
-		res.render('login-signup', { msg: req.query.q});
-	}else
-		res.render('login-signup', { msg: null });
+	res.render('login-signup', { msg: ((req.query.q) ? req.query.q : null)});
 });
 
 //user login
@@ -25,24 +25,19 @@ router.post('/login', (req, res, next)=>{
 	let { email, password } = req.body;
 	
 	email = (email.trim()).toLowerCase();
-	let cookie = uuidv4();
+	let cookie = shortid.generate();
 	
-	User.findOneAndUpdate({ email }, { $set: { cookie }}, "password", (err, user)=>{
+	User.findOneAndUpdate({ email }, { $set: { cookie }}, (err, user)=>{
 		if (err) console.error.bind('Database Error', err);
 		if (user){
 			//checking password
 			let passwordMatch = bcrypt.compareSync(password, user.password);
 			if (passwordMatch){
-				
-				res.setHeader('Set-Cookie', cookie.serialize('token', String(cookie), {
-					maxAge: COOKIES_AGE,
-					path: '/'
-				}));
-				res.status(302).redirect('/dashboard');
+				res.cookie('token', cookie, { maxAge: COOKIES_AGE }).status(302).redirect('/users');
 			}else
-				res.status(302).redirect(`/login-signup?query=${ERROR_MSG}`);
+				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 		}else{
-			res.status(302).redirect(`/login-signup?query=${ERROR_MSG}`);
+			res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 		}
 	});
 });
@@ -62,16 +57,11 @@ router.post('/signup', (req, res, next)=>{
 		
 		user.password = bcrypt.hashSync(password);
 		
-		user.cookie = uuidv4();
-		
-		res.setHeader('Set-Cookie', cookie.serialize('token', String(user.cookie), {
-			maxAge: COOKIES_AGE,
-			path: '/'
-		}));
+		user.cookie = shortid.generate();
 		
 		User.create(user, (err)=>{
 			if (err) console.error.bind('Database error', err);
-			res.status(302).redirect('/dashboard');
+			res.cookie('token', cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
 		});
 	}else
 		res.status(302).redirect(`/login-signup?query=${ERROR_MSG}`);
@@ -80,11 +70,6 @@ router.post('/signup', (req, res, next)=>{
 //forget password
 router.get('/forget', (req, res, next)=>{
 	res.send("<h1>Available Soon</h1>");
-});
-
-//dashboard
-router.get('/dashboard', (req, res, next)=>{
-	res.send('<h1>Available soon</h1>');
 });
 
 module.exports = router;

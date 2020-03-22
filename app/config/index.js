@@ -17,9 +17,5 @@ let BTN_CTRL = {
 
 //snack bar
 let ERROR_MSG = null;
-//	{
-//	error: true,
-//	msg: null
-//};
 
 module.exports = { invalidRes, validRes, COOKIES_AGE, BTN_CTRL, ERROR_MSG };
