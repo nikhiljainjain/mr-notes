@@ -7,7 +7,7 @@ let logger = require('morgan');
 
 let indexRouter = require('./app/routes/index');
 let usersRouter = require('./app/routes/users');
-let teamsRouter = require('./app/routes/teams');
+//let teamsRouter = require('./app/routes/teams');
 
 let app = express();
 let mongoose = require('mongoose');
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/teams', teamsRouter);
+//app.use('/teams', teamsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

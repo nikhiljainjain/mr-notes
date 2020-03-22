@@ -1,14 +1,48 @@
-<% include ./partial/header.ejs %>
+<!DOCTYPE html>
+<html lang="enUS" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="/karma/img/fav.png">
+    <!-- Author Meta -->
+    <meta name="author" content="nj-notes">
+    <!-- Meta Description -->
+    <meta name="description" content="stylish sticky notes">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>NJ Notes</title>
+	<!--material icons-->
+  	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--font baloo-->
+	<link href="https://fonts.googleapis.com/css?family=Baloo+2:500&display=swap" rel="stylesheet"> 
+	<!--material css-->
+	<link rel="stylesheet" href="/css/materialize.min.css">	
+</head>
+<body style="font-family: 'Baloo 2', cursive;">
+	<div class="navbar-fixed">
+		<nav class="purple darken-3">
+			<div class="nav-wrapper">
+				<div style="margin-left: 30px; margin-right: 30px;">
+				  <a href="#!" class="brand-logo center">NJ Notes</a>
+					<ul id="nav-mobile" class="left hide-on-med-and-down">
+					<li><a href="/"><i class="material-icons right">keyboard_backspace</i></a></li>
+				  </ul>
+				</div>
+			</div>
+		  </nav>
+	</div>
 <br>
-<div class="row">
+<div class="row" >
 	<div class="col s12 m6 l6">
 		<div class="section">
 			<div class="container">
-				<h3 style="color: #9c27b0"><b>Login</b></h3>
+				<h3 style="color: #9c27b0;text-align: center"><b>Login</b></h3>
 				<div class="divider"></div>
 				<div class="section">
 					<div class="row">
-					<form class="col s12" action="/signup" method="post">
+					<form class="col s12" action="/login" method="post">
 					  <div class="row">
 						<div class="input-field col s12">
 						  <input id="email" type="email" class="validate" name="email" required />
@@ -23,13 +57,13 @@
 						</div>
 					  </div>
 						<div class="row">
-							<div class="col s12 m2 l2"></div>
-							<div class="col s12 m8 l8">
+							<div class="col s12 m1 l2"></div>
+							<div class="col s12 m10 l8">
 								<div class="container">
-									<button class="waves-effect waves-light btn-large purple" type="submit">Login<i class="material-icons right">send</i></button>
+									<button class="waves-effect waves-light btn-large purple" type="submit"><span style="font-family: 'Baloo 2', cursive;">Login</span><i class="material-icons right">send</i></button>
 								</div>
 							</div>
-							<div class="col s12 m2 l2"></div>
+							<div class="col s12 m1 l2"></div>
 						</div>
 					</form>
 				  </div>
@@ -40,7 +74,7 @@
 	<div class="col s12 m6 l6">
 		<div class="section">
 			<div class="container">
-				<h3 style="color: #9c27b0"><b>Signup</b></h3>
+				<h3 style="color: #9c27b0;text-align:center"><b>Signup</b></h3>
 				<div class="divider"></div>
 				<div class="section">
 					<div class="row">
@@ -73,13 +107,13 @@
 						</div>
 					  </div>
 						<div class="row">
-							<div class="col s12 m2 l2"></div>
-							<div class="col s12 m8 l8">
+							<div class="col s12 m1 l2"></div>
+							<div class="col s12 m10 l8">
 								<div class="container">
-									<button class="waves-effect waves-light btn-large purple" type="submit">Sign Up<i class="material-icons right">person_add</i></button>
+									<button class="waves-effect waves-light btn-large purple" type="submit"><span style="font-family: 'Baloo 2', cursive;">Sign Up</span><i class="material-icons right">person_add</i></button>
 								</div>
 							</div>
-							<div class="col s12 m2 l2"></div>
+							<div class="col s12 m1 l2"></div>
 						</div>
 					</form>
 				  </div>

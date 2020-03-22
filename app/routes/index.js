@@ -8,8 +8,7 @@ router.get('/', function(req, res, next) {
 
 
 router.get('/login-signup', (req, res, next)=>{
-	BTN_CTRL.logout = false;
-	res.render('login-signup', BTN_CTRL);
+	res.render('login-signup');
 });
 
 router.post('/login', (req, res, next)=>{
