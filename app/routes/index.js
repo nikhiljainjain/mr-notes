@@ -61,7 +61,7 @@ router.post('/signup', (req, res, next)=>{
 		
 		User.create(user, (err)=>{
 			if (err) console.error.bind('Database error', err);
-			res.cookie('token', cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
+			res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
 		});
 	}else
 		res.status(302).redirect(`/login-signup?query=${ERROR_MSG}`);

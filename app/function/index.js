@@ -1,26 +1,18 @@
-let Admin = require("../models/admin");
-let cookie = require("cookie");
+let User = require("../model/users");
 
 const userValid = (req, res, next) =>{
-    consle.log("available soon");
-}
-
-const adminValid = (req, res, next) =>{
-    let session = cookie.parse(req.headers.cookie || '');
-	if (session != null){
-		session = session.token;
-		Admin.findOne({session}, (err, data)=>{
+  	let cookie = req.cookies.token;
+	if (cookie != null){
+		User.findOne({cookie}).populate("notes").exec((err, data)=>{
 			if (err) throw console.error.bind(err);
 			if (data){
 				req.data = data;
 				next();
-			}else{
-				res.status(302).redirect("/admin/login");		  
-			}
+			}else
+				res.status(302).redirect("/login-signup");		  
 		});	
-	}else{
-		res.status(302).redirect("/admin/login");
-	}
+	}else
+		res.status(302).redirect("/login-signup");
 };
 
-module.exports = { userValid, adminValid };
+module.exports = { userValid };
