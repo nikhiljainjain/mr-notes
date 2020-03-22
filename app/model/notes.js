@@ -1,5 +1,5 @@
 let mongoose = require("mongoose");
-let shortid = require("shortid");
+//let shortid = require("shortid");
 
 let njnotes = new mongoose.Schema({
 	//unique id generator
@@ -9,7 +9,7 @@ let njnotes = new mongoose.Schema({
 	//description
 	desc: { type: String, default: null},
 	//creator
-	creator: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
 	//other members
 	members: [ { type: mongoose.Schema.ObjectId, ref: 'njnotesusers' } ], 
 	//last login time
@@ -18,8 +18,8 @@ let njnotes = new mongoose.Schema({
 	lists: [ { type: mongoose.Schema.ObjectId, ref: 'njnoteslists' } ]
 });
 
-njnotes.pre(['create', 'save'], (next)=>{
-	this.uid = shortid.generate();
-});
+//njnotes.pre(['create', 'save'], (next)=>{
+//	this.uid = shortid.generate();
+//});
 
 module.exports = mongoose.model('njnotes', njnotes);

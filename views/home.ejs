@@ -8,7 +8,16 @@
 			<div class="col s12 m12 l10">
 				<h5 style="color: #aa00ff"><b>Personal Boards</b><i class="material-icons left">person</i></h5>
 				<div class="row">
-					<div data-target="modal1" class="col s12 m6 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px">
+					<% notes.forEach((i)=>{ %>
+						<a href="/users/board/<%= i.uid %>">	
+							<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
+								<%= (i.name) %>
+							</div>
+						</a>
+						
+					<% }); %>
+					
+					<div data-target="modal1" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin: 5px">
 						Create New Board
 					</div>
 				  <!-- Modal Structure -->

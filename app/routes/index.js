@@ -49,7 +49,7 @@ router.post('/signup', (req, res, next)=>{
 	let { fname, lname, email, password, cpassword } = req.body;
 	if (password === cpassword){
 		let user = {
-			name: ((fname + lname).toUpperCase()),
+			name: ((fname +" "+ lname).toUpperCase()),
 			email: ((email.trim()).toLowerCase()),
 			password,
 			cookie: null
@@ -64,12 +64,18 @@ router.post('/signup', (req, res, next)=>{
 			res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
 		});
 	}else
-		res.status(302).redirect(`/login-signup?query=${ERROR_MSG}`);
+		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 });
 
 //forget password
 router.get('/forget', (req, res, next)=>{
 	res.send("<h1>Available Soon</h1>");
+});
+
+//logout user
+router.get('/logout', (req, res, next)=>{
+	//remove from db
+	res.clearCookie('token').status(302).redirect('/');
 });
 
 module.exports = router;

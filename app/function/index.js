@@ -7,6 +7,7 @@ const userValid = (req, res, next) =>{
 			if (err) throw console.error.bind(err);
 			if (data){
 				req.data = data;
+				console.log(req.data);
 				next();
 			}else
 				res.status(302).redirect("/login-signup");		  
