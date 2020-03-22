@@ -22,7 +22,11 @@ router.post('/signup', (req, res, next)=>{
 	res.status(302).redirect('/dashboard');
 	//res.render('dashboard', { lgbtn: false });
 });
-	
+
+router.get('/forget', (req, res, next)=>{
+	res.send("<h1>Available Soon</h1>");
+});
+
 router.get('/dashboard', (req, res, next)=>{
 	res.send('<h1>Available soon</h1>');
 });
