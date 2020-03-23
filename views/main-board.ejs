@@ -1,0 +1,160 @@
+<div class="section">
+<br>
+	<div class="container">
+		<div class="row" id="loadList">
+			<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px">
+				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
+					<div class="row">
+						<!-- creating new list -->
+						<div class="input-field col s12" style="color: white">
+						  <input id="icon_prefix" type="text" class="validate" name="name" required />
+						  <label for="icon_prefix" style="color: white">List Name</label>
+						</div>
+						<div class="input-field col s12">
+							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2 right">Add It<i class="material-icons right">add</i></button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+<br>
+</div>
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+  <form action=""  id="newCardForm" method="post" >
+<!--	  enctype="multipart/form-data" -->
+	<div class="modal-content">
+		<h4 style="text-align: center;color: #ab47bc">New Card Details<i class="modal-close material-icons right">close</i></h4>
+		<div class="container"><div class="divider"></div></div>
+		  <div class="row">
+			<div class="input-field col s12">
+			  <textarea id="textarea1" name="desc" required class="materialize-textarea"></textarea>
+			  <label for="textarea1">Description</label>
+			</div>
+		  </div>
+			<div class="row">
+			<div class="file-field input-field col s12">  
+			<div class="btn purple lighten-1 right">
+				<span>File</span>
+				<input type="file" name="img" accept="image/*" >
+			  </div>
+			  <div class="file-path-wrapper">
+				<input class="file-path validate disabled" placeholder="File Name" type="text">
+			  </div>
+			</div>
+		</div>
+			<div class="row">
+			<div class="input-field col s12" style="width:100%">
+			  <input type="text" class="datepicker" name="date" />
+			  <label for="textarea1">Due Date</label>
+			</div>
+		  </div>
+		<br>
+		<div class="divider"></div>
+		</div>
+	<div class="modal-footer">
+	  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 5px 5px" type="submit" >Create
+		<i class="material-icons right">create</i>
+	  </button>
+	</div>
+  </form>
+</div>
+<script>
+	let listIdG;
+	
+	function internetError(){
+		M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
+	}
+	
+	function cardLoader(listId){
+		let temp = '', time = new Date();
+		$.get(`/users/cards/<%= uid %>/${listId}`).done((resp)=>{
+			$(`#${listId}`).val("");
+			resp.data.forEach((i)=>{
+				temp += (!i.archive) ? `<div class="z-depth-1" style="width:100%;text-align:center;padding: 15px 0">
+							<p>${i.desc}</p>
+							<span>${ (i.dueDate != null) ? (("<br><b>Due Date </b>")+ time.toDateString(i.dueDate)): ""}</span>
+							<br>
+							<button onclick="archiveCard('${i.uid}', '${listId}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">Archive<i class="material-icons right">archive</i></button>
+							</div>`: '';
+			});
+			$(`#${listId}`).append(temp);
+		}).fail(internetError);
+	}
+	
+	function listLoader() {
+		let temp = '';
+		$.get("/users/board/lists/cards/<%= uid %>").done((data)=>{
+				data.data.forEach((i)=>{
+					  temp = `<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
+						<h4 class="card-title" style="text-align:center">${i.name}</h4>
+						<div class="divider" style="color:grey"></div>
+						<br>
+						<div class="card-content purple darken-4" id="${i.uid}"></div>
+						<br>
+						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
+						</div>`;
+			
+					//adding element to the page
+					$("#loadList").append(temp);
+			
+					//loading cards
+					cardLoader(i.uid);
+						
+				});
+		}).fail(internetError);
+	}
+	
+	function addNewCard(listId){
+		let elems = document.getElementById('modal1');
+    	let instance = M.Modal.init(elems);
+		instance.open();
+		listIdG = listId;
+	}
+		
+	function archiveCard(uid, listId){
+		$.get(`/users/card/archive/${uid}`).done((res)=>{
+			console.log(res);
+			cardLoader(listId);
+		}).fail(internetError);
+	}
+	
+	$(document).ready(function(){
+		listLoader();
+		
+		$("#newCardForm").submit((event)=>{
+			event.preventDefault();
+			
+			let form = $(this), desc = form.find("textarea[name='desc']").val();
+			let time = form.find("input[name='date']").val();
+			
+			time = (time != "") ? (new Date(time)):null;
+			
+			let elems = document.getElementById('modal1');
+			let instance = M.Modal.init(elems);
+			instance.close();
+			
+			//let img = $('#img')[0].files[0];
+			
+			$.post(`/users/new/card/<%= uid %>/${listIdG}`, { desc, time }).done((resp)=>{
+				cardLoader(listIdG);
+			}).fail(internetError);
+		});
+				
+	  $("#newListForm").submit((event)=>{
+		  //not noramlly submission of form
+		  event.preventDefault();
+		  
+		  let $form = $(this), name = $form.find("input[name='name']").val();
+		  
+		  $form.find("input[name='name']").val(null);
+		  
+		  $.post("/users/new/list/<%= uid %>", { name }).done((data)=>{
+			  M.toast({ html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 5000 });
+		  		listLoader();
+		  }).fail(internetError);
+	  });
+	});
+</script>
+<% include ./partial/ifooter.ejs %>

@@ -9,12 +9,13 @@
 				<h5 style="color: #aa00ff"><b>Personal Boards</b><i class="material-icons left">person</i></h5>
 				<div class="row">
 					<% notes.forEach((i)=>{ %>
-						<a href="/users/board/<%= i.uid %>">	
-							<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
-								<%= (i.name) %>
-							</div>
-						</a>
-						
+						<% if (!i.teamWork){ %>
+							<a href="/users/board/<%= i.uid %>">	
+								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
+									<%= (i.name) %>
+								</div>
+							</a>
+						<% } %>
 					<% }); %>
 					
 					<div data-target="modal1" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin: 5px">
@@ -61,6 +62,15 @@
 			<div class="col s12 m8 l10">
 				<h5 style="color: #aa00ff"><b>Team Board</b><i class="material-icons left">people</i></h5>
 				<div class="row">
+					<% notes.forEach((i)=>{ %>
+						<% if (i.teamWork){ %>
+							<a href="/users/team/board/<%= i.uid %>">	
+								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
+									<%= (i.name) %>
+								</div>
+							</a>
+						<% } %>
+					<% }); %>
 					<div data-target="modal2" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin: 5px">
 						Create Team Board
 					</div>
@@ -68,7 +78,7 @@
 				  <div id="modal2" class="modal">
 					  <form action="/users/create/team/board" method="post">
 						<div class="modal-content">
-							<h4 style="text-align: center;color: #ab47bc">New Board Details<i class="modal-close material-icons right">close</i></h4>
+							<h4 style="text-align: center;color: #ab47bc">New Team Board Details<i class="modal-close material-icons right">close</i></h4>
 							<div class="container"><div class="divider"></div></div>
 							  <div class="row">
 								<div class="input-field col s6">

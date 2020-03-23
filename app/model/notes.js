@@ -10,6 +10,8 @@ let njnotes = new mongoose.Schema({
 	desc: { type: String, default: null},
 	//creator
 	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	//team notes
+	teamWork: { type: Boolean, default: false },
 	//other members
 	members: [ { type: mongoose.Schema.ObjectId, ref: 'njnotesusers' } ], 
 	//last login time
