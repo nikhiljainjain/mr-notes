@@ -7,6 +7,7 @@ let shortid = require('shortid');
 //self-made
 let { COOKIES_AGE, BTN_CTRL, ERROR_MSG } = require('../config');
 let User = require('../model/users');
+let { userValid } = require('../function');
 
 //home page
 router.get('/', function(req, res, next) {
@@ -20,7 +21,7 @@ router.get('/login-signup', (req, res, next)=>{
 
 //user login
 router.post('/login', (req, res, next)=>{
-	ERROR_MSG = "Invalid credentials";
+	ERROR_MSG = 'Invalid credentials';
 	
 	let { email, password } = req.body;
 	
@@ -68,14 +69,18 @@ router.post('/signup', (req, res, next)=>{
 });
 
 //forget password
-router.get('/forget', (req, res, next)=>{
-	res.send("<h1>Available Soon</h1>");
+router.get('/forget-password', (req, res, next)=>{
+	//need to implement
+	res.render("forget-password");
 });
 
 //logout user
 router.get('/logout', (req, res, next)=>{
-	//remove from db
-	res.clearCookie('token').status(302).redirect('/');
+	User.findOneAndUpdate({cookie: req.cookies.token}, { $set: { cookie: null }}, (err, data)=>{
+		if (err) console.error.bind("Database error", err);
+		res.clearCookie('token');
+		res.status(302).redirect('/login-signup?q=logout');
+	});
 });
 
 module.exports = router;

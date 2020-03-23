@@ -140,20 +140,20 @@ router.get('/team/board/:uid', (req, res, next)=>{
 });
 
 //adding new member
-router.post('/team/add/member/:uid', (req, res, next)=>{
-	User.findOne({email: req.body.email}, "email", (err, data)=>{
+router.post('/team/add/member/:uid', (req, res, next)=>{	
+	User.findOne({email: req.body.email}, "email", (err, userData)=>{
 		if (err) console.error.bind("Database error", err);
-		
+		console.log(data);
 		if (data){
 			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: data._id }}, (err, data)=>{
 				if (err) console.error.bind("Database error", err);
-				
+				console.log(data);
 				res.json((data) ? validRes: invalidRes);
-				
+				if (data)
+					User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } });				
 			});
-		}else{
+		}else
 			res.json(invalidRes);
-		}
 	});
 });
 
