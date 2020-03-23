@@ -76,8 +76,12 @@ router.post("/new/card/:noteId/:listId", (req, res, next)=>{
 });
 
 //list of all cards 
-router.get("/card/:noteId/:listId", (req, res, next)=>{
-	res.send("OK");
+router.get("/cards/:noteId/:listId", (req, res, next)=>{
+	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
+		if (err) console.error.bind("Database error", err);
+		console.log(data.cards);
+		res.json({ data: data.cards });
+	});
 });
 
 //adding new list in notes
@@ -100,6 +104,14 @@ router.post('/new/list/:uid', (req, res, next)=>{
 			if (err) console.error.bind("Database error", err);
 			res.send("OK");
 		});
+	});
+});
+
+//archive the card
+router.get("/card/archive/:uid", (req, res, next)=>{
+	Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}}, (err, data)=>{
+		if (err) console.error.bind("Database error", err);
+		res.send("OK");
 	});
 });
 

@@ -52,22 +52,47 @@
 <script>
 	let listIdG;
 	
+	function internetError(){
+		M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
+	}
+	
+	function cardLoader(listId){
+		let temp = '', time = new Date();
+		$.get(`/users/cards/<%= uid %>/${listId}`).done((resp)=>{
+			$(`#${listId}`).val("");
+			resp.data.forEach((i)=>{
+				temp += (!i.archive) ? `<div class="z-depth-1" style="width:100%;text-align:center;padding: 15px 0">
+							<p>${i.desc}</p>
+							<span>${ (i.dueDate != null) ? (("<br><b>Due Date </b>")+ time.toDateString(i.dueDate)): ""}</span>
+							<br>
+							<button onclick="archiveCard('${i.uid}', '${listId}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">Archive<i class="material-icons right">archive</i></button>
+							</div>`: '';
+			});
+			$(`#${listId}`).append(temp);
+		}).fail(internetError);
+	}
+	
 	function listLoader() {
 		let temp = '';
 		$.get("/users/board/lists/cards/<%= uid %>").done((data)=>{
 				data.data.forEach((i)=>{
-					  temp += `<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
+					  temp = `<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
 						<h4 class="card-title" style="text-align:center">${i.name}</h4>
 						<div class="divider" style="color:grey"></div>
-						<div class="card-content"></div>
+						<br>
+						<div class="card-content purple darken-4" id="${i.uid}"></div>
+						<br>
 						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
 						</div>`;
-						//console.log(i);	
+			
+					//adding element to the page
+					$("#loadList").append(temp);
+			
+					//loading cards
+					cardLoader(i.uid);
+						
 				});
-				$("#loadList").append(temp);
-		}).fail(()=>{
-			M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
-		});
+		}).fail(internetError);
 	}
 	
 	function addNewCard(listId){
@@ -75,6 +100,13 @@
     	let instance = M.Modal.init(elems);
 		instance.open();
 		listIdG = listId;
+	}
+		
+	function archiveCard(uid, listId){
+		$.get(`/users/card/archive/${uid}`).done((res)=>{
+			console.log(res);
+			cardLoader(listId);
+		}).fail(internetError);
 	}
 	
 	$(document).ready(function(){
@@ -93,10 +125,8 @@
 			instance.close();
 			
 			$.post(`/users/new/card/<%= uid %>/${listIdG}`, { desc, time }).done((resp)=>{
-				console.log(resp);
-			}).fail(()=>{
-				M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
-			});
+				cardLoader(listIdG);
+			}).fail(internetError);
 		});
 				
 	  $("#newListForm").submit((event)=>{
@@ -107,10 +137,10 @@
 		  
 		  $form.find("input[name='name']").val(null);
 		  
-		  $.post( "/users/new/list/<%= uid %>", { name }).done((data)=>{
+		  $.post("/users/new/list/<%= uid %>", { name }).done((data)=>{
 			  M.toast({ html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 5000 });
 		  		listLoader();
-		  });
+		  }).fail(internetError);
 	  });
 	});
 </script>
