@@ -61,7 +61,7 @@
   </form>
 </div>
 <script>
-	let listIdG;
+	let listIdG, elems, instance, form;
 	
 	function internetError(){
 		M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
@@ -93,7 +93,7 @@
 						<br>
 						<div class="card-content purple darken-4" id="${i.uid}"></div>
 						<br>
-						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
+						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right" style="margin: 5px">Add Card<i class="material-icons right">add</i></button>
 						</div>`;
 			
 					//adding element to the page
@@ -107,8 +107,8 @@
 	}
 	
 	function addNewCard(listId){
-		let elems = document.getElementById('modal1');
-    	let instance = M.Modal.init(elems);
+		elems = document.getElementById('modal1');
+    	instance = M.Modal.init(elems);
 		instance.open();
 		listIdG = listId;
 	}
@@ -123,16 +123,39 @@
 	$(document).ready(function(){
 		listLoader();
 		
+		$("#newMemberForm").submit((event)=>{
+			$("#addMemberBtn").addClass("disabled");
+			event.preventDefault();
+			
+			form = $(this);
+			let email = form.find("input[name='email']").val();
+			elems = document.getElementById('addMember');
+			instance = M.Modal.init(elems);
+			instance.close();
+			
+			$.post("/users/team/add/member/<%= uid %>", { email }).done((resp)=>{
+				   console.log(resp);
+					if (resp.msg == "NOT OK"){
+						M.toast({html: 'User Not Exist <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
+					}else{
+						M.toast({html: 'User Added Successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 10000});
+					}
+				   
+		   }).fail(internetError);
+			form.find("input[name='email']").val(null);
+		});
+		
 		$("#newCardForm").submit((event)=>{
 			event.preventDefault();
 			
-			let form = $(this), desc = form.find("textarea[name='desc']").val();
+			form = $(this);
+			let desc = form.find("textarea[name='desc']").val();
 			let time = form.find("input[name='date']").val();
 			
 			time = (time != "") ? (new Date(time)):null;
 			
-			let elems = document.getElementById('modal1');
-			let instance = M.Modal.init(elems);
+			elems = document.getElementById('modal1');
+			instance = M.Modal.init(elems);
 			instance.close();
 			
 			//let img = $('#img')[0].files[0];
@@ -146,7 +169,7 @@
 		  //not noramlly submission of form
 		  event.preventDefault();
 		  
-		  let $form = $(this), name = $form.find("input[name='name']").val();
+		  let $form = $(this); name = $form.find("input[name='name']").val();
 		  
 		  $form.find("input[name='name']").val(null);
 		  
