@@ -124,7 +124,7 @@ router.post('/create/team/board', (req, res, next)=>{
 	let { notes, _id } = req.data; 
 	let uid = shortid.generate();
 	
-	Notes.create({ name, desc, creater: _id, uid }, (err, data)=>{
+	Notes.create({ name, desc, creater: _id, uid, teamWork: true }, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		
 		User.findByIdAndUpdate(req.data._id, {$push: {notes: data._id}}, (err, newData)=>{
@@ -143,14 +143,17 @@ router.get('/team/board/:uid', (req, res, next)=>{
 router.post('/team/add/member/:uid', (req, res, next)=>{	
 	User.findOne({email: req.body.email}, "email", (err, userData)=>{
 		if (err) console.error.bind("Database error", err);
-		console.log(data);
-		if (data){
-			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: data._id }}, (err, data)=>{
+		console.log(userData);
+		if (userData){
+			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: userData._id }}, (err, data)=>{
 				if (err) console.error.bind("Database error", err);
 				console.log(data);
 				res.json((data) ? validRes: invalidRes);
 				if (data)
-					User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } });				
+					User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } }, (err, updateData)=>{
+						if (err) console.error.bind("Database error", err);
+						console.log(updateData);
+					});				
 			});
 		}else
 			res.json(invalidRes);

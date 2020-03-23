@@ -10,7 +10,7 @@ let njnotes = new mongoose.Schema({
 	desc: { type: String, default: null},
 	//creator
 	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
-	//team notes
+	//team notes true if this will created for team
 	teamWork: { type: Boolean, default: false },
 	//other members
 	members: [ { type: mongoose.Schema.ObjectId, ref: 'njnotesusers' } ], 
