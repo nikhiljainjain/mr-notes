@@ -52,6 +52,34 @@ router.post('/new/board', (req, res, next)=>{
 	});
 });
 
+//adding new card
+router.post("/new/card/:noteId/:listId", (req, res, next)=>{
+	let card = {
+		uid: null,
+		desc: req.body.desc,
+		dueDate: null,
+		creator: req.data._id,
+		
+	};
+	
+	card.uid = shortid.generate();
+	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
+	
+	res.send("OK");
+	
+	Card.create(card, (err, data)=>{
+		if (err) console.error.bind("New card creation DB error", err);
+		List.findOneAndUpdate({ uid: req.params.listId }, {$push: { cards: data._id }}, (err, newList)=>{
+			if (err) console.error.bind("NC List DB error", err);
+		});
+	});
+});
+
+//list of all cards 
+router.get("/card/:noteId/:listId", (req, res, next)=>{
+	res.send("OK");
+});
+
 //adding new list in notes
 router.post('/new/list/:uid', (req, res, next)=>{
 	let { name } = req.body;

@@ -6,6 +6,7 @@
 			<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px">
 				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
 					<div class="row">
+						<!-- creating new list -->
 						<div class="input-field col s12" style="color: white">
 						  <input id="icon_prefix" type="text" class="validate" name="name" required />
 						  <label for="icon_prefix" style="color: white">List Name</label>
@@ -20,7 +21,37 @@
 	</div>
 <br>
 </div>
+<!-- Modal Structure -->
+<div id="modal1" class="modal" style="height:300px">
+  <form action=""  id="newCardForm" method="post">
+	<div class="modal-content">
+		<h4 style="text-align: center;color: #ab47bc">New Card Details<i class="modal-close material-icons right">close</i></h4>
+		<div class="container"><div class="divider"></div></div>
+		  <div class="row">
+			<div class="input-field col s12">
+			  <textarea id="textarea1" name="desc" required class="materialize-textarea"></textarea>
+			  <label for="textarea1">Description</label>
+			</div>
+		  </div>
+			<div class="row">
+			<div class="input-field col s12" style="width:100%">
+			  <input type="text" class="datepicker" name="date" />
+			  <label for="textarea1">Due Date</label>
+			</div>
+		  </div>
+		<br>
+		<div class="divider"></div>
+		</div>
+	<div class="modal-footer">
+	  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 0 5px" type="submit" >Create
+		<i class="material-icons right">create</i>
+	  </button>
+	</div>
+  </form>
+</div>
 <script>
+	let listIdG;
+	
 	function listLoader() {
 		let temp = '';
 		$.get("/users/board/lists/cards/<%= uid %>").done((data)=>{
@@ -29,9 +60,9 @@
 						<h4 class="card-title" style="text-align:center">${i.name}</h4>
 						<div class="divider" style="color:grey"></div>
 						<div class="card-content"></div>
-						<button onclick="addNewCard('<%= uid %>', '${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
+						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
 						</div>`;
-						console.log(i);	
+						//console.log(i);	
 				});
 				$("#loadList").append(temp);
 		}).fail(()=>{
@@ -39,24 +70,44 @@
 		});
 	}
 	
-	function addNewCard(uid, listId){
-		console.log("working");
+	function addNewCard(listId){
+		let elems = document.getElementById('modal1');
+    	let instance = M.Modal.init(elems);
+		instance.open();
+		listIdG = listId;
 	}
 	
 	$(document).ready(function(){
 		listLoader();
 		
+		$("#newCardForm").submit((event)=>{
+			event.preventDefault();
+			
+			let form = $(this), desc = form.find("textarea[name='desc']").val();
+			let time = form.find("input[name='date']").val();
+			
+			time = (time != "") ? (new Date(time)):null;
+			
+			let elems = document.getElementById('modal1');
+			let instance = M.Modal.init(elems);
+			instance.close();
+			
+			$.post(`/users/new/card/<%= uid %>/${listIdG}`, { desc, time }).done((resp)=>{
+				console.log(resp);
+			}).fail(()=>{
+				M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
+			});
+		});
+				
 	  $("#newListForm").submit((event)=>{
 		  //not noramlly submission of form
 		  event.preventDefault();
 		  
-		  let $form = $(this),
-			  term = $form.find("input[name='name']").val(),
-			  url = $form.attr("action");
+		  let $form = $(this), name = $form.find("input[name='name']").val();
 		  
-		  $form.find("input[name='name']").val("");
+		  $form.find("input[name='name']").val(null);
 		  
-		  $.post( "/users/new/list/<%= uid %>", { name: term }).done((data)=>{
+		  $.post( "/users/new/list/<%= uid %>", { name }).done((data)=>{
 			  M.toast({ html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 5000 });
 		  		listLoader();
 		  });

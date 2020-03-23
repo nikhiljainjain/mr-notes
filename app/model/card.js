@@ -1,15 +1,13 @@
 let mongoose = require("mongoose");
-let shortid = require('shortid');
+//let shortid = require('shortid');
 
 let njcard = new mongoose.Schema({
 	//unique id generator
 	uid: { type: String, default: null },
-	//board name
-    name: { type: String, default: "Mr. X"},
 	//description
 	desc: { type: String, default: null },
 	//archive status
-	archive: { type: Boolean, default: true },
+	archive: { type: Boolean, default: false },
 	//reminder date
 	dueDate: { type: Date, default: null },
 	//attachement
@@ -20,8 +18,8 @@ let njcard = new mongoose.Schema({
     creationTime: { type: Date, default: Date.now },
 });
 
-njcard.pre(['create', 'save'], (next)=>{
-	this.uid = shortid.generate();
-});
+//njcard.pre(['create', 'save'], (next)=>{
+//	this.uid = shortid.generate();
+//});
 
 module.exports = mongoose.model('njnotescards', njcard);
