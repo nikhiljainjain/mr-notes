@@ -1,4 +1,53 @@
-<% include ./partial/iheader.ejs %>
+<!DOCTYPE html>
+<html lang="enUS" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="/img/fav.png">
+    <!-- Author Meta -->
+    <meta name="author" content="nj-notes">
+    <!-- Meta Description -->
+    <meta name="description" content="stylish sticky notes">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>NJ Notes</title>
+	<!--material icons-->
+  	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--font baloo-->
+	<link href="https://fonts.googleapis.com/css?family=Baloo+2:500&display=swap" rel="stylesheet"> 
+	<!--materialize css-->
+	<link rel="stylesheet" href="/css/materialize.min.css">
+	<!--jquery min-->
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<!--materialize js-->
+	<script src="/js/materialize.min.js"></script>
+	<!--activation function-->
+</head>
+<body style="font-family: 'Baloo 2', cursive;">
+	<div class="navbar-fixed">
+		<nav class="purple darken-3">
+			<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+			<div class="nav-wrapper">
+				<div style="margin-left: 30px; margin-right: 30px;">
+				  <a href="#!" class="brand-logo center">NJ Notes</a>
+					<ul class="right hide-on-med-and-down">
+						<li><a href="/users/team/add/member/<%= uid %>" class="waves-effect waves-light btn purple darken-2">Add Member<i class="material-icons left">group_add</i></a></li>
+						<li><a href="/login-signup" class="waves-effect waves-light btn purple darken-2">Logout <i class="material-icons left">exit_to_app</i></a></li>
+					</ul>
+					<ul class="left hide-on-med-and-down">
+						<li><a href="/users" class="waves-effect waves-light btn purple darken-2"><i class="material-icons">home</i></a></li>
+					</ul>
+				</div>
+			</div>
+		  </nav>
+	</div>
+	<ul class="sidenav" id="mobile-demo">
+		<li><a href="/users" >Home<i class="material-icons left">home</i></a></li>
+		<li><a href="/users/team/add/member/<%= uid %>" >Add Member<i class="material-icons left">group_add</i></a></li>
+		<li><a href="/logout">Logout<i class="material-icons left">exit_to_app</i></a></li>
+	</ul>
 <div class="section">
 <br>
 	<div class="container">

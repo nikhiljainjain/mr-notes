@@ -5,7 +5,7 @@ let bcrypt = require('bcryptjs');
 let shortid = require('shortid');
 
 //self-made 
-let { COOKIES_AGE, ERROR_MSG } = require('../config');
+let { COOKIES_AGE, ERROR_MSG, invalidRes, validRes } = require('../config');
 let { userValid } = require('../function');
 let User = require('../model/users');
 let Notes = require('../model/notes');
@@ -112,6 +112,48 @@ router.get("/card/archive/:uid", (req, res, next)=>{
 	Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		res.send("OK");
+	});
+});
+
+//team work
+
+//creating new tream board
+router.post('/create/team/board', (req, res, next)=>{
+	let { name, desc } = req.body;
+	
+	let { notes, _id } = req.data; 
+	let uid = shortid.generate();
+	
+	Notes.create({ name, desc, creater: _id, uid }, (err, data)=>{
+		if (err) console.error.bind("Database error", err);
+		
+		User.findByIdAndUpdate(req.data._id, {$push: {notes: data._id}}, (err, newData)=>{
+			if (err) console.error.bind('Database error', err);
+		});
+		res.status(302).redirect(`/users/team/board/${uid}`);
+	});
+});
+
+//inside board
+router.get('/team/board/:uid', (req, res, next)=>{
+	res.render("team", { uid: req.params.uid });
+});
+
+//adding new member
+router.post('/team/add/member/:uid', (req, res, next)=>{
+	User.findOne({email: req.body.email}, "email", (err, data)=>{
+		if (err) console.error.bind("Database error", err);
+		
+		if (data){
+			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: data._id }}, (err, data)=>{
+				if (err) console.error.bind("Database error", err);
+				
+				res.json((data) ? validRes: invalidRes);
+				
+			});
+		}else{
+			res.json(invalidRes);
+		}
 	});
 });
 

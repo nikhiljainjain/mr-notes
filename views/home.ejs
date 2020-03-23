@@ -52,5 +52,48 @@
 		</div>
 	</div>
 </div>
-<br>
+<!-- team member part-->
+<div class="section">
+	<div class="container">
+		<div class="row">
+			<div class="col s12 m4 l2">
+			</div>
+			<div class="col s12 m8 l10">
+				<h5 style="color: #aa00ff"><b>Team Board</b><i class="material-icons left">people</i></h5>
+				<div class="row">
+					<div data-target="modal2" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin: 5px">
+						Create Team Board
+					</div>
+					<!-- Modal Structure -->
+				  <div id="modal2" class="modal">
+					  <form action="/users/create/team/board" method="post">
+						<div class="modal-content">
+							<h4 style="text-align: center;color: #ab47bc">New Board Details<i class="modal-close material-icons right">close</i></h4>
+							<div class="container"><div class="divider"></div></div>
+							  <div class="row">
+								<div class="input-field col s6">
+								  <input id="name" name="name" type="text" class="validate" required />
+								  <label for="name">Team Name</label>
+								</div>
+							  </div>
+							  <div class="row">
+								<div class="input-field col s12">
+								  <textarea id="textarea1" name="desc" required class="materialize-textarea"></textarea>
+								  <label for="textarea1">Description</label>
+								</div>
+							  </div>
+							<div class="divider"></div>
+							</div>
+						<div class="modal-footer">
+						  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 0 5px" type="submit" >Create
+							<i class="material-icons right">create</i>
+						  </button>
+						</div>
+					  </form>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <% include ./partial/ifooter.ejs %>
