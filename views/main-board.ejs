@@ -70,9 +70,9 @@
 	function cardLoader(listId){
 		let temp = '', time = new Date();
 		$.get(`/users/cards/<%= uid %>/${listId}`).done((resp)=>{
-			$(`#${listId}`).val("");
+			$(`#${listId}`).html(null);
 			resp.data.forEach((i)=>{
-				temp += (!i.archive) ? `<div class="z-depth-1" style="width:100%;text-align:center;padding: 15px 0">
+				temp += (!i.archive) ? `<div class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;">
 							<p>${i.desc}</p>
 							<span>${ (i.dueDate != null) ? (("<br><b>Due Date </b>")+ time.toDateString(i.dueDate)): ""}</span>
 							<br>
@@ -90,9 +90,9 @@
 					  temp = `<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
 						<h4 class="card-title" style="text-align:center">${i.name}</h4>
 						<div class="divider" style="color:grey"></div>
-						<br>
+						
 						<div class="card-content purple darken-4" id="${i.uid}"></div>
-						<br>
+						
 						<button onclick="addNewCard('${i.uid}')" class="waves-effect waves-light btn purple darken-2 right" style="margin: 5px">Add Card<i class="material-icons right">add</i></button>
 						</div>`;
 			
@@ -139,10 +139,10 @@
 						M.toast({html: 'User Not Exist <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
 					}else{
 						M.toast({html: 'User Added Successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 10000});
-					}
-				   
-		   }).fail(internetError);
+					}	   
+			}).fail(internetError);
 			form.find("input[name='email']").val(null);
+			$("#addMemberBtn").addClass("disabled");
 		});
 		
 		$("#newCardForm").submit((event)=>{

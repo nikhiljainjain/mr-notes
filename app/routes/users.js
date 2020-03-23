@@ -46,7 +46,7 @@ router.post('/new/board', (req, res, next)=>{
 		notes.push(data._id);
 		User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
 			if (err) console.error.bind('Database error', err);
-			console.log(newData);
+			//console.log(newData);
 		});
 		res.status(302).redirect(`/users/board/${uid}`);
 	});
@@ -79,7 +79,7 @@ router.post("/new/card/:noteId/:listId", (req, res, next)=>{
 router.get("/cards/:noteId/:listId", (req, res, next)=>{
 	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		console.log(data.cards);
+		//console.log(data.cards);
 		res.json({ data: data.cards });
 	});
 });
@@ -143,16 +143,16 @@ router.get('/team/board/:uid', (req, res, next)=>{
 router.post('/team/add/member/:uid', (req, res, next)=>{	
 	User.findOne({email: req.body.email}, "email", (err, userData)=>{
 		if (err) console.error.bind("Database error", err);
-		console.log(userData);
+		//console.log(userData);
 		if (userData){
 			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: userData._id }}, (err, data)=>{
 				if (err) console.error.bind("Database error", err);
-				console.log(data);
+				//console.log(data);
 				res.json((data) ? validRes: invalidRes);
 				if (data)
 					User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } }, (err, updateData)=>{
 						if (err) console.error.bind("Database error", err);
-						console.log(updateData);
+						//console.log(updateData);
 					});				
 			});
 		}else

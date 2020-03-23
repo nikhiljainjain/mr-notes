@@ -16,7 +16,14 @@ router.get('/', function(req, res, next) {
 
 //login & signup page
 router.get('/login-signup', (req, res, next)=>{
-	res.render('login-signup', { msg: ((req.query.q) ? req.query.q : null)});
+	if (req.cookies.token){
+		User.findOne({ cookie: req.cookies.token }, "name", (err, data)=>{
+			if (err) console.error.bind("Database error", err);
+			if (data)
+				res.status(302).redirect("/users");
+		});
+	}else
+		res.render('login-signup', { msg: ((req.query.q) ? req.query.q : null)});
 });
 
 //user login
