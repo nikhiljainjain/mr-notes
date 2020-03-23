@@ -2,17 +2,16 @@
 <div class="section purple accent-4">
 <br>
 	<div class="container">
-		<div class="row">
-			<div class="col s12 m6 l6">
-				<form action="/users/new/list/<%= uid %>" method="post">
+		<div class="row" id="loadList">
+			<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px">
+				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
 					<div class="row">
-						<div class="input-field col s6" style="color: white">
-						  <i class="material-icons prefix">short_text</i>
+						<div class="input-field col s12" style="color: white">
 						  <input id="icon_prefix" type="text" class="validate" name="name" required />
 						  <label for="icon_prefix" style="color: white">List Name</label>
 						</div>
-						<div class="input-field col s6">
-							<button type="submit" class="waves-effect waves-light btn purple lighten-1">Add It<i class="material-icons right">add</i></button>
+						<div class="input-field col s12">
+							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2 right">Add It<i class="material-icons right">add</i></button>
 						</div>
 					</div>
 				</form>
@@ -21,4 +20,47 @@
 	</div>
 <br>
 </div>
+<script>
+	function listLoader() {
+		let temp = '';
+		$.get("/users/board/lists/cards/<%= uid %>").done((data)=>{
+				data.data.forEach((i)=>{
+					  temp += `<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
+						<h4 class="card-title" style="text-align:center">${i.name}</h4>
+						<div class="divider" style="color:grey"></div>
+						<div class="card-content"></div>
+						<button onclick="addNewCard('<%= uid %>', '${i.uid}')" class="waves-effect waves-light btn purple darken-2 right">Add Card<i class="material-icons right">add</i></button>
+						</div>`;
+						console.log(i);	
+				});
+				$("#loadList").append(temp);
+		}).fail(()=>{
+			M.toast({html: 'Something happening wrong OR Check your internet connection <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
+		});
+	}
+	
+	function addNewCard(uid, listId){
+		console.log("working");
+	}
+	
+	$(document).ready(function(){
+		listLoader();
+		
+	  $("#newListForm").submit((event)=>{
+		  //not noramlly submission of form
+		  event.preventDefault();
+		  
+		  let $form = $(this),
+			  term = $form.find("input[name='name']").val(),
+			  url = $form.attr("action");
+		  
+		  $form.find("input[name='name']").val("");
+		  
+		  $.post( "/users/new/list/<%= uid %>", { name: term }).done((data)=>{
+			  M.toast({ html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 5000 });
+		  		listLoader();
+		  });
+	  });
+	});
+</script>
 <% include ./partial/ifooter.ejs %>

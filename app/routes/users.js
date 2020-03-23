@@ -20,9 +20,18 @@ router.get('/', (req, res, next)=>{
 	res.render('home', { notes: req.data.notes });
 });
 
+//get the list & card 
+router.get('/board/lists/cards/:uid', (req, res, next)=>{
+	//remove _id before sending to front-end
+	List.find({ notesUid: req.params.uid}).populate("cards").exec((err, data)=>{
+		if (err) console.error.bind("DB errror on inside board", err);
+		res.json({data});
+	});
+});
+
 //inside board
 router.get('/board/:uid', (req, res, next)=>{
-	res.render("board", {uid: req.params.uid});
+	res.render("board", { uid: req.params.uid });
 });
 
 //creating new board
@@ -52,18 +61,17 @@ router.post('/new/list/:uid', (req, res, next)=>{
 	
 	let temp = null;
 	notes.forEach((i)=>{
-		if (i.uid == req.params.uid)
-			temp = i;
+		temp = (i.uid == req.params.uid) ? i : temp;
 	});
 	
-	List.create({ name, uid, creater: _id }, (err, data)=>{
+	List.create({ name, uid, creater: _id, notesUid: temp.uid }, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		res.send("OK");
-		console.log(temp, data, req.data);
-//		temp.lists.push(data._id);
-//		Notes.findByIdAndUpdate(temp._id, {$set: {lists}}, (err)=>{
-//			if (err) console.error.bind("Database error", err);
-//		});
+		//console.log(data);
+		temp.lists.push(data._id);
+		Notes.findByIdAndUpdate(temp._id, {$set: { lists: temp.lists }}, (err)=>{
+			if (err) console.error.bind("Database error", err);
+			res.send("OK");
+		});
 	});
 });
 

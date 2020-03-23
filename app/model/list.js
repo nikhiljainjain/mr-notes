@@ -1,7 +1,9 @@
 let mongoose = require("mongoose");
-let shortid = require("shortid");
+//let shortid = require("shortid");
 
 let njlist = new mongoose.Schema({
+	//notes uid
+	notesUid: { type: String, default: null },
 	//unique id generator
 	uid: { type: String, default: null },
 	//board name
@@ -11,11 +13,13 @@ let njlist = new mongoose.Schema({
 	//creation time
     creationTime: { type: Date, default: Date.now },
 	//notes id
-	cards: [ { type: mongoose.Schema.ObjectId, ref: 'njnotescards' } ]
+	cards: [ { 
+		type: mongoose.Schema.ObjectId, ref: 'njnotescards'
+	} ]
 });
 
-njlist.pre(['create', 'save'], (next)=>{
-	this.uid = shortid.generate();
-});
+//njlist.pre(['create', 'save'], (next)=>{
+//	this.uid = shortid.generate();
+//});
 
 module.exports = mongoose.model('njnoteslists', njlist);
