@@ -1,13 +1,13 @@
 <div class="section">
 <br>
 	<div class="container">
-		<div class="row" id="loadList">
+		<div class="row scroll" id="loadList">
 			<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px">
 				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
 					<div class="row">
 						<!-- creating new list -->
 						<div class="input-field col s12" style="color: white">
-						  <input id="icon_prefix" type="text" class="validate" name="name" required />
+						  <input id="icon_prefix" type="text" style="color: white" class="validate" name="name" required />
 						  <label for="icon_prefix" style="color: white">List Name</label>
 						</div>
 						<div class="input-field col s12">
@@ -63,6 +63,11 @@
 <script>
 	let listIdG, elems, instance, form;
 	
+	function clearVariable(){
+		elems = instance = null;
+		form = null;
+	}
+
 	function internetError(){
 		M.toast({
 			html: `<div class="row">
@@ -81,13 +86,13 @@
 		});
 	}
 
-	function addCard(uid, listId, date, desc){
+	function showCard(uid, listId, date, desc){
 		let time = new Date();
 		$(`div#${listId}`).append(`<div id="${uid}" class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;">
 			<p>${desc}</p>
-			<span>${ (date != null) ? (("<br><b>Due Date </b>")+ time.toDateString(date)): ""}</span>
+			<span>${ (date != null) ? (("<br><b>Due Date </b><br>")+ time.toDateString(date)): ""}</span>
 			<br>
-			<button onclick="archiveCard('${uid}', '${listId}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">
+			<button onclick="archiveCard('${uid}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">
 				Archive
 				<i class="material-icons right">
 					archive
@@ -97,18 +102,14 @@
 	}
 
 	function cardLoader(listId){
-		let temp = '', time = new Date();
-		$.get(`/users/cards/<%= uid %>/${listId}`).done((resp)=>{
-			//$(`div#${listId}`).empty();
-			resp.data.forEach((i)=>{
-				(!i.archive) ? addCard(i.uid, listId, i.dueDate, i.desc)  : null;
-				//temp += (!i.archive) ? : '';
+		$.get(`/users/cards/<%= uid %>/${listId}`).done((res)=>{
+			res.data.forEach((i)=>{
+				(!i.archive) ? showCard(i.uid, listId, i.dueDate, i.desc)  : null;
 			});
-			//$(`div#${listId}`).append(temp);
 		}).fail(internetError);
 	}
 	
-	function newList(name, uid){
+	function showList(name, uid){
 		//adding element to the page
 		$("#loadList").append(`<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
 			<h4 class="card-title" style="text-align:center">${name}</h4>
@@ -126,35 +127,34 @@
 	}
 
 	function listLoader() {
-		let temp = '';
-		$.get("/users/board/lists/cards/<%= uid %>").done((data)=>{
-				data.data.forEach((i)=>{
+		$.get("/users/board/lists/cards/<%= uid %>").done((res)=>{
+				res.data.forEach((i)=>{
 					//loading list
-					newList(name, uid);
+					showList(i.name, i.uid);
 			
 					//loading cards
-					cardLoader(i.uid);	
+					i.cards.forEach((j)=>{
+						(!j.archive) ? showCard(j.uid, i.uid, j.dueDate, j.desc)  : null;
+					});
 				});
 		}).fail(internetError);
 	}
 	
 	function addNewCard(listId){
 		elems = document.getElementById('modal1');
-    	instance = M.Modal.init(elems);
+		instance = M.Modal.init(elems);
 		instance.open();
 		listIdG = listId;
+		//clearVariable();
 	}
-		
-	function archiveCard(uid, listId){
+
+	function archiveCard(uid){
 		$.get(`/users/card/archive/${uid}`).done((res)=>{
-			console.log(res);
 			$(`div#${uid}`).remove();
 		}).fail(internetError);
 	}
-	
-	$(document).ready(function(){
-		listLoader();
-		
+
+	$(document).ready(function(){		
 		//new member addition
 		$("#newMemberForm").submit((event)=>{
 			$("#addMemberBtn").addClass("disabled");
@@ -165,39 +165,49 @@
 			elems = document.getElementById('addMember');
 			instance = M.Modal.init(elems);
 			instance.close();
+			clearVariable();
 			
 			$.post("/users/team/add/member/<%= uid %>", { email }).done((resp)=>{
-				   console.log(resp);
-					if (resp.msg == "NOT OK"){
-						M.toast({html: 'User Not Exist <i class="material-icons right" style="color:red">cancel</i>', displayLength: 10000});
-					}else{
-						M.toast({html: 'User Added Successfully <i class="material-icons right" style="color:green">check_circle</i>', displayLength: 10000});
-					}	   
+					if (resp.msg == "NOT OK")
+						M.toast({
+							html: `User Not Exist 
+								<i class="material-icons right" style="color:red">
+									cancel
+								</i>`, 
+							displayLength: 10000
+						});
+					else
+						M.toast({
+							html: `User Added Successfully 
+								<i class="material-icons right" style="color:green">
+									check_circle
+								</i>`, 
+							displayLength: 10000
+						});  
 			}).fail(internetError);
 			form.find("input[name='email']").val(null);
-			$("#addMemberBtn").addClass("disabled");
+			$("#addMemberBtn").removeClass("disabled");
 		});
 		
 		//adding new card
 		$("#newCardForm").submit((event)=>{
 			event.preventDefault();
 			
+			// elems = document.getElementById('modal1');
+			// instance = M.Modal.init(elems);
+			instance.close();
+			clearVariable();
+
 			form = $(this);
 			let desc = form.find("textarea[name='desc']").val();
 			let time = form.find("input[name='date']").val();
 			
 			time = (time != "") ? (new Date(time)):null;
-			
-			elems = document.getElementById('modal1');
-			instance = M.Modal.init(elems);
-			instance.close();
-			
 			//let img = $('#img')[0].files[0];
 			
 			$.post(`/users/new/card/<%= uid %>/${listIdG}`, { desc, time }).done((resp)=>{
-				addCard(resp.data.uid, listIdG, time, desc);
-				//M.toast({html: resp.data.uid, displayLength: 15000});
-				//console.log(resp);
+				console.log(resp, listIdG, time, desc);
+				showCard(resp.data.uid, listIdG, time, desc);
 			}).fail(internetError);
 		});
 		
@@ -210,14 +220,16 @@
 			
 			$form.find("input[name='name']").val(null);
 			
-			$.post("/users/new/list/<%= uid %>", { name }).done((data)=>{
+			$.post("/users/new/list/<%= uid %>", { name }).done((res)=>{
 				M.toast({ 
 					html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', 
-					displayLength: 5000 });
-					
-				//listLoader();
+					displayLength: 5000 
+				});
+				showList(name, res.data.uid);	
 			}).fail(internetError);
-	  });
+	  	});
+
+		listLoader();
 	});
 </script>
 <% include ./partial/ifooter.ejs %>

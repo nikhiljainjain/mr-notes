@@ -17,21 +17,22 @@ router.use(userValid);
 
 //user home
 router.get('/', (req, res, next)=>{
-	res.render('home', { notes: req.data.notes });
+	res.render('home', { notes: req.data.notes, user: req.data });
 });
 
 //get the list & card 
 router.get('/board/lists/cards/:uid', (req, res, next)=>{
 	//remove _id before sending to front-end
-	List.find({ notesUid: req.params.uid}).populate("cards").exec((err, data)=>{
-		if (err) console.error.bind("DB errror on inside board", err);
-		res.json(data);
+	List.find({ notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
+		if (err) console.error.bind("DB errror ", err);
+		validRes.data = data;
+		res.json(validRes);
 	});
 });
 
 //inside board
 router.get('/board/:uid', (req, res, next)=>{
-	res.render("board", { uid: req.params.uid });
+	res.render("board", { uid: req.params.uid, user: req.data });
 });
 
 //creating new board
@@ -58,19 +59,18 @@ router.post("/new/card/:noteId/:listId", (req, res, next)=>{
 		uid: null,
 		desc: req.body.desc,
 		dueDate: null,
-		creator: req.data._id,
-		
+		creater: req.data._id,	
 	};
 	
 	card.uid = shortid.generate();
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
-	
 	validRes.data = card;
 	
 	Card.create(card, (err, data)=>{
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ uid: req.params.listId }, {$push: { cards: data._id }}, (err, newList)=>{
+		List.findOneAndUpdate({ uid: req.params.listId,  notesUid: req.params.noteId }, { $push: { cards: data._id } }, (err, newList)=>{
 			if (err) console.error.bind("NC List DB error", err);
+			validRes.data.creater = null;
 			res.json(validRes);
 		});
 	});
@@ -96,15 +96,14 @@ router.post('/new/list/:uid', (req, res, next)=>{
 
 	newList.uid = shortid.generate();
 	
-	validRes.data = newList.uid;
+	validRes.data = newList;
 
 	List.create({ name, uid, creater: _id, notesUid: temp.uid }, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		//console.log(data);
-		temp.lists.push(data._id);
 		Notes.findByIdAndUpdate(temp._id, { $push: { lists: data._id } }, (err)=>{
 			if (err) console.error.bind("Database error", err);
 			//validRes.data.creater = null;
+			validRes.data.creater = null;
 			res.json(validRes);
 		});
 	});
@@ -143,7 +142,7 @@ router.get('/team/board/:uid', (req, res, next)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking if board really a team board or not
 		if (data.teamWork)
-			res.render("team", { uid: req.params.uid });
+			res.render("team", { uid: req.params.uid, user: req.data });
 		else
 			res.status(302).redirect('/users');
 	});
