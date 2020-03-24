@@ -25,7 +25,7 @@ router.get('/board/lists/cards/:uid', (req, res, next)=>{
 	//remove _id before sending to front-end
 	List.find({ notesUid: req.params.uid}).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror on inside board", err);
-		res.json({data});
+		res.json(data);
 	});
 });
 
@@ -65,12 +65,13 @@ router.post("/new/card/:noteId/:listId", (req, res, next)=>{
 	card.uid = shortid.generate();
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
 	
-	res.send("OK");
+	validRes.data = card;
 	
 	Card.create(card, (err, data)=>{
 		if (err) console.error.bind("New card creation DB error", err);
 		List.findOneAndUpdate({ uid: req.params.listId }, {$push: { cards: data._id }}, (err, newList)=>{
 			if (err) console.error.bind("NC List DB error", err);
+			res.json(validRes);
 		});
 	});
 });
@@ -86,23 +87,25 @@ router.get("/cards/:noteId/:listId", (req, res, next)=>{
 
 //adding new list in notes
 router.post('/new/list/:uid', (req, res, next)=>{
-	let { name } = req.body;
+	let newList = {
+		name: (req.body.name).trim(),
+		uid: null,
+		creater: req.data._id,
+		notesUid: req.params.uid
+	};
+
+	newList.uid = shortid.generate();
 	
-	let uid = shortid.generate();
-	let { notes, _id } = req.data;
-	
-	let temp = null;
-	notes.forEach((i)=>{
-		temp = (i.uid == req.params.uid) ? i : temp;
-	});
-	
+	validRes.data = newList.uid;
+
 	List.create({ name, uid, creater: _id, notesUid: temp.uid }, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//console.log(data);
 		temp.lists.push(data._id);
-		Notes.findByIdAndUpdate(temp._id, {$set: { lists: temp.lists }}, (err)=>{
+		Notes.findByIdAndUpdate(temp._id, { $push: { lists: data._id } }, (err)=>{
 			if (err) console.error.bind("Database error", err);
-			res.send("OK");
+			//validRes.data.creater = null;
+			res.json(validRes);
 		});
 	});
 });
@@ -111,7 +114,7 @@ router.post('/new/list/:uid', (req, res, next)=>{
 router.get("/card/archive/:uid", (req, res, next)=>{
 	Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		res.send("OK");
+		res.json(validRes);
 	});
 });
 
@@ -136,7 +139,14 @@ router.post('/create/team/board', (req, res, next)=>{
 
 //inside board
 router.get('/team/board/:uid', (req, res, next)=>{
-	res.render("team", { uid: req.params.uid });
+	Notes.findOne({ uid: req.params.uid }, "teamWork", (err, data)=>{
+		if (err) console.error.bind("DB error", err);
+		//checking if board really a team board or not
+		if (data.teamWork)
+			res.render("team", { uid: req.params.uid });
+		else
+			res.status(302).redirect('/users');
+	});
 });
 
 //adding new member

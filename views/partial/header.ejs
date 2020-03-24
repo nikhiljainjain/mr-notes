@@ -19,21 +19,29 @@
 	<link href="https://fonts.googleapis.com/css?family=Baloo+2:500&display=swap" rel="stylesheet"> 
 	<!--material css-->
 	<link rel="stylesheet" href="/css/materialize.min.css">
+	<style>
+		html{
+			scroll-behavior: smooth;
+		}
+		/* footer{
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+		} */
+		body {
+			display: flex;
+			min-height: 100vh;
+			flex-direction: column;
+		}
+
+		main {
+			flex: 1 0 auto;
+		}
+			
+	</style>
+	<!--jquery min-->
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<!--materialize js-->
+	<script src="/js/materialize.min.js"></script>
 </head>
-<body style="font-family: 'Baloo 2', cursive;">
-	<div class="navbar-fixed">
-		<nav class="purple darken-3">
-			<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-			<div class="nav-wrapper">
-				<div style="margin-left: 30px; margin-right: 30px;">
-				  <a href="#!" class="brand-logo">NJ Notes</a>
-					  <ul class="right hide-on-med-and-down">
-						<li><a href="/login-signup" class="waves-effect waves-light btn purple">Login <i class="material-icons left">person_outline</i></a></li>
-					  </ul>
-				</div>
-			</div>
-		  </nav>
-	</div>
-	 <ul class="sidenav" id="mobile-demo">
-		<li><a href="/login-signup">Login/Sign-Up <i class="material-icons left">person_outline</i></a></li>
-	</ul>

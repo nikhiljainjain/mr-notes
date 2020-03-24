@@ -24,10 +24,28 @@ router.get('/login-signup', (req, res, next)=>{
 					if (err) console.error.bind("Session error", err);
 					res.status(302).redirect("/users");
 				});
+			}else{
+				res.status(302).redirect('/logout');
 			}
 		});
-	}else
-		res.render('login-signup', { msg: ((req.query.q) ? req.query.q : null)});
+	}else {
+		//data for snackbar
+		let data = { 
+			msg: req.query.q,
+			icon: "cancel",
+			color: "red"
+		};
+
+		data.msg = ((data.msg === "Invalid credentials") || (data.msg === "Password and Confirm password not matched") || ( data.msg === "Logout Successfully")) ? data.msg: null;
+
+		if (data.msg === "Logout Successfully"){
+			data.msg = req.query.q;
+			data.icon = "check_circle";
+			data.color = "green";
+		}
+
+		res.render('login-signup', data);
+	}
 });
 
 //user login
@@ -94,9 +112,10 @@ router.get('/forget-password', (req, res, next)=>{
 router.get('/logout', (req, res, next)=>{
 	User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
+		//console.log(data, req.cookies);
 		req.session.regenerate((err)=>{
 			if (err) console.error.bind("Session error", err);
-			res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=logout');
+			res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
 		});
 	});
 });

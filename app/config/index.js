@@ -1,10 +1,12 @@
 //json response of invalid request
 let invalidRes = {
-    msg: "NOT OK", data: "invalid request"
+    msg: "NOT OK", 
+    data: "invalid request",
 };
 //json response of valid request
 let validRes = {
-    msg: "OK", data: "ALL is WELL"
+    msg: "OK", 
+    data: "ALL is WELL",
 };
 
 //cookies age for 300 days
