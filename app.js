@@ -4,7 +4,9 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+let session = require('express-session');
 
+let { COOKIES_AGE } = require('./app/config');
 let indexRouter = require('./app/routes/index');
 let usersRouter = require('./app/routes/users');
 //let teamsRouter = require('./app/routes/teams');
@@ -31,6 +33,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    httpOnly: false,
+    path: '/',
+    saveUninitialized: false,
+    cookie: { 
+      secure: false,
+      maxAge: COOKIES_AGE,
+    }
+}));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

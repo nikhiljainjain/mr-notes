@@ -140,24 +140,31 @@ router.get('/team/board/:uid', (req, res, next)=>{
 });
 
 //adding new member
-router.post('/team/add/member/:uid', (req, res, next)=>{	
-	User.findOne({email: req.body.email}, "email", (err, userData)=>{
-		if (err) console.error.bind("Database error", err);
-		//console.log(userData);
-		if (userData){
-			Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: userData._id }}, (err, data)=>{
-				if (err) console.error.bind("Database error", err);
-				//console.log(data);
-				res.json((data) ? validRes: invalidRes);
-				if (data)
-					User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } }, (err, updateData)=>{
-						if (err) console.error.bind("Database error", err);
-						//console.log(updateData);
-					});				
-			});
-		}else
-			res.json(invalidRes);
-	});
+router.post('/team/add/member/:uid', (req, res, next)=>{
+	/*
+	Checking if adder email id isn't same of new member email id
+	*/
+	if (req.body.email !== req.data.email){
+		User.findOne({email: req.body.email}, "email", (err, userData)=>{
+			if (err) console.error.bind("Database error", err);
+			//console.log(userData);
+			if (userData){
+				Notes.findOneAndUpdate({ uid: req.params.uid }, {$push: { members: userData._id }}, (err, data)=>{
+					if (err) console.error.bind("Database error", err);
+					//console.log(data);
+					res.json((data) ? validRes: invalidRes);
+					if (data)
+						User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } }, (err, updateData)=>{
+							if (err) console.error.bind("Database error", err);
+							//console.log(updateData);
+						});				
+				});
+			}else
+				res.json(invalidRes);
+		});
+	}else{
+		res.json(invalidRes);
+	}	
 });
 
 module.exports = router;

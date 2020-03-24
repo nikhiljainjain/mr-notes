@@ -19,8 +19,12 @@ router.get('/login-signup', (req, res, next)=>{
 	if (req.cookies.token){
 		User.findOne({ cookie: req.cookies.token }, "name", (err, data)=>{
 			if (err) console.error.bind("Database error", err);
-			if (data)
-				res.status(302).redirect("/users");
+			if (data){
+				req.session.regenerate((err)=>{
+					if (err) console.error.bind("Session error", err);
+					res.status(302).redirect("/users");
+				});
+			}
 		});
 	}else
 		res.render('login-signup', { msg: ((req.query.q) ? req.query.q : null)});
@@ -41,12 +45,14 @@ router.post('/login', (req, res, next)=>{
 			//checking password
 			let passwordMatch = bcrypt.compareSync(password, user.password);
 			if (passwordMatch){
-				res.cookie('token', cookie, { maxAge: COOKIES_AGE }).status(302).redirect('/users');
+				req.session.regenerate((err)=>{
+					if (err) console.error.bind("Session error", err);
+					res.cookie('token', cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
+				});
 			}else
 				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
-		}else{
+		}else
 			res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
-		}
 	});
 });
 
@@ -69,7 +75,10 @@ router.post('/signup', (req, res, next)=>{
 		
 		User.create(user, (err)=>{
 			if (err) console.error.bind('Database error', err);
-			res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
+			req.session.regenerate((err)=>{
+				if (err) console.error.bind("Session error", err);
+				res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
+			});
 		});
 	}else
 		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
@@ -83,10 +92,12 @@ router.get('/forget-password', (req, res, next)=>{
 
 //logout user
 router.get('/logout', (req, res, next)=>{
-	User.findOneAndUpdate({cookie: req.cookies.token}, { $set: { cookie: null }}, (err, data)=>{
+	User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		res.clearCookie('token');
-		res.status(302).redirect('/login-signup?q=logout');
+		req.session.regenerate((err)=>{
+			if (err) console.error.bind("Session error", err);
+			res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=logout');
+		});
 	});
 });
 
