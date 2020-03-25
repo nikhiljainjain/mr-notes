@@ -98,9 +98,9 @@ router.post('/new/list/:uid', (req, res, next)=>{
 	
 	validRes.data = newList;
 
-	List.create({ name, uid, creater: _id, notesUid: temp.uid }, (err, data)=>{
+	List.create(newList, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		Notes.findByIdAndUpdate(temp._id, { $push: { lists: data._id } }, (err)=>{
+		Notes.findOneAndUpdate({ uid: newList.notesUid }, { $push: { lists: data._id } }, (err)=>{
 			if (err) console.error.bind("Database error", err);
 			//validRes.data.creater = null;
 			validRes.data.creater = null;
