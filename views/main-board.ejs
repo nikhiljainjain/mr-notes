@@ -1,24 +1,29 @@
 <div class="section">
-<br>
-	<div class="container">
-		<div class="row scroll" id="loadList">
-			<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px">
+	<!-- <br> -->
+	<!-- <div class="container"> -->
+		<div class="scrolling-wrapper" id="loadList">
+			<div class="card purple darken-3" style="margin: 5px">
 				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
 					<div class="row">
 						<!-- creating new list -->
-						<div class="input-field col s12" style="color: white">
-						  <input id="icon_prefix" type="text" style="color: white" class="validate" name="name" required />
-						  <label for="icon_prefix" style="color: white">List Name</label>
-						</div>
 						<div class="input-field col s12">
-							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2 right">Add It<i class="material-icons right">add</i></button>
+							<input id="icon_prefix" type="text" class="validate white-text" name="name" required />
+							<label for="icon_prefix" class="white-text">List Name</label>
+						</div>
+						<div class="input-field col s12 center">
+							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2">Add It<i class="material-icons right">add</i></button>
 						</div>
 					</div>
 				</form>
-			</div>
+			</div>	
+			<!-- <div class="col s12 m9 l10 scrolling-wrapper" id="loadList"> -->
+				<!-- <div class="container"> -->
+					<!-- <div class="row" id="loadList"></div> -->
+				<!-- </div> -->
+			<!-- </div> -->
 		</div>
-	</div>
-<br>
+	<!-- </div> -->
+	<!-- <br> -->
 </div>
 <!-- Modal Structure -->
 <div id="modal1" class="modal">
@@ -89,7 +94,7 @@
 	function showCard(uid, listId, date, desc){
 		let time = new Date();
 		$(`div#${listId}`).append(`<div id="${uid}" class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;">
-			<p>${desc}</p>
+			<p style="padding: 0 5px">${desc}</p>
 			<span>${ (date != null) ? (("<br><b>Due Date </b><br>")+ time.toDateString(date)): ""}</span>
 			<br>
 			<button onclick="archiveCard('${uid}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">
@@ -111,9 +116,9 @@
 	
 	function showList(name, uid){
 		//adding element to the page
-		$("#loadList").append(`<div class="col s12 m6 l3 purple darken-3 card" style="margin-right: 5px;color:white;padding-bottom:5px">
+		$("#loadList").append(`<div class="card purple darken-3 white-text" style="margin: 5px;padding-bottom:5px">
 			<h4 class="card-title" style="text-align:center">${name}</h4>
-			<div class="divider" style="color:grey"></div>
+			<div class="divider white-text"></div>
 			
 			<div class="card-content purple darken-4" id="${uid}"></div>
 			
@@ -154,7 +159,10 @@
 		}).fail(internetError);
 	}
 
-	$(document).ready(function(){		
+	$(document).ready(function(){
+		//loading list
+		listLoader();
+
 		//new member addition
 		$("#newMemberForm").submit((event)=>{
 			$("#addMemberBtn").addClass("disabled");
@@ -228,8 +236,6 @@
 				showList(name, res.data.uid);	
 			}).fail(internetError);
 	  	});
-
-		listLoader();
 	});
 </script>
 <% include ./partial/ifooter.ejs %>
