@@ -66,15 +66,15 @@
 		M.toast({
 			html: `<div class="row">
 					<div class="col s6">
-						Something happening wrong 
-						<br> 
-						Check your internet connection
-						</div> 
-					<div class="col s6">
 						<i class="material-icons left" style="color:red">
 							cancel
 						</i>
 					</div>
+					<div class="col s6">
+						Something happening wrong 
+						<br> 
+						Check your internet connection
+					</div> 
 				</div>`, 
 			displayLength: 10000
 		});
@@ -219,7 +219,7 @@
 			
 			$.post("/users/new/list/<%= uid %>", { name }).done((res)=>{
 				M.toast({ 
-					html: 'New list creted successfully <i class="material-icons left" style="color:green">check_circle</i>', 
+					html: '<i class="material-icons left" style="color:green">check_circle</i> New list creted successfully', 
 					displayLength: 5000 
 				});
 				showList(name, res.data.uid);	
