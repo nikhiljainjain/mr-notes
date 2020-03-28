@@ -1,8 +1,8 @@
 <div class="section">
-	<!-- <br> -->
-	<!-- <div class="container"> -->
-		<div class="scrolling-wrapper" id="loadList">
-			<div class="card purple darken-3" style="margin: 5px">
+	<br>
+	<div class="container">
+		<div class="row" >
+			<div class="col s12 purple darken-3" style="margin: 5px">
 				<form action="/users/new/list/<%= uid %>" id="newListForm" method="post">
 					<div class="row">
 						<!-- creating new list -->
@@ -11,7 +11,7 @@
 							<label for="icon_prefix" class="white-text">List Name</label>
 						</div>
 						<div class="input-field col s12 center">
-							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2">Add It<i class="material-icons right">add</i></button>
+							<button type="submit" id="newListName" class="waves-effect waves-light btn purple darken-2">Create<i class="material-icons left">add</i></button>
 						</div>
 					</div>
 				</form>
@@ -22,8 +22,13 @@
 				<!-- </div> -->
 			<!-- </div> -->
 		</div>
-	<!-- </div> -->
-	<!-- <br> -->
+	</div>
+	<div class="section">
+		<div class="container">	
+			<div class="row" id="loadList"></div>
+		</div>
+	</div>
+	<br>
 </div>
 <!-- Modal Structure -->
 <div id="modal1" class="modal">
@@ -38,17 +43,6 @@
 			  <label for="textarea1">Description</label>
 			</div>
 		  </div>
-			<!-- <div class="row">
-			<div class="file-field input-field col s12">  
-			<div class="btn purple lighten-1 right">
-				<span>File</span>
-				<input type="file" name="img" accept="image/*" >
-			  </div>
-			  <div class="file-path-wrapper">
-				<input class="file-path validate disabled" placeholder="File Name" type="text">
-			  </div>
-			</div>
-		</div> -->
 			<div class="row">
 			<div class="input-field col s12" style="width:100%">
 			  <input type="text" class="datepicker" name="date" />
@@ -60,7 +54,7 @@
 		</div>
 	<div class="modal-footer">
 	  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 5px 5px" type="submit" >Create
-		<i class="material-icons right">create</i>
+		<i class="material-icons left">create</i>
 	  </button>
 	</div>
   </form>
@@ -82,7 +76,7 @@
 						Check your internet connection
 						</div> 
 					<div class="col s6">
-						<i class="material-icons right" style="color:red">
+						<i class="material-icons left" style="color:red">
 							cancel
 						</i>
 					</div>
@@ -94,12 +88,12 @@
 	function showCard(uid, listId, date, desc){
 		let time = new Date();
 		$(`div#${listId}`).append(`<div id="${uid}" class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;">
-			<p style="padding: 0 5px">${desc}</p>
+			<p>${desc}</p>
 			<span>${ (date != null) ? (("<br><b>Due Date </b><br>")+ time.toDateString(date)): ""}</span>
 			<br>
 			<button onclick="archiveCard('${uid}')" style="margin-top: 5px" class="waves-effect waves-light btn purple darken-3 center">
 				Archive
-				<i class="material-icons right">
+				<i class="material-icons left">
 					archive
 				</i>
 			</button>
@@ -116,7 +110,7 @@
 	
 	function showList(name, uid){
 		//adding element to the page
-		$("#loadList").append(`<div class="card purple darken-3 white-text" style="margin: 5px;padding-bottom:5px">
+		$("#loadList").append(`<div class="col s12 m6 l3 purple darken-3 white-text" style="margin: 5px;padding-bottom:5px">
 			<h4 class="card-title" style="text-align:center">${name}</h4>
 			<div class="divider white-text"></div>
 			
@@ -124,7 +118,7 @@
 			
 			<button onclick="addNewCard('${uid}')" class="waves-effect waves-light btn purple darken-2 right" style="margin: 5px">
 				Add Card
-				<i class="material-icons right">
+				<i class="material-icons left">
 					add
 				</i>
 			</button>
@@ -179,7 +173,7 @@
 					if (resp.msg == "NOT OK")
 						M.toast({
 							html: `User Not Exist 
-								<i class="material-icons right" style="color:red">
+								<i class="material-icons left" style="color:red">
 									cancel
 								</i>`, 
 							displayLength: 10000
@@ -187,7 +181,7 @@
 					else
 						M.toast({
 							html: `User Added Successfully 
-								<i class="material-icons right" style="color:green">
+								<i class="material-icons left" style="color:green">
 									check_circle
 								</i>`, 
 							displayLength: 10000
@@ -230,7 +224,7 @@
 			
 			$.post("/users/new/list/<%= uid %>", { name }).done((res)=>{
 				M.toast({ 
-					html: 'New list creted successfully <i class="material-icons right" style="color:green">check_circle</i>', 
+					html: 'New list creted successfully <i class="material-icons left" style="color:green">check_circle</i>', 
 					displayLength: 5000 
 				});
 				showList(name, res.data.uid);	

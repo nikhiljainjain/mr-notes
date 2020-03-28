@@ -1,27 +1,22 @@
 <% include ./header.ejs %>
 <body style="font-family: 'Baloo 2', cursive;">
-	<!-- Dropdown Structure -->
-	<ul id="dropdown1"  class="dropdown-content purple darken-3">
-		<li><a href="#" class="white-text waves-effect waves-purple">Setting<i class="material-icons left">settings</i></a></li>
-		<li><a href="/logout" class="white-text waves-effect waves-purple">Logout<i class="material-icons left">exit_to_app</i></a></li>
-	</ul>
 	<div class="navbar-fixed">
 		<nav class="purple darken-3">
-			<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+			<a href="#" data-target="side-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 			<div class="nav-wrapper">
 				<div style="margin-left: 30px; margin-right: 30px;">
-				  <a href="#!" class="brand-logo center">NJ Notes</a>
+				  <a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left" style="width: 64px;height: 64px;margin-top: 2px;"></a>
 					<ul class="right hide-on-med-and-down">
-						<li><a class="waves-effect waves-purple dropdown-trigger btn purple darken-2" href="#dropdown1"><%= user.name %><i style="padding: -5px;" class="material-icons left">person</i></a></li>
+						<li><button  class="waves-effect waves-purple btn purple darken-2" onclick="openSideNav()"><%= user.name %><i style="padding: -5px;" class="material-icons left">person</i></button></li>
 					</ul>
 					<ul class="left hide-on-med-and-down">
-						<li><a href="/users" class="waves-effect waves-purple btn purple darken-2"><i class="material-icons">home</i></a></li>
+						<li><a href="/users" class="waves-effect waves-purple btn purple darken-2">Home<i class="material-icons left">home</i></a></li>
 					</ul>
 				</div>
 			</div>
 		  </nav>
 	</div>
-	<ul class="sidenav" id="mobile-demo">
+	<ul class="sidenav" id="side-nav">
 		<li>
 			<div class="user-view">
 				<div class="background">
@@ -36,6 +31,7 @@
 		<li>
 			<div class="divider"></div>
 		</li>
+		<li><a href="#">Feedback<i class="material-icons left">description</i></a></li>
 		<li><a href="#">Setting<i class="material-icons left">settings</i></a></li>
 		<li><a href="/logout">Logout<i class="material-icons left">exit_to_app</i></a></li>
 	</ul>

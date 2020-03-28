@@ -10,11 +10,19 @@
 </footer>
 </body>
 <script>
-  $(document).ready(function(){
-	  	$('.sidenav').sidenav();
-	  	$('.modal').modal();
-	  	$('.datepicker').datepicker();
-		$(".dropdown-trigger").dropdown();
-  });   
+let elems, instance;
+
+function openSideNav(){
+	elems = document.getElementById('side-nav');
+	instance = M.Sidenav.init(elems);
+	instance.open();
+}
+
+$(document).ready(function(){
+	$('.sidenav').sidenav();
+	$('.modal').modal();
+	$('.datepicker').datepicker();
+	$(".dropdown-trigger").dropdown();
+});   
 </script>
 </html>
