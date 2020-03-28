@@ -9,7 +9,7 @@ let session = require('express-session');
 let { COOKIES_AGE } = require('./app/config');
 let indexRouter = require('./app/routes/index');
 let usersRouter = require('./app/routes/users');
-//let teamsRouter = require('./app/routes/teams');
+let teamsRouter = require('./app/routes/teams');
 
 let app = express();
 let mongoose = require('mongoose');
@@ -40,14 +40,14 @@ app.use(session({
     path: '/',
     saveUninitialized: false,
     cookie: { 
-      secure: false,
-      maxAge: COOKIES_AGE,
+    	secure: false,
+    	maxAge: COOKIES_AGE,
     }
 }));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/teams', teamsRouter);
+app.use('/teams', teamsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -22,6 +22,8 @@
     "shortid": "^2.2.15"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
     "nodemon": "^2.0.2"
   }
 }

@@ -175,7 +175,7 @@
 			instance.close();
 			clearVariable();
 			
-			$.post("/users/team/add/member/<%= uid %>", { email }).done((resp)=>{
+			$.post("/teams/add/member/<%= uid %>", { email }).done((resp)=>{
 					if (resp.msg == "NOT OK")
 						M.toast({
 							html: `User Not Exist 

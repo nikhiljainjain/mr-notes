@@ -64,7 +64,7 @@
 				<div class="row">
 					<% notes.forEach((i)=>{ %>
 						<% if (i.teamWork){ %>
-							<a href="/users/team/board/<%= i.uid %>">	
+							<a href="/teams/board/<%= i.uid %>">	
 								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
 									<%= (i.name) %>
 								</div>
@@ -76,7 +76,7 @@
 					</div>
 					<!-- Modal Structure -->
 				  <div id="modal2" class="modal">
-					  <form action="/users/create/team/board" method="post">
+					  <form action="/teams/create/board" method="post">
 						<div class="modal-content">
 							<h4 style="text-align: center;color: #ab47bc">New Team Board Details<i class="modal-close material-icons right">close</i></h4>
 							<div class="container"><div class="divider"></div></div>
