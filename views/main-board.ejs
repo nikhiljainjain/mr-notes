@@ -16,11 +16,6 @@
 					</div>
 				</form>
 			</div>	
-			<!-- <div class="col s12 m9 l10 scrolling-wrapper" id="loadList"> -->
-				<!-- <div class="container"> -->
-					<!-- <div class="row" id="loadList"></div> -->
-				<!-- </div> -->
-			<!-- </div> -->
 		</div>
 	</div>
 	<div class="section">
@@ -172,18 +167,18 @@
 			$.post("/teams/add/member/<%= uid %>", { email }).done((resp)=>{
 					if (resp.msg == "NOT OK")
 						M.toast({
-							html: `User Not Exist 
-								<i class="material-icons left" style="color:red">
+							html: `<i class="material-icons left" style="color:red">
 									cancel
-								</i>`, 
+								</i>
+								User Not Exist`, 
 							displayLength: 10000
 						});
 					else
 						M.toast({
-							html: `User Added Successfully 
-								<i class="material-icons left" style="color:green">
+							html: `<i class="material-icons left" style="color:green">
 									check_circle
-								</i>`, 
+								</i>
+								User Added Successfully`, 
 							displayLength: 10000
 						});  
 			}).fail(internetError);

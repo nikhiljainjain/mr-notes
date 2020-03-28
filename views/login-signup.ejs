@@ -16,48 +16,48 @@
 <div class="row" >
 	<div class="col s12 m6 l6">
 		<div class="section">
-			<div class="container">
+			<!-- <div class="container"> -->
 				<h3 style="color: #9c27b0;text-align: center"><b>Login</b></h3>
 				<div class="divider"></div>
 				<div class="section">
 					<div class="row">
-					<form class="col s12" action="/login" method="post">
-					  <div class="row">
-						<div class="input-field col s12">
-						  <input id="email" type="email" class="validate" name="email" required />
-						  <label for="email">Email</label>
-							<span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
-						</div>
-					  </div>
-					  <div class="row">
-						<div class="input-field col s12">
-						  <input id="pswrd" type="password" class="validate" name="password" required />
-						  <label for="pswrd">Password</label>
-						</div>
-					  </div>
+						<form class="col s12" action="/login" method="post">
 						<div class="row">
-							<div class="col s12 m6 l6">
-								<div class="container">
-									<button class="waves-effect waves-light btn-large purple" type="submit"><span style="font-family: 'Baloo 2', cursive;">Login</span><i class="material-icons left">person</i></button>
-								</div>
+							<div class="input-field col s12">
+							<input id="email" type="email" class="validate" name="email" required />
+							<label for="email">Email</label>
+								<span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
 							</div>
-							<div class="col s12 m6 l6">
-								<div class="section">
-									<div class="container">
-										<a href="/forget-password" style="color: #bdbdbd; font-size: 20px; font-weight: bold;text-decoration: underline;"  target="_blank">Forget Password</a>
+						</div>
+						<div class="row">
+							<div class="input-field col s12">
+							<input id="pswrd" type="password" class="validate" name="password" required />
+							<label for="pswrd">Password</label>
+							</div>
+						</div>
+							<div class="row">
+								<div class="col s12 m6 l6 center">
+									<!-- <div class="container"> -->
+										<button class="waves-effect waves-light btn-large purple" type="submit"><i class="material-icons left">person</i><span style="font-family: 'Baloo 2', cursive;">Login</span></button>
+									<!-- </div> -->
+								</div>
+								<div class="col s12 m6 l6 center">
+									<div class="section">
+										<!-- <div class="container"> -->
+											<a href="/forget-password" style="color: #bdbdbd; font-size: 20px; font-weight: bold;text-decoration: underline;"  target="_blank">Forget Password</a>
+										<!-- </div> -->
 									</div>
 								</div>
 							</div>
-						</div>
-					</form>
+						</form>
 				  </div>
-				</div>
+				<!-- </div> -->
 			</div>
 		</div>
 	</div>
 	<div class="col s12 m6 l6">
 		<div class="section">
-			<div class="container">
+			<!-- <div class="container"> -->
 				<h3 style="color: #9c27b0;text-align:center"><b>Signup</b></h3>
 				<div class="divider"></div>
 				<div class="section">
@@ -91,18 +91,17 @@
 						</div>
 					  </div>
 						<div class="row">
-							<div class="col s12 m1 l2"></div>
-							<div class="col s12 m10 l8">
-								<div class="container">
+							<!-- <div class="col s12 m1 l2"></div> -->
+							<div class="col s12 m6 l6 center">
+								<!-- <div class="container"> -->
 									<button class="waves-effect waves-light btn-large purple" type="submit"><span style="font-family: 'Baloo 2', cursive;">Sign Up</span><i class="material-icons left">person_add</i></button>
-								</div>
+								<!-- </div> -->
 							</div>
-							<div class="col s12 m1 l2"></div>
+							<!-- <div class="col s12 m1 l2"></div> -->
 						</div>
 					</form>
 				  </div>
-
-				</div>
+				<!-- </div> -->
 			</div>
 		</div>
 	</div>
@@ -110,11 +109,12 @@
 <br>
 <% if (msg){ %>
 <script>
-	document.addEventListener('DOMContentLoaded', ()=>{
-		M.toast({
-			html: `<%= msg %> <i class="material-icons left" style="color:<%= color %>"><%= icon %></i>`, 
-			displayLength: 15000
-		})});
+document.addEventListener('DOMContentLoaded', ()=>{
+	M.toast({
+		html: `<i class="material-icons left" style="color:<%= color %>"><%= icon %></i><%= msg %>`, 
+		displayLength: 15000
+	})
+});
 </script>
 <% } %>
 <% include ./partial/footer.ejs %>
