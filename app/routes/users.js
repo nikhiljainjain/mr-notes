@@ -1,12 +1,11 @@
 //installed packages
 let express = require('express');
 let router = express.Router();
-let bcrypt = require('bcryptjs');
 let shortid = require('shortid');
 
 //self-made 
-let { COOKIES_AGE, ERROR_MSG, invalidRes, validRes } = require('../config');
-let { userValid } = require('../function');
+let { validRes } = require('../config');
+let { userValid, validId } = require('../function');
 let User = require('../model/users');
 let Notes = require('../model/notes');
 let List = require('../model/list');
@@ -17,26 +16,34 @@ router.use(userValid);
 
 //user home
 router.get('/', (req, res, next)=>{
+	//query handler
 	res.render('home', { notes: req.data.notes, user: req.data });
 });
 
 //get the list & card 
-router.get('/board/lists/cards/:uid', (req, res, next)=>{
-	//remove _id before sending to front-end
+router.get('/board/lists/cards/:uid', validId, async (req, res, next)=>{
 	List.find({ notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
+		//remove _id before sending to front-end
 		validRes.data = data;
 		res.json(validRes);
 	});
 });
 
 //inside board
-router.get('/board/:uid', (req, res, next)=>{
-	res.render("board", { uid: req.params.uid, user: req.data });
+router.get('/board/:uid', validId, (req, res, next)=>{
+	Notes.findOne({ uid: req.params.uid }, "teamWork", (err, data)=>{
+		if (err) console.error.bind("DB error", err);
+		//generate get query if 'if' condition fail
+		if (data && !(data.teamWork))
+			res.render("board", { uid: req.params.uid, user: req.data });
+		else
+			res.status(302).render('/users');
+	})
 });
 
 //creating new board
-router.post('/new/board', (req, res, next)=>{
+router.post('/new/board', async (req, res, next)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -54,7 +61,7 @@ router.post('/new/board', (req, res, next)=>{
 });
 
 //adding new card
-router.post("/new/card/:noteId/:listId", (req, res, next)=>{
+router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 	let card = {
 		uid: null,
 		desc: req.body.desc,
@@ -75,7 +82,7 @@ router.post("/new/card/:noteId/:listId", (req, res, next)=>{
 });
 
 //list of all cards 
-router.get("/cards/:noteId/:listId", (req, res, next)=>{
+router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
 	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		validRes.data = data.cards;
@@ -84,7 +91,7 @@ router.get("/cards/:noteId/:listId", (req, res, next)=>{
 });
 
 //adding new list in notes
-router.post('/new/list/:uid', async (req, res, next)=>{
+router.post('/new/list/:uid', validId, async (req, res, next)=>{
 	let newList = {
 		name: (req.body.name).trim(),
 		uid: null,
@@ -93,7 +100,6 @@ router.post('/new/list/:uid', async (req, res, next)=>{
 	};
 
 	newList.uid = shortid.generate();
-	
 	validRes.data = newList;
 
 	List.create(newList, async (err, data)=>{
@@ -105,7 +111,7 @@ router.post('/new/list/:uid', async (req, res, next)=>{
 });
 
 //archive the card
-router.get("/card/archive/:uid", async (req, res, next)=>{
+router.get("/card/archive/:uid", validId, async (req, res, next)=>{
 	await Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}});
 	res.json(validRes);
 });

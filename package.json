@@ -9,10 +9,12 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
+    "ddos": "^0.2.1",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "express-sanitizer": "^1.0.5",
     "express-session": "^1.17.0",
     "formidable": "^1.2.2",
     "fs": "0.0.1-security",

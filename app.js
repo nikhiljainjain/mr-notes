@@ -5,6 +5,8 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let session = require('express-session');
+let expressSanitizer = require('express-sanitizer');
+let dosPrev = require('ddos');
 
 let { COOKIES_AGE } = require('./app/config');
 let indexRouter = require('./app/routes/index');
@@ -13,8 +15,14 @@ let teamsRouter = require('./app/routes/teams');
 
 let app = express();
 let mongoose = require('mongoose');
+let noDos = new dosPrev({
+	burst: 15,
+	limit: 25,
+	maxCount: 35
+});
 
 let dbUrl = (process.env.NODE_ENV === 'PRODUCTION') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
+let logMethod = (process.env.NODE_ENV === 'PRODUCTION') ? 'combined' : 'dev';
 
 //database connection
 mongoose.connect(dbUrl || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
@@ -28,11 +36,13 @@ app.set('view engine', 'ejs');
 app.disable('etag');
 app.disable('x-powered-by');
 
-app.use(logger('dev'));
+app.use(noDos.express);
+app.use(logger(logMethod));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressSanitizer());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

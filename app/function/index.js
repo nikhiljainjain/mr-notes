@@ -1,4 +1,6 @@
 let User = require("../model/users");
+let shortid = require('shortid');
+let { invalidRes } = require('../config');
 
 const userValid = (req, res, next) =>{
   	let cookie = req.cookies.token;
@@ -6,8 +8,8 @@ const userValid = (req, res, next) =>{
 		User.findOne({cookie}).populate("notes").exec((err, data)=>{
 			if (err) throw console.error.bind(err);
 			if (data){
+				req.list = [];
 				req.data = data;
-				//console.log(req.data);
 				next();
 			}else
 				res.status(302).redirect("/login-signup");		  
@@ -16,4 +18,13 @@ const userValid = (req, res, next) =>{
 		res.status(302).redirect("/login-signup");
 };
 
-module.exports = { userValid };
+const validId = (req, res, next) => {
+	let flag = true, i;
+	//console.log(req.params);
+	for(i in req.params)
+		flag = (shortid.isValid(req.params[`${i}`])) ? true: false;
+	//console.log(flag);
+	flag ? next():res.json(invalidRes);
+};
+
+module.exports = { userValid, validId };
