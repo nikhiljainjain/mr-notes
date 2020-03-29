@@ -1,3 +1,1 @@
-before_script:
-  - mongo mydb_test --eval 'db.createUser({ user:"travis",pwd:"test",roles:["readWrite"]});'
 language: node_js 
