@@ -1,5 +1,4 @@
 let mongoose = require("mongoose");
-//let shortid = require("shortid");
 
 let njlist = new mongoose.Schema({
 	//notes uid
@@ -10,6 +9,8 @@ let njlist = new mongoose.Schema({
     name: { type: String, default: "Mr. X"},
 	//creator
 	creator: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	//assigned To
+	assignTo: { type: mongoose.Schema.ObjectId, ref: "njnotesuers" },
 	//creation time
     creationTime: { type: Date, default: Date.now },
 	//notes id
@@ -17,9 +18,5 @@ let njlist = new mongoose.Schema({
 		type: mongoose.Schema.ObjectId, ref: 'njnotescards'
 	} ]
 });
-
-//njlist.pre(['create', 'save'], (next)=>{
-//	this.uid = shortid.generate();
-//});
 
 module.exports = mongoose.model('njnoteslists', njlist);

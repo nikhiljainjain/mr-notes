@@ -1,5 +1,4 @@
 let mongoose = require("mongoose");
-//let shortid = require("shortid");
 
 let njnotes = new mongoose.Schema({
 	//unique id generator
@@ -19,9 +18,5 @@ let njnotes = new mongoose.Schema({
 	//notes id
 	lists: [ { type: mongoose.Schema.ObjectId, ref: 'njnoteslists' } ]
 });
-
-//njnotes.pre(['create', 'save'], (next)=>{
-//	this.uid = shortid.generate();
-//});
 
 module.exports = mongoose.model('njnotes', njnotes);

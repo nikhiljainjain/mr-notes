@@ -3,7 +3,7 @@
 This project was bootstrapped with [Expressjs Generator](https://expressjs.com/en/starter/generator.html).
 
 ### Gitpod
-- This project is Gitpod ready. You can run this project.
+This project is Gitpod ready. You can run this project.
 
 ### Setup Environment Value
 - Make copy of .envexample as .env .
