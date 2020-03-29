@@ -21,7 +21,8 @@ router.get('/', (req, res, next)=>{
 });
 
 //get the list & card 
-router.get('/board/lists/cards/:uid', validId, async (req, res, next)=>{
+router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
+	console.log(req.params);
 	List.find({ notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		//remove _id before sending to front-end

@@ -8,7 +8,6 @@ const userValid = (req, res, next) =>{
 		User.findOne({cookie}).populate("notes").exec((err, data)=>{
 			if (err) throw console.error.bind(err);
 			if (data){
-				req.list = [];
 				req.data = data;
 				next();
 			}else
@@ -21,8 +20,10 @@ const userValid = (req, res, next) =>{
 const validId = (req, res, next) => {
 	let flag = true, i;
 	//console.log(req.params);
-	for(i in req.params)
+	for(i in req.params){
+		//console.log(shortid.isValid(req.params[`${i}`]), req.params[`${i}`]);
 		flag = (shortid.isValid(req.params[`${i}`])) ? true: false;
+	}
 	//console.log(flag);
 	flag ? next():res.json(invalidRes);
 };
