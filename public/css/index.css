@@ -1,20 +1,33 @@
+
 html{
     scroll-behavior: smooth;
 }
 
 body {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     min-height: 100vh;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
 }
 
 main {
-    flex: 1 0 auto;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
 }
 
 .logo-fav {
     width: 64px; 
     height: 64px;
+}
+
+.home-ls {
+    margin-top: 5px;
+    margin-left: 15px;
 }
 
 @media only screen and (min-width: 1000px){
@@ -25,12 +38,16 @@ main {
     .logo-fav {
         margin-top: 2px;
     }
+
+    .home-ls {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 370px){
     .logo-fav {
         width: 55px;
         height: 55px;
-        margin-top: 5px;
+        /* margin-top: 5px; */
     }
 }

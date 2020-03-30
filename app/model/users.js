@@ -9,12 +9,14 @@ let user = new mongoose.Schema({
     password: { type: String, default: null },
     //cookie
     cookie: { type: String, default: null },
-    //last login time
+    //register time
     registerTime: { type: Date, default: Date.now },
+    //email verification code (code valid for 48 hours after generation)
+    verificationCode: { type: String, default: null, unique: true },
     //user verified
     verified: { type: Boolean, default: false },
 	//notes id
-	notes: [{ type: mongoose.Schema.ObjectId, ref: 'njnotes', unique: true }],
+	notes: [{ type: mongoose.Schema.ObjectId, ref: 'njnotes' }],
 });
 
 module.exports = mongoose.model('njnotesusers', user);

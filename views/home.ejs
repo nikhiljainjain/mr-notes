@@ -1,4 +1,5 @@
 <% include ./partial/iheader.ejs %>
+<link rel="stylesheet" href="/css/dashboard.css">
 <br>
 <div class="section">
 	<div class="container">
@@ -11,21 +12,21 @@
 					<% notes.forEach((i)=>{ %>
 						<% if (!i.teamWork){ %>
 							<a href="/users/board/<%= i.uid %>">	
-								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light center-align" style="line-height: 100px;display: table-cell;color: #ab47bc;width: 250px;height: 100px;margin:5px;">
+								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light center-align box-board" >
 									<%= (i.name) %>
 								</div>
 							</a>
 						<% } %>
 					<% }); %>
 					
-					<div data-target="modal1" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger center-align " style="line-height: 100px;display: table-cell;color: #ab47bc;width: 250px;height: 100px;margin: 5px">
+					<div data-target="modal1" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger center-align box-board">
 						Create New Board
 					</div>
 				  <!-- Modal Structure -->
 				  <div id="modal1" class="modal">
 					  <form action="/users/new/board" method="post">
 						<div class="modal-content">
-							<h4 style="text-align: center;color: #ab47bc">New Board Details<i class="modal-close material-icons right">close</i></h4>
+							<h4 class="center-align" style="color: #ab47bc">New Board Details<i class="modal-close material-icons right">close</i></h4>
 							<div class="container"><div class="divider"></div></div>
 							  <div class="row">
 								<div class="input-field col s6">
@@ -42,9 +43,12 @@
 							<div class="divider"></div>
 							</div>
 						<div class="modal-footer">
-						  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 0 5px" type="submit" >Create
-							<i class="material-icons left">create</i>
-						  </button>
+							<button class="btn waves-effect waves-light purple lighten-1" style="margin: 0 5px" type="submit">
+								Create
+								<i class="material-icons left">
+									create
+								</i>
+						  	</button>
 						</div>
 					  </form>
 				  </div>
@@ -65,13 +69,13 @@
 					<% notes.forEach((i)=>{ %>
 						<% if (i.teamWork){ %>
 							<a href="/teams/board/<%= i.uid %>">	
-								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin:5px;">
+								<div class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light box-board">
 									<%= (i.name) %>
 								</div>
 							</a>
 						<% } %>
 					<% }); %>
-					<div data-target="modal2" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger" style="line-height: 100px;display: table-cell;text-align: center; color: #ab47bc;width: 250px;height: 100px;margin: 5px">
+					<div data-target="modal2" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger box-board">
 						Create New Team Board
 					</div>
 					<!-- Modal Structure -->
@@ -80,20 +84,20 @@
 						<div class="modal-content">
 							<h4 style="text-align: center;color: #ab47bc">New Team Board Details<i class="modal-close material-icons right">close</i></h4>
 							<div class="container"><div class="divider"></div></div>
-							  <div class="row">
-								<div class="input-field col s6">
-								  <input id="name" name="name" type="text" class="validate" required />
-								  <label for="name">Team Name</label>
-								</div>
-							  </div>
-							  <div class="row">
-								<div class="input-field col s12">
-								  <textarea id="textarea1" name="desc" required class="materialize-textarea"></textarea>
-								  <label for="textarea1">Description</label>
-								</div>
-							  </div>
+							  	<div class="row">
+									<div class="input-field col s6">
+									<input id="name" name="name" type="text" class="validate" required />
+									<label for="name">Team Name</label>
+									</div>
+							  	</div>
+								<div class="row">
+									<div class="input-field col s12">
+										<textarea id="textarea1" name="desc" required class="materialize-textarea"></textarea>
+										<label for="textarea1">Description</label>
+									</div>
+							  	</div>
 							<div class="divider"></div>
-							</div>
+						</div>
 						<div class="modal-footer">
 						  <button class="btn waves-effect waves-light purple lighten-1" style="margin: 0 5px" type="submit" >Create
 							<i class="material-icons left">create</i>

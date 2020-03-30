@@ -1,0 +1,13 @@
+.boxcard {
+    padding: 15px 0;
+    margin-bottom:5px;
+    border: none;
+    border-radius: 5px;
+}
+
+.box-list {
+    margin: 5px;
+    padding:5px;
+    border: none;
+    border-radius: 5px;
+}

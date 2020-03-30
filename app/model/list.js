@@ -6,10 +6,12 @@ let njlist = new mongoose.Schema({
 	//unique id generator
 	uid: { type: String, default: null },
 	//board name
-    name: { type: String, default: "Mr. X"},
+	name: { type: String, default: "Mr. X"},
+	//archive 
+	archive: { type: Boolean, default: false },
 	//creator
-	creator: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
-	//assigned To
+	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	//assigned To (useful in team board)
 	assignTo: { type: mongoose.Schema.ObjectId, ref: "njnotesuers" },
 	//creation time
     creationTime: { type: Date, default: Date.now },

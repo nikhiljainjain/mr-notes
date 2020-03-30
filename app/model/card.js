@@ -10,7 +10,7 @@ let njcard = new mongoose.Schema({
 	//reminder date
 	dueDate: { type: Date, default: null },
 	//creator
-	creator: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
 	//last login time
     creationTime: { type: Date, default: Date.now },
 });

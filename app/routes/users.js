@@ -22,8 +22,7 @@ router.get('/', (req, res, next)=>{
 
 //get the list & card 
 router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
-	console.log(req.params);
-	List.find({ notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
+	List.find({ creater: req.data._id, notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		//remove _id before sending to front-end
 		validRes.data = data;
@@ -33,7 +32,7 @@ router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 
 //inside board
 router.get('/board/:uid', validId, (req, res, next)=>{
-	Notes.findOne({ uid: req.params.uid }, "teamWork", (err, data)=>{
+	Notes.findOne({ creater: req.data._id, uid: req.params.uid }, "teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork))
@@ -74,9 +73,10 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
 	validRes.data = card;
 	
-	Card.create(card, async (err, data)=>{
+	Card.create(card, (err, data)=>{
 		if (err) console.error.bind("New card creation DB error", err);
-		await List.findOneAndUpdate({ uid: req.params.listId,  notesUid: req.params.noteId }, { $push: { cards: data._id } });
+		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId },
+			{ $push: { cards: data._id } });
 		validRes.data.creater = null;
 		res.json(validRes);
 	});
@@ -84,8 +84,9 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 
 //list of all cards 
 router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
-	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
+	List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
+		//remove _id from array of card before sending to response
 		validRes.data = data.cards;
 		res.json(validRes);
 	});
@@ -105,7 +106,7 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 
 	List.create(newList, async (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		await Notes.findOneAndUpdate({ uid: newList.notesUid }, { $push: { lists: data._id } });
+		Notes.findOneAndUpdate({ creater: req.data._id, uid: newList.notesUid }, { $push: { lists: data._id } });
 		validRes.data.creater = null;
 		res.json(validRes);
 	});
@@ -113,9 +114,8 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 
 //archive the card
 router.get("/card/archive/:uid", validId, async (req, res, next)=>{
-	await Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}});
+	await Card.findOneAndUpdate({ creater: req.params._id, uid: req.params.uid }, {$set: {archive: true}});
 	res.json(validRes);
 });
-
 
 module.exports = router;

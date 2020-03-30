@@ -4,9 +4,9 @@ let njnotes = new mongoose.Schema({
 	//unique id generator
 	uid: { type: String, default: null },
 	//board name
-    name: { type: String, default: "Mr. X"},
+    name: { type: String, default: "Mr. X" },
 	//description
-	desc: { type: String, default: null},
+	desc: { type: String, default: null },
 	//creator
 	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
 	//team notes true if this will created for team

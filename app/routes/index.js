@@ -109,16 +109,29 @@ router.get('/forget-password', (req, res, next)=>{
 	res.render("forget-password");
 });
 
-router.use(userValid);
-
 //logout user
 router.get('/logout', (req, res, next)=>{
 	User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//console.log(data, req.cookies);
-		req.session.regenerate((err)=>{
+		req.session.regenerate((err)=>{router.get('/logout', (req, res, next)=>{
+			User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
+				if (err) console.error.bind("Database error", err);
+				//console.log(data, req.cookies);
+				req.session.regenerate((err)=>{
+					if (err) console.error.bind("Session error", err);
+					if (data)
+						res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
+					else	
+						res.status(302).redirect('/login-signup');
+				});
+			});
+		});
 			if (err) console.error.bind("Session error", err);
-			res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
+			if (data)
+				res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
+			else	
+				res.status(302).redirect('/login-signup');
 		});
 	});
 });
