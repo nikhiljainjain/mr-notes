@@ -11,3 +11,26 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+.logo-fav {
+    width: 64px; 
+    height: 64px;
+}
+
+@media only screen and (min-width: 1000px){
+    .index-img {
+        margin-left: -25px;
+    }
+
+    .logo-fav {
+        margin-top: 2px;
+    }
+}
+
+@media only screen and (max-width: 370px){
+    .logo-fav {
+        width: 55px;
+        height: 55px;
+        margin-top: 5px;
+    }
+}

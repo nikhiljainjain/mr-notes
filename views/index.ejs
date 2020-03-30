@@ -1,102 +1,88 @@
 <% include ./partial/header.ejs %>
 <body style="font-family: 'Baloo 2', cursive;">
 	<header>
-	<div class="navbar-fixed">
-		<nav class="purple darken-3">
-			<a href="/users" class="waves-effect waves-light right sidenav-trigger "><i class="material-icons">person</i></a>
-			<!-- <a href="#" data-target="mobile-demo" class="sidenav-trigger right"><i class="material-icons">menu</i></a> -->
-			<div class="nav-wrapper">
-				<div style="margin-left: 30px; margin-right: 30px;">
-				  <a href="#!" class="brand-logo">Mr. Notes<img src="/img/fav2.png" class="left" style="width: 64px;height: 64px;margin-top: 2px;"></a>
-					  <ul class="right hide-on-med-and-down">
+		<div class="navbar-fixed">
+			<nav class="purple darken-3">
+				<a href="/users" class="waves-effect waves-light right sidenav-trigger ">Login</a>
+				<div class="nav-wrapper">
+					<a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left logo-fav"></a>
+					<ul class="right hide-on-med-and-down">
 						<li><a href="/users" class="waves-effect waves-light btn purple">Login <i class="material-icons left">person_outline</i></a></li>
-					  </ul>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</header>
+	<main>
+		<div class="purple darken-3">
+			<br>
+			<div class="row white-text">
+				<div class="col s12 m6 l8">
+					<div class="container">
+						<h3>
+							<b>
+								Why you use Mr. Notes for your work ?
+							</b>
+						</h3>
+						<h5>
+							We are here to help numerous new companies and associations right now during 
+							this panedemic (COVID-19). So you can oversee your work and telecommute and 
+							remain at home
+						</h5>
+						<br>
+						<a href="/users" class="waves-effect waves-light btn purple center" type="submit">Register Now</a>
+						<br>
+					</div>
+				</div>
+				<div class="col s12 m6 l4">
+					<img src="/img/note-34670.png" class="card-image index-img" style="width:100%;margin-top:5px;">
+				</div>
+				<br>
+			</div>
+			<br>
+		</div>
+		<br>
+		<div class="section">
+			<div class="row">
+				<div class="col s12 m6 l8">
+					<div class="container">
+						<h2 style="color: #9c27b0"><b>Team Work</b></h2>
+						<p style="color: #ba68c8; font-size: 23px">
+							Regardless of whether it's for work, a side 
+							project or even the following family get-away, it enables your group to 
+							remain composed.
+						</p>
+						<a href="/users" class="waves-effect waves-light btn-large purple darken-1"><i class="material-icons right">trending_flat</i><b>Start doing</b></a>
+						<br>
+					</div>
+				</div>
+				<div class="col s12 m6 l4">
+					<div class="container">
+						<img src="/img/supplies-4880916.png" style="width: 100%">
+					</div>
 				</div>
 			</div>
-		  </nav>
-	</div>
-	 <!-- <ul class="sidenav" id="mobile-demo">
-		<li><a href="/users" class="sidenav-trigger right">Login/Sign-Up <i class="material-icons left">person_outline</i></a></li>
-	</ul> -->
-</header>
-<main>
-<div class="purple darken-3">
-	<br>
-	<div class="row" style="color:white;">
-		<div class="col s12 m6 l8">
-			<div class="container">
-				<h3>
-					<b>
-						Why you use Mr. Notes for your work ?
-					</b>
-				</h3>
-				<h5>
-					We are here to help numerous new companies and associations right now during 
-					this panedemic (COVID-19). So you can oversee your work and telecommute and 
-					remain at home
-				</h5>
-				<br>
-				<form action="/login-signup">
-				  <div class="row">
-					<div class="input-field col s6">
-					  <input id="icon_prefix" type="email" class="validate">
-						 <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
+		</div>
+		<br>
+		<div class="section">
+			<div class="row">
+				<div class="col s12 m6 l1"></div>
+				<div class="col s12 m6 l3">
+					<div class="container">
+						<img src="/img/user-interface-1655006-2.png" style="width:100%">
 					</div>
-					<div class="input-field col s6">
-						<button class="waves-effect waves-light btn purple " type="submit">Sign Up - It's Free</button>
-					</div>
-				  </div>
-				</form>
+				</div>
+				<div class="col s12 m6 l8">
+					<div class="container">
+						<h2 style="color: #9c27b0"><b>At a glance</b></h2>
+						<p style="color: #ba68c8; font-size: 23px;">
+							Plunge into the subtleties by including remarks, connections, due dates, 
+							and all the more legitimately to Mr. Notes cards feature. Work together
+							on ventures from start to finish.	
+						</p>
+					</div> 	
+				</div>
 			</div>
 		</div>
-		<div class="col s12 m6 l4">
-				<img src="/img/note-34670.png" class="card-image" style="width:100%;margin-left: -15px;margin-top:5px;">
-			
-		</div>
-	</div>
-	
-</div>
-<br>
-<div class="section">
-	<div class="row">
-		<div class="col s12 m6 l8">
-			<div class="container">
-				<h2 style="color: #9c27b0"><b>Team Work</b></h2>
-				<p style="color: #ba68c8; font-size: 23px">
-					Regardless of whether it's for work, a side 
-					project or even the following family get-away, it enables your group to 
-					remain composed.
-				</p>
-				<a class="waves-effect waves-light btn-large purple darken-1"><i class="material-icons right">trending_flat</i><b>Start doing</b></a>
-			</div>
-		</div>
-		<div class="col s12 m6 l4">
-			<div class="container">
-				<img src="/img/supplies-4880916.png" style="width: 100%">
-			</div>
-		</div>
-	</div>
-</div>
-<br>
-<div class="section">
-	<div class="row">
-		<div class="col s12 m6 l1"></div>
-		<div class="col s12 m6 l3">
-			<div class="container">
-				<img src="/img/user-interface-1655006-2.png" style="width:100%">
-			</div>
-		</div>
-		<div class="col s12 m6 l8">
-			<div class="container">
-				<h2 style="color: #9c27b0"><b>At a glance</b></h2>
-				<p style="color: #ba68c8; font-size: 23px;">
-					Plunge into the subtleties by including remarks, connections, due dates, 
-					and all the more legitimately to Mr. Notes cards feature. Work together
-					on ventures from start to finish.	
-				</p>
-			</div> 	
-		</div>
-	</div>
-</div>
-<br>
+		<br>
 <% include ./partial/footer.ejs %>

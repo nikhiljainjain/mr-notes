@@ -43,7 +43,7 @@ router.get('/login-signup', (req, res, next)=>{
 			data.icon = "check_circle";
 			data.color = "green";
 		}
-
+		req.query.q = null;
 		res.render('login-signup', data);
 	}
 });

@@ -4,10 +4,10 @@
 		<nav class="purple darken-3">
 			<div class="nav-wrapper">
 				<div style="margin-left: 30px; margin-right: 30px;">
-				  <a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left" style="width: 64px;height: 64px;margin-top: 2px;"></a>
+					<a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left logo-fav"></a>
 					<ul id="nav-mobile" class="left hide-on-med-and-down">
-					<li><a href="/" class="waves-effect waves-light btn purple darken-2"><i class="material-icons">keyboard_backspace</i></a></li>
-				  </ul>
+						<li><a href="/" class="waves-effect waves-light btn purple darken-2"><i class="material-icons">keyboard_backspace</i></a></li>
+				  	</ul>
 				</div>
 			</div>
 		  </nav>
@@ -24,15 +24,15 @@
 							<form class="col s12" action="/login" method="post">
 							<div class="row">
 								<div class="input-field col s12">
-								<input id="email" type="email" class="validate" name="email" required />
-								<label for="email">Email</label>
-									<span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
+									<input id="email" type="email" class="validate" name="email" required />
+									<label for="email">Email</label>
+									<!-- <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span> -->
 								</div>
 							</div>
 							<div class="row">
 								<div class="input-field col s12">
-								<input id="pswrd" type="password" class="validate" name="password" required />
-								<label for="pswrd">Password</label>
+									<input id="pswrd" type="password" class="validate" name="password" required />
+									<label for="pswrd">Password</label>
 								</div>
 							</div>
 								<div class="row">
@@ -75,19 +75,19 @@
 						</div>
 							<div class="row">
 							<div class="input-field col s12">
-							<input id="signup-email" type="email" class="validate" name="email" required />
-							<label for="signup-email">Email</label>
-								<span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span>
+								<input id="signup-email" type="email" class="validate" name="email" required />
+								<label for="signup-email">Email</label>
+								<!-- <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span> -->
 							</div>
 						</div>
 						<div class="row">
 							<div class="input-field col s6">
-							<input id="password" type="password" class="validate" name="password" required />
-							<label for="password">Password</label>
+								<input id="password" type="password" minlength="6" maxlength="26" class="validate" name="password" required />
+								<label for="password">Password</label>
 							</div>
 							<div class="input-field col s6">
-							<input id="confirm-password" type="password" class="validate" name="cpassword" required />
-							<label for="confirm-password">Confirm Password</label>
+								<input id="confirm-password" type="password" class="validate" minlength="6" maxlength="26" name="cpassword" required />
+								<label for="confirm-password">Confirm Password</label>
 							</div>
 						</div>
 							<div class="row">
