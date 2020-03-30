@@ -10,7 +10,7 @@ let User = require('../model/users');
 let { userValid } = require('../function');
 
 //home page
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next)=>{
 	res.render('index');
 });
 
@@ -93,6 +93,7 @@ router.post('/signup', (req, res, next)=>{
 		
 		User.create(user, (err)=>{
 			if (err) console.error.bind('Database error', err);
+			//to do -> error handling for error code 11000
 			req.session.regenerate((err)=>{
 				if (err) console.error.bind("Session error", err);
 				res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
@@ -107,6 +108,8 @@ router.get('/forget-password', (req, res, next)=>{
 	//need to implement
 	res.render("forget-password");
 });
+
+router.use(userValid);
 
 //logout user
 router.get('/logout', (req, res, next)=>{

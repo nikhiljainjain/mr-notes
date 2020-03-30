@@ -17,7 +17,7 @@ let listIdG, elems, instance, form;
 
 	function showCard(uid, listId, date, desc){
 		let time = new Date();
-		$(`div#${listId}`).append(`<div id="${uid}" class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;">
+		$(`div#${listId}`).append(`<div id="${uid}" class="z-depth-1" style="text-align:center;padding: 15px 0;margin-bottom:5px;border: none;border-radius: 5px">
 			<p>${desc}</p>
 			<span>${ (date != null) ? (("<b>Due Date </b><br>")+ time.toDateString(date)): ""}</span>
 			<br>
@@ -40,17 +40,19 @@ let listIdG, elems, instance, form;
 	
 	function showList(name, uid){
 		//adding element to the page
-		$("#loadList").append(`<div class="col s12 m6 l3 purple darken-3 white-text" style="margin: 5px;padding:5px">
-			<h4 class="card-title" style="text-align:center">${name}</h4>
+		$("#loadList").append(`<div class="col s12 m6 l3 purple darken-3 white-text" style="margin: 5px;padding:5px;border: none;border-radius: 5px">
+			<h4 class="card-title center-align">
+				${name}
+				<i class="material-icons right">
+				
+				</i>
+			</h4>
 			<div class="divider white-text"></div>
 			
-			<div class="card-content purple darken-4" id="${uid}"></div>
+			<div class="card-content purple darken-4" id="${uid}" style="padding: 5px"></div>
 			
-			<button onclick="addNewCard('${uid}')" class="waves-effect waves-light btn purple darken-2 right" style="margin: 5px">
+			<button onclick="addNewCard('${uid}')" class="waves-effect waves-light btn-small purple darken-2 right" style="margin: 5px">
 				Add Card
-				<i class="material-icons left">
-					add
-				</i>
 			</button>
 			</div>`);
 	}

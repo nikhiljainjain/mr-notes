@@ -15,7 +15,8 @@ let njlist = new mongoose.Schema({
     creationTime: { type: Date, default: Date.now },
 	//notes id
 	cards: [ { 
-		type: mongoose.Schema.ObjectId, ref: 'njnotescards'
+		type: mongoose.Schema.ObjectId, 
+		ref: 'njnotescards'
 	} ]
 });
 
