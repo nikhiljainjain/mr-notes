@@ -107,13 +107,13 @@
 	</div>
 	<br>
 	<% if (msg){ %>
-	<script>
-	document.addEventListener('DOMContentLoaded', ()=>{
-		M.toast({
-			html: `<i class="material-icons left" style="color:<%= color %>"><%= icon %></i><%= msg %>`, 
-			displayLength: 15000
-		})
-	});
-	</script>
+        <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            M.toast({
+                html: `<i class="material-icons left" style="color:<%= color %>"><%= icon %></i><%= msg %>`, 
+                displayLength: 5000
+            })
+        });
+        </script>
 	<% } %>
 	<% include ./partial/footer.ejs %>

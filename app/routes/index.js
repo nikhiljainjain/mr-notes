@@ -24,9 +24,9 @@ router.get('/login-signup', (req, res, next)=>{
     };
 
 	if (req.cookies.token != null && req.cookies.token != ''){
-		User.findOne({ cookie: req.cookies.token }, "name", (err, data)=>{
+		User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
 			if (err) console.error.bind("Database error", err);
-			if (data){
+			if (userData){
 				req.session.regenerate((err)=>{
 					if (err) console.error.bind("Session error", err);
 					res.status(302).redirect("/users");
