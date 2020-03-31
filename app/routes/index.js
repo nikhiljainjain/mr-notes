@@ -16,6 +16,13 @@ router.get('/', (req, res, next)=>{
 
 //login & signup page
 router.get('/login-signup', (req, res, next)=>{
+    //data for toard
+    let data = { 
+        msg: null,
+        icon: "cancel",
+        color: "red"
+    };
+
 	if (req.cookies.token){
 		User.findOne({ cookie: req.cookies.token }, "name", (err, data)=>{
 			if (err) console.error.bind("Database error", err);
@@ -24,17 +31,10 @@ router.get('/login-signup', (req, res, next)=>{
 					if (err) console.error.bind("Session error", err);
 					res.status(302).redirect("/users");
 				});
-			}else{
-				res.status(302).redirect('/logout');
-			}
+			}else
+				res.render('login-signup', data);
 		});
 	}else {
-		//data for snackbar
-		let data = { 
-			msg: req.query.q,
-			icon: "cancel",
-			color: "red"
-		};
 
 		data.msg = ((data.msg === "Invalid credentials") || (data.msg === "Password and Confirm password not matched") || ( data.msg === "Logout Successfully")) ? data.msg: null;
 
@@ -134,19 +134,7 @@ router.get('/logout', (req, res, next)=>{
 	User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//console.log(data, req.cookies);
-		req.session.regenerate((err)=>{router.get('/logout', (req, res, next)=>{
-			User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
-				if (err) console.error.bind("Database error", err);
-				//console.log(data, req.cookies);
-				req.session.regenerate((err)=>{
-					if (err) console.error.bind("Session error", err);
-					if (data)
-						res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
-					else	
-						res.status(302).redirect('/login-signup');
-				});
-			});
-		});
+		req.session.regenerate((err)=>{
 			if (err) console.error.bind("Session error", err);
 			if (data)
 				res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
