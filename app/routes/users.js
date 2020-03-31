@@ -4,7 +4,7 @@ let router = express.Router();
 let shortid = require('shortid');
 
 //self-made 
-let { validRes } = require('../config');
+let { validRes, invalidRes } = require('../config');
 let { userValid, validId } = require('../function');
 let User = require('../model/users');
 let Notes = require('../model/notes');
@@ -24,7 +24,8 @@ router.get('/', (req, res, next)=>{
 router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 	List.find({ creater: req.data._id, notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
-		//remove _id before sending to front-end
+        //remove _id before sending to front-end
+        //console.log(data.cards);
 		validRes.data = data;
 		res.json(validRes);
 	});
@@ -74,9 +75,9 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 	validRes.data = card;
 	
 	Card.create(card, (err, data)=>{
+        //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId },
-			{ $push: { cards: data._id } });
+		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } });
 		validRes.data.creater = null;
 		res.json(validRes);
 	});
@@ -113,9 +114,12 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 });
 
 //archive the card
-router.get("/card/archive/:uid", validId, async (req, res, next)=>{
-	await Card.findOneAndUpdate({ creater: req.params._id, uid: req.params.uid }, {$set: {archive: true}});
-	res.json(validRes);
+router.get("/card/archive/:uid", validId, (req, res, next)=>{
+	Card.findOneAndUpdate({ creater: req.data._id, uid: req.params.uid }, {$set: { archive: true}}, (err, data)=>{
+        if (err) throw err;
+        //console.log(data);
+        res.json(data ? validRes: invalidRes);
+    });
 });
 
 module.exports = router;

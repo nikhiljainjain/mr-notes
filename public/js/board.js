@@ -1,5 +1,5 @@
 let listIdG, elems, instance, form;
-const displayLength = 10000;
+const displayLength = 5000;
 
 function clearVariable(){
 	elems = instance = null;
@@ -28,7 +28,7 @@ function showCard(uid, listId, date, desc){
 				archive
 			</i>
 		</button>
-		</div>`);
+    </div>`);
 }
 
 function cardLoader(listId){
@@ -55,7 +55,7 @@ function showList(name, uid){
 		<button onclick="addNewCard('${uid}')" class="waves-effect waves-light btn-small purple darken-2 right" style="margin: 5px">
 			Add Card
 		</button>
-		</div>`);
+    </div>`);
 }
 
 function listLoader() {
@@ -66,6 +66,7 @@ function listLoader() {
 	
 			//loading cards
 			i.cards.forEach((j)=>{
+                console.log(!j.archive);
 				(!j.archive) ? showCard(j.uid, i.uid, j.dueDate, j.desc)  : null;
 			});
 		});
@@ -82,7 +83,15 @@ function addNewCard(listId){
 
 function archiveCard(uid){
 	$.get(`/users/card/archive/${uid}`).done((res)=>{
-		$(`div#${uid}`).remove();
+        if (res.data.msg == "OK")
+            $(`div#${uid}`).remove();
+        else
+            M.toast({html: `<i class="material-icons" style="color:red;margin-right:5px;">
+					cancel
+                </i>
+                Invalid Card`, 
+            displayLength
+        });
 	}).fail(internetError);
 }
 
@@ -141,7 +150,8 @@ $(document).ready(function(){
 		
 		$.post(`/users/new/card/${uid}/${listIdG}`, { desc, time }).done((resp)=>{
 			form.find("textarea[name='desc']").val(null);
-			form.find("input[name='date']").val(null);
+            form.find("input[name='date']").val(null);
+            //console.log(resp);
 			showCard(resp.data.uid, listIdG, time, desc);
 		}).fail(internetError);
 	});
