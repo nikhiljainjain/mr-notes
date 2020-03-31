@@ -23,7 +23,7 @@ router.get('/login-signup', (req, res, next)=>{
         color: "red"
     };
 
-	if (req.cookies.token){
+	if (req.cookies.token != null && req.cookies.token != ''){
 		User.findOne({ cookie: req.cookies.token }, "name", (err, data)=>{
 			if (err) console.error.bind("Database error", err);
 			if (data){
@@ -35,15 +35,10 @@ router.get('/login-signup', (req, res, next)=>{
 				res.render('login-signup', data);
 		});
 	}else {
+        data.msg = req.query.q;
 
 		data.msg = ((data.msg === "Invalid credentials") || (data.msg === "Password and Confirm password not matched") || ( data.msg === "Logout Successfully")) ? data.msg: null;
 
-		if (data.msg === "Logout Successfully"){
-			data.msg = req.query.q;
-			data.icon = "check_circle";
-			data.color = "green";
-		}
-		req.query.q = null;
 		res.render('login-signup', data);
 	}
 });
@@ -131,17 +126,27 @@ router.post('/email/verification/:verifyCode', (req, res, next)=>{
 
 //logout user
 router.get('/logout', (req, res, next)=>{
-	User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
-		if (err) console.error.bind("Database error", err);
-		//console.log(data, req.cookies);
-		req.session.regenerate((err)=>{
-			if (err) console.error.bind("Session error", err);
-			if (data)
-				res.cookie('token', '', { maxAge: 0 }).status(302).redirect('/login-signup?q=Logout Successfully');
-			else	
-				res.status(302).redirect('/login-signup');
-		});
-	});
+    let data = {
+        msg: null
+    };  
+
+    if (req.cookies.token != null && req.cookies.token != ""){
+        User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
+            if (err) console.error.bind("Database error", err);
+            //console.log(data, req.cookies);
+            req.session.regenerate((err)=>{
+                if (err) console.error.bind("Session error", err);
+                if (data){
+                    data.msg = "Logout Successfully";
+                    data.icon = "check_circle";
+                    data.color = "green";
+                }
+                res.cookie('token', '', { maxAge: 0 }).render('login-signup', data);
+            });
+        });
+    }else{
+        res.render('login-signup', data);
+    }
 });
 
 module.exports = router;
