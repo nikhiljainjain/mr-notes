@@ -7,7 +7,8 @@ const userValid = (req, res, next) =>{
 	//extracting cookies from req parameter
   	let cookie = req.cookies.token;
 	if (cookie != null){
-		User.findOne({cookie}).populate("notes").exec((err, data)=>{
+		/*.populate("notes")*/
+		User.findOne({cookie}).exec((err, data)=>{
 			if (err) throw console.error.bind(err);
 			if (data){
 				req.data = data;

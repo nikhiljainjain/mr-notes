@@ -23,11 +23,15 @@ router.post('/create/board', (req, res, next)=>{
 		teamWork: true,
 		uid: null
 	}; 
+
 	newNote.uid = shortid.generate();
 	
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }});
+		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }}, (err, userData)=>{
+			if (err) console.error.bind("DB error", err);
+			console.log(userData);
+		});
 		res.status(302).redirect(`/teams/board/${newNote.uid}`);
 	});
 });

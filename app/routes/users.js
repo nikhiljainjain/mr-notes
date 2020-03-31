@@ -16,8 +16,14 @@ router.use(userValid);
 
 //user home
 router.get('/', (req, res, next)=>{
-	//query handler
-	res.render('home', { notes: req.data.notes, user: req.data, name: null });
+	Notes.find({creater: req.data._id}, "name uid teamWork").sort("name").exec((err, data)=>{
+		if (err) console.error.bind("DB error", err);
+		/*data.forEach((i)=>{
+			console.log(i.name);
+		});*/
+		//query handler
+		res.render('home', { notes: data, user: req.data, name: null });
+	});
 });
 
 //get the list & card 
@@ -48,7 +54,7 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 });
 
 //creating new board
-router.post('/new/board', async (req, res, next)=>{
+router.post('/new/board', (req, res, next)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -56,11 +62,16 @@ router.post('/new/board', async (req, res, next)=>{
 		uid: null
 	};
 
+	newNote.name = (newNote.name.charAt(0)).toUpperCase() + (newNote.name.slice(1));
+
 	newNote.uid = shortid.generate();
-	
-	Notes.create(newNote, async (err, data)=>{
+	//console.log(newNote);
+	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		await User.findByIdAndUpdate(newNote._id, { $push: { notes : data._id }});
+		User.updateOne({ _id: req.data._id}, { $push: { notes : data._id }}/*, (err, userData)=>{
+			if (err) console.error.bind("DB error", err);
+			console.log(userData);
+		}*/);
 		res.status(302).redirect(`/users/board/${newNote.uid}`);
 	});
 });
