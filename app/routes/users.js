@@ -30,7 +30,6 @@ router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 				j._id = null;
 			});
 		});
-        //remove _id before sending to front-end
 		validRes.data = data;
 		res.json(validRes);
 	});
@@ -82,10 +81,10 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }, (err, listData)=>{
+		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }/*, (err, listData)=>{
 			if (err) throw err;
-			console.log(listData);
-		});
+			//console.log(listData);
+		}*/);
 		validRes.data.creater = null;
 		res.json(validRes);
 	});
@@ -124,7 +123,7 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 //archive the card
 router.get("/card/archive/:uid", validId, (req, res, next)=>{
 	Card.findOneAndUpdate({ creater: req.data._id, uid: req.params.uid }, {$set: { archive: true}}, (err, data)=>{
-        if (err) throw err;
+        if (err) console.error.bind("DB error", err);
         //console.log(data);
         res.json(data ? validRes: invalidRes);
     });

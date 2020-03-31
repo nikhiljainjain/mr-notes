@@ -63,10 +63,10 @@ function listLoader() {
 		res.data.forEach((i)=>{
 			//loading list
 			showList(i.name, i.uid);
-			console.log(i);
+			//console.log(i);
 			//loading cards
 			i.cards.forEach((j)=>{
-                console.log(!j.archive);
+                //console.log(!j.archive);
 				(!j.archive) ? showCard(j.uid, i.uid, j.dueDate, j.desc)  : null;
 			});
 		});
@@ -83,7 +83,7 @@ function addNewCard(listId){
 
 function archiveCard(uid){
 	$.get(`/users/card/archive/${uid}`).done((res)=>{
-        if (res.data.msg == "OK")
+        if (res.msg == "OK")
             $(`div#${uid}`).remove();
         else
             M.toast({html: `<i class="material-icons" style="color:red;margin-right:5px;">
