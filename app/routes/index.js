@@ -5,7 +5,7 @@ let bcrypt = require('bcryptjs');
 let shortid = require('shortid');
 
 //self-made
-let { COOKIES_AGE, BTN_CTRL, ERROR_MSG } = require('../config');
+let { COOKIES_AGE, ERROR_MSG, validRes } = require('../config');
 let User = require('../model/users');
 let { userValid } = require('../function');
 
@@ -107,6 +107,26 @@ router.post('/signup', (req, res, next)=>{
 router.get('/forget-password', (req, res, next)=>{
 	//need to implement
 	res.render("forget-password");
+});
+
+//email verification page
+router.get('/email/verification/:verifyCode', (req, res, next)=>{
+	let data = { 
+		msg: "Invalid URL",
+		icon: "cancel",
+		color: "red"
+	};
+	User.findOne({ verificationCode: req.params.verifyCode }, "email password", (err, data)=>{
+		if (err) console.error.bind("DB error", err);
+		if (data)
+			data.msg = null;
+		res.render('email-verify', data);
+	});
+});
+
+//email verification 
+router.post('/email/verification/:verifyCode', (req, res, next)=>{
+	res.json(validRes);
 });
 
 //logout user

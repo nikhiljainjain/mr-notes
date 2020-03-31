@@ -12,7 +12,7 @@ let user = new mongoose.Schema({
     //register time
     registerTime: { type: Date, default: Date.now },
     //email verification code (code valid for 48 hours after generation)
-    verificationCode: { type: String, default: null, unique: true },
+    verificationCode: { type: String, default: null },
     //user verified
     verified: { type: Boolean, default: false },
 	//notes id
