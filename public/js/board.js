@@ -63,7 +63,7 @@ function listLoader() {
 		res.data.forEach((i)=>{
 			//loading list
 			showList(i.name, i.uid);
-	
+			console.log(i);
 			//loading cards
 			i.cards.forEach((j)=>{
                 console.log(!j.archive);

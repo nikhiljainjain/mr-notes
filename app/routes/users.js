@@ -17,15 +17,20 @@ router.use(userValid);
 //user home
 router.get('/', (req, res, next)=>{
 	//query handler
-	res.render('home', { notes: req.data.notes, user: req.data });
+	res.render('home', { notes: req.data.notes, user: req.data, name: null });
 });
 
 //get the list & card 
 router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
-	List.find({ creater: req.data._id, notesUid: req.params.uid }).populate("cards").exec((err, data)=>{
+	List.find({ creater: req.data._id, notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
+		data.forEach((i)=>{
+			i._id = null;
+			i.cards.forEach((j)=>{
+				j._id = null;
+			});
+		});
         //remove _id before sending to front-end
-        //console.log(data.cards);
 		validRes.data = data;
 		res.json(validRes);
 	});
@@ -33,13 +38,13 @@ router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 
 //inside board
 router.get('/board/:uid', validId, (req, res, next)=>{
-	Notes.findOne({ creater: req.data._id, uid: req.params.uid }, "teamWork", (err, data)=>{
+	Notes.findOne({ creater: req.data._id, uid: req.params.uid }, "name teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork))
-			res.render("board", { uid: req.params.uid, user: req.data });
+			res.render("board", { uid: req.params.uid, user: req.data, name: data.name });
 		else
-			res.status(302).render('/users');
+			res.status(302).render('/users/?code=404');
 	})
 });
 
@@ -77,7 +82,10 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } });
+		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }, (err, listData)=>{
+			if (err) throw err;
+			console.log(listData);
+		});
 		validRes.data.creater = null;
 		res.json(validRes);
 	});

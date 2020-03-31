@@ -25,22 +25,22 @@ router.post('/create/board', (req, res, next)=>{
 	}; 
 	newNote.uid = shortid.generate();
 	
-	Notes.create(newNote, async (err, data)=>{
+	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		await User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id}});
-		res.status(302).redirect(`/users/team/board/${uid}`);
+		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }});
+		res.status(302).redirect(`/teams/board/${newNote.uid}`);
 	});
 });
 
 //inside board
 router.get('/board/:uid', validId, (req, res, next)=>{
-	Notes.findOne({ uid: req.params.uid }, "teamWork", (err, data)=>{
+	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking if board really a team board or not
-		if (data.teamWork)
-			res.render("team", { uid: req.params.uid, user: req.data });
+		if (data && data.teamWork)
+			res.render("team", { uid: req.params.uid, user: req.data, name:  data.name});
 		else
-			res.status(302).redirect('/users');
+			res.status(302).redirect('/users?q=code404');
 	});
 });
 
@@ -59,10 +59,7 @@ router.post('/add/member/:uid', validId, (req, res, next)=>{
 					//console.log(data);
 					res.json((data) ? validRes: invalidRes);
 					if (data)
-						User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } }, (err, updateData)=>{
-							if (err) console.error.bind("Database error", err);
-							//console.log(updateData);
-						});				
+						User.findByIdAndUpdate(userData._id, { $push: { notes: data._id } } );				
 				});
 			}else
 				res.json(invalidRes);
