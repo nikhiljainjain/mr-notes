@@ -28,7 +28,7 @@ router.get('/', (req, res, next)=>{
 
 //get the list & card 
 router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
-	List.find({ creater: req.data._id, notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
+	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		data.forEach((i)=>{
 			i._id = null;
@@ -43,7 +43,7 @@ router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 
 //inside board
 router.get('/board/:uid', validId, (req, res, next)=>{
-	Notes.findOne({ creater: req.data._id, uid: req.params.uid }, "name teamWork", (err, data)=>{
+	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork))
@@ -103,7 +103,7 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 
 //list of all cards 
 router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
-	List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
+	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//remove _id from array of card before sending to response
 		validRes.data = data.cards;
@@ -133,7 +133,7 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 
 //archive the card
 router.get("/card/archive/:uid", validId, (req, res, next)=>{
-	Card.findOneAndUpdate({ creater: req.data._id, uid: req.params.uid }, {$set: { archive: true}}, (err, data)=>{
+	Card.findOneAndUpdate({ uid: req.params.uid }, {$set: { archive: true}}, (err, data)=>{
         if (err) console.error.bind("DB error", err);
         //console.log(data);
         res.json(data ? validRes: invalidRes);
