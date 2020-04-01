@@ -21,14 +21,16 @@ let indexRouter = require('./app/routes/index');
 let usersRouter = require('./app/routes/users');
 let teamsRouter = require('./app/routes/teams');
 
-
+//dos attack preventtion
 let noDos = new dosPrev({
 	burst: 15,
 	limit: 25,
 	maxCount: 35
 });
-let dbUrl = (process.env.NODE_ENV === 'PRODUCTION') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
-let logMethod = (process.env.NODE_ENV === 'PRODUCTION') ? 'combined' : 'dev';
+//database url picker
+let dbUrl = (process.env.NODE_ENV === 'production') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
+//defining log method
+let logMethod = (process.env.NODE_ENV === 'production') ? 'combined' : 'dev';
 
 //database connection
 mongoose.connect(dbUrl || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
@@ -73,18 +75,18 @@ app.use('/teams', teamsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'DEV' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'DEV' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 console.log(`Server running on Port ${process.env.PORT || 3000}`);
