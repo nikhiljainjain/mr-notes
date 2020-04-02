@@ -10,20 +10,14 @@ function connect() {
 
             mockgoose.prepareStorage()
             .then(() => {
-                mongoose.connect(DB_URI,
-                    { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false })
-                    .then((res, err) => {
-                        if (err) return reject(err);
-                        resolve();
+                mongoose.connect(DB_URI || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
+                    if (err) console.error.bind(console, 'connection error: ');
                 });
             });
         } else {
-            mongoose.connect(DB_URI,
-                { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false })
-                .then((res, err) => {
-                    if (err) return reject(err);
-                    resolve();
-            })
+            mongoose.connect(DB_URI || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
+                if (err) console.error.bind(console, 'connection error: ');
+            });
         }
         console.log("Connected to Database");
     });
