@@ -1,6 +1,7 @@
 //visit npmjs website & search for package then you will documentation about the package
 
 //default package installed by expressjs generator
+require("dotenv/config");
 let createError = require('http-errors');
 let express = require('express');
 let path = require('path');
@@ -18,6 +19,7 @@ let { COOKIES_AGE } = require('./app/config');
 let indexRouter = require('./app/routes/index');
 let usersRouter = require('./app/routes/users');
 let teamsRouter = require('./app/routes/teams');
+let database = require('./app/database/connect');
 
 //dos attack preventtion
 const noDos = new dosPrev({
@@ -25,7 +27,8 @@ const noDos = new dosPrev({
 	limit: 25,
 	maxCount: 35
 });
-
+//connecting to database
+database.connect();
 //defining log method
 const logMethod = (process.env.NODE_ENV === 'PRODUCTION') ? 'combined' : 'dev';
 
