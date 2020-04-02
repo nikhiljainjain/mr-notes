@@ -1,4 +1,4 @@
-let User = require("../model/users");
+let User = require("../database/model/users");
 let shortid = require('shortid');
 let { invalidRes } = require('../config');
 

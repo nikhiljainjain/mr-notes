@@ -6,10 +6,10 @@ let shortid = require('shortid');
 //self-made 
 let { validRes, invalidRes } = require('../config');
 let { userValid, validId } = require('../function');
-let User = require('../model/users');
-let Notes = require('../model/notes');
-let List = require('../model/list');
-let Card = require('../model/card');
+let User = require('../database/model/users');
+let Notes = require('../database/model/notes');
+let List = require('../database/model/list');
+let Card = require('../database/model/card');
 
 //cookies validation
 router.use(userValid);

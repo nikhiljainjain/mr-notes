@@ -9,11 +9,9 @@ let logger = require('morgan');
 let app = express();
 
 //package installed for this project
-require("dotenv/config");
 let session = require('express-session');
 let expressSanitizer = require('express-sanitizer');
 let dosPrev = require('ddos');
-let mongoose = require('mongoose');
 
 //files made for this project
 let { COOKIES_AGE } = require('./app/config');
@@ -22,21 +20,14 @@ let usersRouter = require('./app/routes/users');
 let teamsRouter = require('./app/routes/teams');
 
 //dos attack preventtion
-let noDos = new dosPrev({
+const noDos = new dosPrev({
 	burst: 15,
 	limit: 25,
 	maxCount: 35
 });
-//database url picker
-let dbUrl = (process.env.NODE_ENV === 'production') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
-//defining log method
-let logMethod = (process.env.NODE_ENV === 'production') ? 'combined' : 'dev';
 
-//database connection
-mongoose.connect(dbUrl || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
-    if (err) console.error.bind(console, 'connection error: ');
-    console.log('Connected to DataBase');
-});
+//defining log method
+const logMethod = (process.env.NODE_ENV === 'production') ? 'combined' : 'dev';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -6,7 +6,7 @@ let shortid = require('shortid');
 
 //self-made
 let { COOKIES_AGE, ERROR_MSG, validRes } = require('../config');
-let User = require('../model/users');
+let User = require('../database/model/users');
 let { userValid } = require('../function');
 
 //home page
