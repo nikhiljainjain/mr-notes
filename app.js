@@ -27,7 +27,7 @@ const noDos = new dosPrev({
 });
 
 //defining log method
-const logMethod = (process.env.NODE_ENV === 'production') ? 'combined' : 'dev';
+const logMethod = (process.env.NODE_ENV === 'PRODUCTION') ? 'combined' : 'dev';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

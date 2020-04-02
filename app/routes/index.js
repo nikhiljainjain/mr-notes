@@ -7,7 +7,7 @@ let shortid = require('shortid');
 //self-made
 let { COOKIES_AGE, ERROR_MSG, validRes } = require('../config');
 let User = require('../database/model/users');
-let { userValid } = require('../function');
+let { bodyDataValidCred } = require('../function');
 
 //home page
 router.get('/', (req, res, next)=>{
@@ -17,7 +17,7 @@ router.get('/', (req, res, next)=>{
 //login & signup page
 router.get('/login-signup', (req, res, next)=>{
     //data for toard
-    let data = { 
+    const data = { 
         msg: null,
         icon: "cancel",
         color: "red"
@@ -44,7 +44,7 @@ router.get('/login-signup', (req, res, next)=>{
 });
 
 //user login
-router.post('/login', (req, res, next)=>{
+router.post('/login', bodyDataValidCred, (req, res, next)=>{
 	ERROR_MSG = 'Invalid credentials';
 	
 	let { email, password } = req.body;
@@ -70,8 +70,8 @@ router.post('/login', (req, res, next)=>{
 });
 
 //user registration
-router.post('/signup', (req, res, next)=>{
-	ERROR_MSG = "Password and Confirm password not matched";
+router.post('/signup', bodyDataValidCred, (req, res, next)=>{
+	ERROR_MSG = "Password and Confirm Password are not same";
 	
 	let { fname, lname, email, password, cpassword } = req.body;
 	if (password === cpassword){
@@ -120,7 +120,7 @@ router.get('/email/verification/:verifyCode', (req, res, next)=>{
 });
 
 //email verification 
-router.post('/email/verification/:verifyCode', (req, res, next)=>{
+router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res, next)=>{
 	res.json(validRes);
 });
 

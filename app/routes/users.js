@@ -5,14 +5,14 @@ let shortid = require('shortid');
 
 //self-made 
 let { validRes, invalidRes } = require('../config');
-let { userValid, validId } = require('../function');
+let { bodyDataValidJSON, cookieValid, validId } = require('../function');
 let User = require('../database/model/users');
 let Notes = require('../database/model/notes');
 let List = require('../database/model/list');
 let Card = require('../database/model/card');
 
 //cookies validation
-router.use(userValid);
+router.use(cookieValid);
 
 //user home
 router.get('/', (req, res, next)=>{
@@ -54,7 +54,7 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 });
 
 //creating new board
-router.post('/new/board', (req, res, next)=>{
+router.post('/new/board', bodyDataValidJSON, (req, res, next)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -77,7 +77,7 @@ router.post('/new/board', (req, res, next)=>{
 });
 
 //adding new card
-router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
+router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req, res, next)=>{
 	let card = {
 		uid: null,
 		desc: req.body.desc,
@@ -112,7 +112,7 @@ router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
 });
 
 //adding new list in notes
-router.post('/new/list/:uid', validId, async (req, res, next)=>{
+router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res, next)=>{
 	let newList = {
 		name: (req.body.name).trim(),
 		uid: null,

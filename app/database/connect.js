@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 //database url picker
-const DB_URI = (process.env.NODE_ENV === 'production') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
+const DB_URI = (process.env.NODE_ENV === 'PRODUCTION') ? process.env.MONGODB_URL : process.env.TESTDB_URL;
+const DB_PARA = { 
+    useUnifiedTopology: true,  
+    useNewUrlParser: true, 
+    useFindAndModify: false,
+    useCreateIndex: true 
+};
 
 function connect() {
     return new Promise((resolve, reject) => {
@@ -10,12 +16,12 @@ function connect() {
 
             mockgoose.prepareStorage()
             .then(() => {
-                mongoose.connect(DB_URI || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
+                mongoose.connect(DB_URI || "mongodb://localhost:27017/test", DB_PARA, err => {
                     if (err) console.error.bind(console, 'connection error: ');
                 });
             });
         } else {
-            mongoose.connect(DB_URI || "mongodb://localhost:27017/test", { useUnifiedTopology: true,  useNewUrlParser: true, useFindAndModify: false }, err => {
+            mongoose.connect(DB_URI || "mongodb://localhost:27017/test", DB_PARA, err => {
                 if (err) console.error.bind(console, 'connection error: ');
             });
         }
@@ -24,7 +30,7 @@ function connect() {
 }
 
 function close() {
-  return mongoose.disconnect();
+    return mongoose.disconnect();
 }
 
 module.exports = { connect, close };

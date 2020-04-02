@@ -5,17 +5,15 @@ let shortid = require('shortid');
 
 //self-made 
 let { invalidRes, validRes } = require('../config');
-let { userValid, validId } = require('../function');
+let { cookieValid, validId, bodyDataValidJSON } = require('../function');
 let User = require('../database/model/users');
 let Notes = require('../database/model/notes');
-let List = require('../database/model/list');
-let Card = require('../database/model/card');
 
 //cookies validation
-router.use(userValid);
+router.use(cookieValid);
 
 //creating new tream board
-router.post('/create/board', (req, res, next)=>{
+router.post('/create/board', bodyDataValidJSON, (req, res, next)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -49,7 +47,7 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 });
 
 //adding new member
-router.post('/add/member/:uid', validId, (req, res, next)=>{
+router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res, next)=>{
 	/*
 	Checking if adder email id isn't same of new member email id
 	*/
