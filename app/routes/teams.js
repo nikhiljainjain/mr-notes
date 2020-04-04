@@ -4,7 +4,7 @@ let router = express.Router();
 let shortid = require('shortid');
 
 //self-made 
-let { invalidRes, validRes } = require('../config');
+let { invalidRes, validRes, ejsData } = require('../config');
 let { cookieValid, validId, bodyDataValidJSON } = require('../function');
 let User = require('../database/model/users');
 let Notes = require('../database/model/notes');
@@ -26,10 +26,10 @@ router.post('/create/board', bodyDataValidJSON, (req, res, next)=>{
 	
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }}, (err, userData)=>{
+		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }}/*, (err, userData)=>{
 			if (err) console.error.bind("DB error", err);
 			console.log(userData);
-		});
+		}*/);
 		res.status(302).redirect(`/teams/board/${newNote.uid}`);
 	});
 });
@@ -39,8 +39,12 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking if board really a team board or not
-		if (data && data.teamWork)
-			res.render("team", { uid: req.params.uid, user: req.data, name:  data.name});
+		if (data && data.teamWork){
+			ejsData.uid = req.params.uid;
+			ejsData.user = req.data;
+			ejsData.name = data.name;
+			res.render("team", ejsData);
+		}
 		else
 			res.status(302).redirect('/users?q=code404');
 	});

@@ -11,6 +11,25 @@ This project is Gitpod ready. You can run this project.
     otherwise enter url in TESTDB_URL.
 - Default Node environment is development you can change it by replacing NODE_ENV value to PRODUCTION.
 
+## Technology Use
+
+### Backend Part
+- Nodejs (Programming language)
+- Expressjs (Framework)
+- Mongoosejs (Database)
+
+### Frontend Part
+- HTML with EJS
+- Materialized CSS
+- jQuery
+- Google Fonts & Icons
+
+### Test Script
+- Chai & Mocha
+- Supertest
+- Mockgoose
+- Postman
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -33,23 +52,23 @@ Open [Deployed Site](https://mrnotes.me) to view it in the browser.
 
 ### Backend code
 
-- [] Email verification process
-- [] Forget password
-- [] Test script for every json responser
-- [] Data format validation 
-- [] Cross check of Notes belonging to respective person
-- [] List assignment to a person (team dashboard)
-- [] Card transfer from one list to another list
-- [] Person adding new team member should be team creater
-- [] User profile updation
+- [ ] Email verification process
+- [ ] Forget password
+- [ ] Test script for every json responser
+- [ ] Data format validation 
+- [ ] Cross check of Notes belonging to respective person
+- [ ] List assignment to a person (team dashboard)
+- [ ] Card transfer from one list to another list
+- [ ] Person adding new team member should be team creater
+- [ ] User profile updation
 
 ### Frontend page
 
-- [] Email verification
-- [] Forget password
-- [] Adding loader on every page
-- [] Password strength indicator on signup
-- [] Recaptcha on Login & signup
-- [] Card drag & drop to other list
-- [] List assignment to a person (team dashboard)
-- [] Profile editor
+- [ ] Email verification
+- [ ] Forget password
+- [ ] Adding loader on every page
+- [ ] Password strength indicator on signup
+- [ ] Recaptcha on Login & signup
+- [ ] Card drag & drop to other list
+- [ ] List assignment to a person (team dashboard)
+- [ ] Profile editor

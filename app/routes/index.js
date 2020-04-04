@@ -5,7 +5,7 @@ let bcrypt = require('bcryptjs');
 let shortid = require('shortid');
 
 //self-made
-let { COOKIES_AGE, ERROR_MSG, validRes } = require('../config');
+let { COOKIES_AGE, ERROR_MSG, validRes, ejsData } = require('../config');
 let User = require('../database/model/users');
 let { bodyDataValidCred } = require('../function');
 
@@ -16,13 +16,6 @@ router.get('/', (req, res, next)=>{
 
 //login & signup page
 router.get('/login-signup', (req, res, next)=>{
-    //data for toard
-    const data = { 
-        msg: null,
-        icon: "cancel",
-        color: "red"
-    };
-
 	if (req.cookies.token != null && req.cookies.token != ''){
 		User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
 			if (err) console.error.bind("Database error", err);
@@ -32,14 +25,14 @@ router.get('/login-signup', (req, res, next)=>{
 					res.status(302).redirect("/users");
 				});
 			}else
-				res.render('login-signup', data);
+				res.render('login-signup', ejsData);
 		});
 	}else {
-        data.msg = req.query.q;
+        ejsData.msg = req.query.q;
 
-		data.msg = ((data.msg === "Invalid credentials") || (data.msg === "Password and Confirm password not matched") || ( data.msg === "Logout Successfully")) ? data.msg: null;
+		ejsData.msg = ((ejsData.msg === "Invalid credentials") || (ejsData.msg === "Password and Confirm password not matched")) ? ejsData.msg: null;
 
-		res.render('login-signup', data);
+		res.render('login-signup', ejsData);
 	}
 });
 
@@ -98,24 +91,38 @@ router.post('/signup', bodyDataValidCred, (req, res, next)=>{
 		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 });
 
-//forget password
+//forget password page
 router.get('/forget-password', (req, res, next)=>{
 	//need to implement
 	res.render("forget-password");
 });
 
+router.post('/forget-password', (req, res, next)=>{
+	//prcoess forget password
+	/*
+	find the email in the database
+	generate new verification link & save to db
+	send email to the user with link
+	*/
+	res.json(validRes);
+});
+
+router.get('/forget-password/code/:verificationCode', (req, res, next)=>{
+	res.render('new-password');
+});
+
+router.post('/forget-password/code/:verificationCode', (req, res, next)=>{
+	res.json(validRes);
+});
+
 //email verification page
 router.get('/email/verification/:verifyCode', (req, res, next)=>{
-	let data = { 
-		msg: "Invalid URL",
-		icon: "cancel",
-		color: "red"
-	};
 	User.findOne({ verificationCode: req.params.verifyCode }, "email password", (err, data)=>{
+		ejsData.msg = "Invalid URL";
 		if (err) console.error.bind("DB error", err);
 		if (data)
-			data.msg = null;
-		res.render('email-verify', data);
+			ejsData.msg = null;
+		res.render('email-verify', ejsData);
 	});
 });
 
@@ -126,10 +133,6 @@ router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res, nex
 
 //logout user
 router.get('/logout', (req, res, next)=>{
-    let data = {
-        msg: null
-    };  
-
     if (req.cookies.token != null && req.cookies.token != ""){
         User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
             if (err) console.error.bind("Database error", err);
@@ -137,15 +140,15 @@ router.get('/logout', (req, res, next)=>{
             req.session.regenerate((err)=>{
                 if (err) console.error.bind("Session error", err);
                 if (data){
-                    data.msg = "Logout Successfully";
-                    data.icon = "check_circle";
-                    data.color = "green";
+                    ejsData.msg = "Logout Successfully";
+                    ejsData.icon = "check_circle";
+                    ejsData.color = "green";
                 }
-                res.cookie('token', '', { maxAge: 0 }).render('login-signup', data);
+                res.cookie('token', '', { maxAge: 0 }).render('login-signup', ejsData);
             });
         });
     }else{
-        res.render('login-signup', data);
+        res.render('login-signup', ejsData);
     }
 });
 
