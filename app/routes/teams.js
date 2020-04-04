@@ -13,7 +13,7 @@ let Notes = require('../database/model/notes');
 router.use(cookieValid);
 
 //creating new tream board
-router.post('/create/board', bodyDataValidJSON, (req, res, next)=>{
+router.post('/create/board', bodyDataValidJSON, (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -26,16 +26,18 @@ router.post('/create/board', bodyDataValidJSON, (req, res, next)=>{
 	
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		User.findByIdAndUpdate(req.data._id, { $push: { notes: data._id }}/*, (err, userData)=>{
-			if (err) console.error.bind("DB error", err);
-			console.log(userData);
-		}*/);
+		let { notes } = req.data;
+		notes.push(data._id);
+		User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
+			if (err) console.error.bind('Database error', err);
+			console.log(newData);
+		});
 		res.status(302).redirect(`/teams/board/${newNote.uid}`);
 	});
 });
 
 //inside board
-router.get('/board/:uid', validId, (req, res, next)=>{
+router.get('/board/:uid', validId, (req, res)=>{
 	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking if board really a team board or not
@@ -51,7 +53,7 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 });
 
 //adding new member
-router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res, next)=>{
+router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 	/*
 	Checking if adder email id isn't same of new member email id
 	*/
@@ -78,7 +80,7 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res, next)=>{
 /*
 
 //get the list & card 
-router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
+router.get('/board/lists/cards/:uid', validId, (req, res)=>{
 	console.log(req.params);
 	List.find({ notesUid: req.params.uid, creater: req.data._id }).populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
@@ -89,7 +91,7 @@ router.get('/board/lists/cards/:uid', validId, (req, res, next)=>{
 });
 
 //inside board
-router.get('/board/:uid', validId, (req, res, next)=>{
+router.get('/board/:uid', validId, (req, res)=>{
 	Notes.findOne({ uid: req.params.uid }, "teamWork", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
@@ -101,7 +103,7 @@ router.get('/board/:uid', validId, (req, res, next)=>{
 });
 
 //creating new board
-router.post('/new/board', async (req, res, next)=>{
+router.post('/new/board', async (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
@@ -119,7 +121,7 @@ router.post('/new/board', async (req, res, next)=>{
 });
 
 //adding new card
-router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
+router.post("/new/card/:noteId/:listId", validId, async (req, res)=>{
 	let card = {
 		uid: null,
 		desc: req.body.desc,
@@ -140,7 +142,7 @@ router.post("/new/card/:noteId/:listId", validId, async (req, res, next)=>{
 });
 
 //list of all cards 
-router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
+router.get("/cards/:noteId/:listId", validId, (req, res)=>{
 	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		validRes.data = data.cards;
@@ -149,7 +151,7 @@ router.get("/cards/:noteId/:listId", validId, (req, res, next)=>{
 });
 
 //adding new list in notes
-router.post('/new/list/:uid', validId, async (req, res, next)=>{
+router.post('/new/list/:uid', validId, async (req, res)=>{
 	let newList = {
 		name: (req.body.name).trim(),
 		uid: null,
@@ -169,7 +171,7 @@ router.post('/new/list/:uid', validId, async (req, res, next)=>{
 });
 
 //archive the card
-router.get("/card/archive/:uid", validId, async (req, res, next)=>{
+router.get("/card/archive/:uid", validId, async (req, res)=>{
 	await Card.findOneAndUpdate({ uid: req.params.uid }, {$set: {archive: true}});
 	res.json(validRes);
 });

@@ -7,15 +7,16 @@ let shortid = require('shortid');
 //self-made
 let { COOKIES_AGE, ERROR_MSG, validRes, ejsData } = require('../config');
 let User = require('../database/model/users');
-let { bodyDataValidCred } = require('../function');
+let { bodyDataValidCred, bodyDataValidJSON } = require('../function');
 
 //home page
-router.get('/', (req, res, next)=>{
+router.get('/', (req, res)=>{
+	console.log(req.statusCode)
 	res.render('index');
 });
 
 //login & signup page
-router.get('/login-signup', (req, res, next)=>{
+router.get('/login-signup', (req, res)=>{
 	if (req.cookies.token != null && req.cookies.token != ''){
 		User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
 			if (err) console.error.bind("Database error", err);
@@ -37,7 +38,7 @@ router.get('/login-signup', (req, res, next)=>{
 });
 
 //user login
-router.post('/login', bodyDataValidCred, (req, res, next)=>{
+router.post('/login', bodyDataValidCred, (req, res)=>{
 	ERROR_MSG = 'Invalid credentials';
 	
 	let { email, password } = req.body;
@@ -63,7 +64,7 @@ router.post('/login', bodyDataValidCred, (req, res, next)=>{
 });
 
 //user registration
-router.post('/signup', bodyDataValidCred, (req, res, next)=>{
+router.post('/signup', bodyDataValidCred, (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
 	
 	let { fname, lname, email, password, cpassword } = req.body;
@@ -92,12 +93,12 @@ router.post('/signup', bodyDataValidCred, (req, res, next)=>{
 });
 
 //forget password page
-router.get('/forget-password', (req, res, next)=>{
+router.get('/forget-password', (req, res)=>{
 	//need to implement
-	res.render("forget-password");
+	res.render("forget-password", ejsData);
 });
 
-router.post('/forget-password', (req, res, next)=>{
+router.post('/forget-password', bodyDataValidJSON, (req, res)=>{
 	//prcoess forget password
 	/*
 	find the email in the database
@@ -107,32 +108,30 @@ router.post('/forget-password', (req, res, next)=>{
 	res.json(validRes);
 });
 
-router.get('/forget-password/code/:verificationCode', (req, res, next)=>{
-	res.render('new-password');
+router.get('/forget-password/code/:verificationCode', (req, res)=>{
+	res.render('new-password', ejsData);
 });
 
-router.post('/forget-password/code/:verificationCode', (req, res, next)=>{
+router.post('/forget-password/code/:verificationCode', bodyDataValidJSON, (req, res)=>{
 	res.json(validRes);
 });
 
 //email verification page
-router.get('/email/verification/:verifyCode', (req, res, next)=>{
+router.get('/email/verification/:verifyCode', (req, res)=>{
 	User.findOne({ verificationCode: req.params.verifyCode }, "email password", (err, data)=>{
-		ejsData.msg = "Invalid URL";
 		if (err) console.error.bind("DB error", err);
-		if (data)
-			ejsData.msg = null;
+		ejsData.msg = (data) ? null: "Invalid URL";
 		res.render('email-verify', ejsData);
 	});
 });
 
 //email verification 
-router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res, next)=>{
+router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res)=>{
 	res.json(validRes);
 });
 
 //logout user
-router.get('/logout', (req, res, next)=>{
+router.get('/logout', (req, res)=>{
     if (req.cookies.token != null && req.cookies.token != ""){
         User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
             if (err) console.error.bind("Database error", err);

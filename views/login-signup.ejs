@@ -1,16 +1,4 @@
-<% include ./partial/header.ejs %>
-<body style="font-family: 'Baloo 2', cursive;">
-	<div class="navbar-fixed">
-		<nav class="purple darken-3">
-			<div class="nav-wrapper">
-				<!-- <a href="/" class="waves-effect waves-light left white-text show-on-small purple darken-2 btn home-ls"><i class="material-icons">home</i></a> -->
-				<a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left logo-fav"></a>
-				<ul id="nav-mobile" class="left hide-on-med-and-down">
-					<li><a href="/" class="waves-effect waves-light btn purple darken-2"><i class="material-icons">keyboard_backspace</i></a></li>
-				</ul>
-			</div>
-		</nav>
-	</div>
+<% include ./partial/logo-navbar.ejs %>
 	<div class="row" >
 		<div class="col s12 m5 l5">
 			<div class="section">
@@ -106,14 +94,4 @@
 		</div>
 	</div>
 	<br>
-	<% if (msg){ %>
-        <script>
-        document.addEventListener('DOMContentLoaded', ()=>{
-            M.toast({
-                html: `<i class="material-icons left" style="color:<%= color %>"><%= icon %></i><%= msg %>`, 
-                displayLength: 5000
-            })
-        });
-        </script>
-	<% } %>
 	<% include ./partial/footer.ejs %>

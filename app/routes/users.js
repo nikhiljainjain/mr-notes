@@ -16,13 +16,13 @@ router.use(cookieValid);
 
 //user home
 router.get('/', (req, res)=>{
-	Notes.find({ creater: req.data._id }, "name uid teamWork").sort("name").exec((err, data)=>{
+	User.findById(req.data._id, "notes").populate("notes").sort("name").exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
-		/*data.forEach((i)=>{
-			console.log(i.name);
-		});*/
-		//query handler
-		ejsData.notes = data;
+		data.notes.forEach((i)=>{
+			i._id = null;
+		});
+		//console.log("Users data", data.notes.length, data.notes);
+		ejsData.notes = data.notes;
 		ejsData.user = req.data;
 		res.render('home', ejsData);
 	});
@@ -55,7 +55,7 @@ router.get('/board/:uid', validId, (req, res)=>{
 			res.render("board", ejsData);
 		}
 		else
-			res.status(302).render('/users/?code=404');
+			res.status(302).render('/users/?code=404&type=board');
 	})
 });
 
@@ -74,10 +74,12 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	//console.log(newNote);
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		User.updateOne({ _id: req.data._id}, { $push: { notes : data._id }}/*, (err, userData)=>{
-			if (err) console.error.bind("DB error", err);
-			console.log(userData);
-		}*/);
+		let { notes } = req.data;
+		notes.push(data._id);
+		User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
+			if (err) console.error.bind('Database error', err);
+			console.log(newData);
+		});
 		res.status(302).redirect(`/users/board/${newNote.uid}`);
 	});
 });

@@ -9,11 +9,12 @@ const bodyDataValidCred = (req, res, next)=>{
 	flag = true;
 	for (i in req.body)
 		flag = (req.body[`${i}`] != ('' || null)) ? true: false; 
-	flag ? next():res.status(302).redirect(`/login-signup/q=${invalidRes.data}`);
+	flag ? next():res.status(302).redirect(`${req.path}/?q=${invalidRes.data}`);
 }; 
 
 //data validation 
 const bodyDataValidJSON = (req, res, next)=>{
+	console.log(req.path);
 	invalidRes.data = "Invalid Data";
 	flag = true;
 	for (i in req.body)
