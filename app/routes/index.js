@@ -7,7 +7,7 @@ let shortid = require('shortid');
 //self-made
 let { COOKIES_AGE, ERROR_MSG, validRes, ejsData } = require('../config');
 let User = require('../database/model/users');
-let { bodyDataValidCred, bodyDataValidJSON } = require('../function');
+let { bodyDataValidCred, bodyDataValidJSON, checkURLDetailsPage, checkURLDetailsJSON } = require('../function');
 
 //home page
 router.get('/', (req, res)=>{
@@ -31,7 +31,7 @@ router.get('/login-signup', (req, res)=>{
 	}else {
         ejsData.msg = req.query.q;
 
-		ejsData.msg = ((ejsData.msg === "Invalid credentials") || (ejsData.msg === "Password and Confirm password not matched")) ? ejsData.msg: null;
+		//ejsData.msg = ((ejsData.msg === "Invalid credentials") || (ejsData.msg === "Password and Confirm password not matched")) ? ejsData.msg: null;
 
 		res.render('login-signup', ejsData);
 	}

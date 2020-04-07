@@ -3,18 +3,45 @@ let shortid = require('shortid');
 let { invalidRes } = require('../config');
 let flag, i;
 
+const { e505 } = require('../config/error');
+
+//checking same origin of request and https protocol
+const checkURLDetailsPage = (req, res, next)=>{
+	invalidRes.data = "Invalid host OR Insecure protcols";
+	console.log(req.protocol, req.hostname);
+	if (process.env.NODE_ENV === 'PRODUCTION'){
+		if ((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com"))
+			next();
+		else 
+			res.status(505).render("error-display", e505);
+	}else
+		next();
+};
+
+//checking same origin of request and https protocol
+const checkURLDetailsJSON = (req, res, next)=>{
+	invalidRes.data = "Invalid host OR Insecure protcols";
+	console.log(req.protocol, req.hostname);
+	if (process.env.NODE_ENV === 'PRODUCTION'){
+		if ((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com"))
+			next();
+		else 
+			res.status(505).json(invalidRes);
+	}else
+		next();
+};
+
 //data validation of login or signup page 
 const bodyDataValidCred = (req, res, next)=>{
-	invalidRes.data = "Invalid User Details";
 	flag = true;
 	for (i in req.body)
 		flag = (req.body[`${i}`] != ('' || null)) ? true: false; 
-	flag ? next():res.status(302).redirect(`${req.path}/?q=${invalidRes.data}`);
+	flag ? next():res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
 }; 
 
 //data validation 
 const bodyDataValidJSON = (req, res, next)=>{
-	console.log(req.path);
+	//console.log(req.path);
 	invalidRes.data = "Invalid Data";
 	flag = true;
 	for (i in req.body)
@@ -53,4 +80,4 @@ const validId = (req, res, next) => {
 	flag ? next():res.json(invalidRes);
 };
 
-module.exports = { bodyDataValidCred, bodyDataValidJSON, validId, cookieValid };
+module.exports = { bodyDataValidCred, bodyDataValidJSON, validId, cookieValid, checkURLDetailsPage, checkURLDetailsJSON };
