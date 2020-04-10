@@ -4,10 +4,12 @@
 	<!-- navbar (after login) -->
 	<div class="navbar-fixed">
 		<nav class="purple darken-3">
+			<!-- side menu -->
 			<a href="#" data-target="side-nav" class="sidenav-trigger show-on-large"><i class="material-icons">menu</i></a>
 			<div class="nav-wrapper">
 				<a href="#!" class="brand-logo center">Mr. Notes<img src="/img/fav2.png" class="left logo-fav"></a>
 				<ul class="right hide-on-med-and-down">
+					<!-- display username on dashboard & notes name on notes screen -->
 					<li><a class="waves-effect waves-purple btn z-depth-0 purple darken-2"><%= (name) ? name : user.name %><i style="padding: -5px;" class="material-icons left"><%=  (name) ? "dashboard" : "person" %></i></a></li>
 				</ul>
 			</div>
@@ -15,15 +17,18 @@
 	</div>
 	<ul class="sidenav" id="side-nav">
 		<li>
+			<!-- user profile view -->
 			<div class="user-view">
 				<div class="background">
 					<img src="/img/ocean-3605547.jpg">
 				</div>
 				<a href="#"><img class="circle" src="/img/human-3056693.jpg"></a>
+				<!-- display user details -->
 				<a href="#"><span class="white-text name"><%= user.name %></span></a>
 				<a href="#"><span class="white-text email"><%= user.email %></span></a>
 		  	</div>
 		</li>
+		<!-- navigation link -->
 		<li><a href="/users" >Home<i class="material-icons left">home</i></a></li>
 		<li>
 			<div class="divider"></div>

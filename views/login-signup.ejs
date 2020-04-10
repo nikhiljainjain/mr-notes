@@ -6,27 +6,32 @@
 					<h3 class="purple-text center-align"><b>Login</b></h3>
 					<div class="divider"></div>
 					<div class="section">
+						<!-- login form -->
 						<div class="row">
 							<form class="col s12" action="/login" method="post">
 							<div class="row">
+								<!-- email input -->
 								<div class="input-field col s12">
 									<input id="email" type="email" class="validate" name="email" required />
 									<label for="email">Email</label>
 									<!-- <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span> -->
 								</div>
 							</div>
+							<!-- password input -->
 							<div class="row">
 								<div class="input-field col s12">
 									<input id="pswrd" type="password" class="validate" name="password" required />
 									<label for="pswrd">Password</label>
 								</div>
 							</div>
+							<!-- submission button -->
 								<div class="row">
 									<div class="col s12 m6 l6 center">
 										<!-- <div class="container"> -->
 											<button class="waves-effect waves-light btn-large purple" type="submit"><i class="material-icons left">person</i><span style="font-family: 'Baloo 2', cursive;">Login</span></button>
 										<!-- </div> -->
 									</div>
+									<!-- forget password link -->
 									<div class="col s12 m6 l6 center">
 										<div class="section">
 											<!-- <div class="container"> -->
@@ -49,18 +54,22 @@
 					<div class="divider"></div>
 					<div class="section">
 						<div class="row">
+							<!-- registration form -->
 						<form class="col s12" action="/signup" method="post">
 							<div class="row">
+								<!-- input user first name -->
 								<div class="input-field col s6">
 								<input id="first_name" type="text" name="fname" class="validate" required />
 								<label for="first_name">First Name</label>
 								</div>
+								<!-- input user last name -->
 								<div class="input-field col s6">
 								<input id="last_name" type="text" class="validate" name="lname" required />
 								<label for="last_name">Last Name</label>
 								</div>
 							</div>
 							<div class="row">
+								<!-- input user email -->
 								<div class="input-field col s12">
 									<input id="signup-email" type="email" class="validate" name="email" required />
 									<label for="signup-email">Email</label>
@@ -68,15 +77,18 @@
 								</div>
 							</div>
 							<div class="row">
+								<!-- input password -->
 								<div class="input-field col s6">
 									<input id="password" type="password" minlength="6" maxlength="26" class="validate" name="password" required />
 									<label for="password">Password</label>
 								</div>
+								<!-- input confirm password -->
 								<div class="input-field col s6">
 									<input id="confirm-password" type="password" class="validate" minlength="6" maxlength="26" name="cpassword" required />
 									<label for="confirm-password">Confirm Password</label>
 								</div>
 							</div>
+							<!-- submission button -->
 							<div class="row">
 								<!-- <div class="col s12 m1 l2"></div> -->
 								<div class="col s12 m6 l6 center">

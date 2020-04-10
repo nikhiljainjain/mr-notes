@@ -9,6 +9,7 @@
 			<div class="col s12 m12 l10">
 				<h5 style="color: #aa00ff"><b>Personal Boards</b><i class="material-icons left">person</i></h5>
 				<div class="row">
+					<!-- displaying all the personal notes -->
 					<% notes.forEach((i)=>{ %>
 						<% if (!i.teamWork){ %>
 							<a href="/users/board/<%= i.uid %>">	
@@ -18,11 +19,12 @@
 							</a>
 						<% } %>
 					<% }); %>
-					
+					<!-- create new personal notes (call to modal) -->
 					<div data-target="modal1" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger center-align box-board">
 						Create New Board
 					</div>
 				  <!-- Modal Structure -->
+				  <!-- modal for new personal board -->
 				  <div id="modal1" class="modal">
 					  <form action="/users/new/board" method="post">
 						<div class="modal-content">
@@ -66,6 +68,7 @@
 			<div class="col s12 m12 l10">
 				<h5 style="color: #aa00ff"><b>Team Board</b><i class="material-icons left">people</i></h5>
 				<div class="row">
+					<!-- display list of all team notes -->
 					<% notes.forEach((i)=>{ %>
 						<% if (i.teamWork){ %>
 							<a href="/teams/board/<%= i.uid %>">	
@@ -75,10 +78,12 @@
 							</a>
 						<% } %>
 					<% }); %>
+					<!-- creating new team notes (call to modal) -->
 					<div data-target="modal2" class="col s12 m12 l3 purple lighten-4 z-depth-1 waves-effect waves-light modal-trigger center-align box-board">
 						New Team Board
 					</div>
 					<!-- Modal Structure -->
+					<!-- new team note moal -->
 				  <div id="modal2" class="modal">
 					  <form action="/teams/create/board" method="post">
 						<div class="modal-content">

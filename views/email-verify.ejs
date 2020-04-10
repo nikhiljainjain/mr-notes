@@ -5,6 +5,7 @@
             <h3 class="purple-text" style="text-align: center"><b>Email Verification</b></h3>
             <div class="divider"></div>
             <div class="section">
+                <!-- decision for display login form or invalid url text -->
                 <% if (msg == null){ %>
                     <div class="row">
                         <form class="col s12" action="/email/verification/<%= (verifyCode) %>" method="post">
