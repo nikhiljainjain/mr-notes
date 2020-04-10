@@ -1,19 +1,16 @@
-let User = require("../database/model/users");
+let createError = require('http-errors');
 let shortid = require('shortid');
+
+let User = require("../database/model/users");
 let { invalidRes } = require('../config');
 let flag, i;
-
-const { e505 } = require('../config/error');
 
 //checking same origin of request and https protocol
 const checkURLDetailsPage = (req, res, next)=>{
 	invalidRes.data = "Invalid host OR Insecure protcols";
 	console.log(req.protocol, req.hostname);
 	if (process.env.NODE_ENV === 'PRODUCTION'){
-		if ((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com"))
-			next();
-		else 
-			res.status(505).render("error-display", e505);
+		((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com")) ? next():next(createError(505));
 	}else
 		next();
 };
@@ -23,10 +20,7 @@ const checkURLDetailsJSON = (req, res, next)=>{
 	invalidRes.data = "Invalid host OR Insecure protcols";
 	console.log(req.protocol, req.hostname);
 	if (process.env.NODE_ENV === 'PRODUCTION'){
-		if ((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com"))
-			next();
-		else 
-			res.status(505).json(invalidRes);
+		((req.protocol === "https") && (req.hostname === "www.mrnotes.me" || req.host === "mrnote.herokuapp.com")) ? next():res.status(505).json(invalidRes);
 	}else
 		next();
 };
