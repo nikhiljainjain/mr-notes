@@ -27,6 +27,7 @@ const noDos = new dosPrev({
 	limit: 25,
 	maxCount: 35
 });
+
 //connecting to database
 database.connect();
 //defining log method
@@ -56,7 +57,7 @@ app.use(session({
     httpOnly: false,
     path: '/',
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
     	secure: false,
     	maxAge: COOKIES_AGE,
     }
