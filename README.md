@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Expressjs Generator](https://expressjs.com/en/starter/generator.html).
 
+Live project available on [Mr Notes](https://www.mrnotes.me).
+
 ### Gitpod
 This project is Gitpod ready. You can run this project.
 
