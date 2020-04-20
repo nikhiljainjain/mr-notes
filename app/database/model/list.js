@@ -2,19 +2,44 @@ let mongoose = require("mongoose");
 
 let njlist = new mongoose.Schema({
 	//notes uid
-	notesUid: { type: String, default: null },
+	notesUid: { 
+		type: String, 
+		default: null,
+		select: false 
+	},
 	//unique id generator
-	uid: { type: String, default: null },
+	uid: { 
+		type: String, 
+		default: null 
+	},
 	//board name
-	name: { type: String, default: "Mr. X"},
+	name: { 
+		type: String, 
+		default: "Mr. X"
+	},
 	//archive 
-	archive: { type: Boolean, default: false },
+	archive: { 
+		type: Boolean, 
+		default: false,
+		select: false
+	},
 	//creator
-	creater: { type: mongoose.Schema.ObjectId, ref: "njnotesusers" },
+	creater: { 
+		type: mongoose.Schema.ObjectId, 
+		ref: "njnotesusers",
+		select: false 
+	},
 	//assigned To (useful in team board)
-	assignTo: { type: mongoose.Schema.ObjectId, ref: "njnotesuers" },
+	assignTo: { 
+		type: mongoose.Schema.ObjectId, 
+		ref: "njnotesuers" 
+	},
 	//creation time
-    creationTime: { type: Date, default: Date.now },
+    creationTime: { 
+		type: Date, 
+		default: Date.now,
+		select: false 
+	},
 	//notes id
 	cards: [ { 
 		type: mongoose.Schema.ObjectId, 

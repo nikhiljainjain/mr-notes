@@ -3,7 +3,7 @@ let express = require('express');
 let router = express.Router();
 let shortid = require('shortid');
 
-//self-made 
+//self-made
 let { validRes, invalidRes, ejsData } = require('../config');
 let { bodyDataValidJSON, cookieValid, validId } = require('../function');
 let User = require('../database/model/users');
@@ -28,8 +28,9 @@ router.get('/', (req, res)=>{
 	});
 });
 
-//get the list & card 
+//get the list & card
 router.get('/board/lists/cards/:uid', validId, (req, res)=>{
+	//in find query add attribute -> archive: false
 	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		data.forEach((i)=>{
@@ -65,9 +66,11 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 		name: req.body.name,
 		desc: req.body.desc,
 		creater: req.data._id,
-		uid: null
+		uid: null,
+		creationTime: null
 	};
 
+	newNote.creationTime = (new Date());
 	newNote.name = (newNote.name.charAt(0)).toUpperCase() + (newNote.name.slice(1));
 
 	newNote.uid = shortid.generate();
@@ -89,14 +92,17 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 	let card = {
 		uid: null,
 		desc: req.body.desc,
-		dueDate: null,
-		creater: req.data._id,	
+		dueDate: req.body.time,
+		creater: req.data._id,
+		creationTime: null
 	};
-	
+
+	card.creationTime = (new Date());
 	card.uid = shortid.generate();
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
 	validRes.data = card;
-	
+	//console.log(req.body, card);
+
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
@@ -109,7 +115,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 	});
 });
 
-//list of all cards 
+//list of all cards
 router.get("/cards/:noteId/:listId", validId, (req, res)=>{
 	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
@@ -125,9 +131,11 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 		name: (req.body.name).trim(),
 		uid: null,
 		creater: req.data._id,
-		notesUid: req.params.uid
+		notesUid: req.params.uid,
+		creationTime: null
 	};
 
+	newList.creationTime = (new Date());
 	newList.uid = shortid.generate();
 	validRes.data = newList;
 

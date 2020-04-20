@@ -1,9 +1,9 @@
 # app/routes/
 
-## routes definig
-
-### home, login, signup, and general routes handle on index.js
-
-### user profile, personal notes, and possible task for notes available on users.js
-
-### features only in teams notes are available in teams.js 
+| routes definig |
+| :---: |
+| file name | routes for |
+| :---: | :---:|
+| index | home, login, signup, and general routes |
+| users | user profile, personal notes, and possible task for notes |
+| teams | features only in teams notes | 
