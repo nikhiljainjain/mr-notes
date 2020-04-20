@@ -3,7 +3,7 @@ let shortid = require('shortid');
 
 let User = require("../database/model/users");
 let { invalidRes } = require('../config');
-let flag, i;
+let i;
 
 //checking same origin of request and https protocol
 const checkURLDetailsPage = (req, res, next)=>{
@@ -27,20 +27,26 @@ const checkURLDetailsJSON = (req, res, next)=>{
 
 //data validation of login or signup page 
 const bodyDataValidCred = (req, res, next)=>{
-	flag = true;
-	for (i in req.body)
-		flag = (req.body[`${i}`] != ('' || null)) ? true: false; 
-	flag ? next():res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
+	for (i in req.body){
+		if (req.body[`${i}`] != ('' || null)){
+			res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
+			break;
+		}
+	}
+	next();
 }; 
 
 //data validation 
 const bodyDataValidJSON = (req, res, next)=>{
 	//console.log(req.path);
 	invalidRes.data = "Invalid Data";
-	flag = true;
-	for (i in req.body)
-		flag = (req.body[`${i}`] != ('' || null)) ? true: false; 
-	flag ? next():res.json(invalidRes);
+	for (i in req.body){
+		if (req.body[`${i}`] != ('' || null)){
+			res.json(invalidRes);
+			break;
+		}
+	} 
+	next();
 }; 
 
 //user cookies validation
