@@ -28,7 +28,7 @@ const checkURLDetailsJSON = (req, res, next)=>{
 //data validation of login or signup page 
 const bodyDataValidCred = (req, res, next)=>{
 	for (i in req.body){
-		if (req.body[`${i}`] != ('' || null)){
+		if (req.body[`${i}`] == ('' || null)){
 			res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
 			break;
 		}
@@ -41,7 +41,7 @@ const bodyDataValidJSON = (req, res, next)=>{
 	//console.log(req.path);
 	invalidRes.data = "Invalid Data";
 	for (i in req.body){
-		if (req.body[`${i}`] != ('' || null)){
+		if (req.body[`${i}`] == ('' || null)){
 			res.json(invalidRes);
 			break;
 		}
