@@ -1,3 +1,5 @@
+let jwt = require("jsonwebtoken");
+let validator = require("validator");
 let createError = require('http-errors');
 let shortid = require('shortid');
 
@@ -28,10 +30,10 @@ const checkURLDetailsJSON = (req, res, next)=>{
 //data validation of login or signup page 
 const bodyDataValidCred = (req, res, next)=>{
 	for (i in req.body){
-		if (req.body[`${i}`] == ('' || null)){
+		if (req.body[`${i}`] == ('' || null) || (i == "email" && validator.isEmail(req.body[`${i}`]))) {
 			res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
 			break;
-		}
+		} 
 	}
 	next();
 }; 
@@ -41,7 +43,7 @@ const bodyDataValidJSON = (req, res, next)=>{
 	//console.log(req.path);
 	invalidRes.data = "Invalid Data";
 	for (i in req.body){
-		if (req.body[`${i}`] == ('' || null)){
+		if (req.body[`${i}`] == ('' || null) || (i == "email" && validator.isEmail(req.body[`${i}`]))){
 			res.json(invalidRes);
 			break;
 		}
@@ -54,16 +56,23 @@ const cookieValid = (req, res, next) =>{
 	//extracting cookies from req parameter
   	let cookie = req.cookies.token;
 	if (cookie != null){
-		/*.populate("notes")*/
-		User.findOne({cookie}).exec((err, data)=>{
-			if (err) throw console.error.bind(err);
-			if (data){
-				req.data = data;
-				//calling next process
-				next();
-			}else
-				res.status(302).redirect("/login-signup");		  
-		});	
+		try{
+			//token validation from jwt
+			cookie = jwt.verify(cookie, process.env.JWT_SECRET);
+			cookie = cookie.token;
+			/*.populate("notes")*/
+			User.findOne({cookie}).exec((err, data)=>{
+				if (err) throw console.error.bind(err);
+				if (data){
+					req.data = data;
+					//calling next process
+					next();
+				}else
+					res.status(302).redirect("/login-signup");		  
+			});
+		}catch(err){
+			res.json(invalidRes);
+		}	
 	}else
 		res.status(302).redirect("/login-signup");
 };
@@ -80,4 +89,22 @@ const validId = (req, res, next) => {
 	flag ? next():res.json(invalidRes);
 };
 
-module.exports = { bodyDataValidCred, bodyDataValidJSON, validId, cookieValid, checkURLDetailsPage, checkURLDetailsJSON };
+/**
+ * for token a random string is generated using library randomstring
+ * generating jwt token with expiration time defined in cookies_age
+ *
+ * this function works as middleware & generate random string & token save into req.data
+ */
+const jwtCreate = (req, res, next) =>{
+    const expiresIn = (COOKIES_AGE/1000);
+    req.data = {
+        token: null,
+        jwt: null
+    };
+	req.data.token = uuidv4();
+    req.data.jwt = jwt.sign({ token: req.data.token }, process.env.JWT_SECRET, { expiresIn });
+    next();
+};
+
+module.exports = { bodyDataValidCred, bodyDataValidJSON, validId, 
+	cookieValid, checkURLDetailsPage, checkURLDetailsJSON, jwtCreate };

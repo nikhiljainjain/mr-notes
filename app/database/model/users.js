@@ -4,13 +4,15 @@ let user = new mongoose.Schema({
 	//full name
     name: { 
         type: String, 
-        default: "Mr. X" 
+        default: "Mr. X",
+        trim: true, 
     },
 	//email id
 	email: { 
         type: String, 
         default: "example@email.com", 
-        unique: true 
+        unique: true,
+        trim: true
     },
 	//password
     password: { 
@@ -41,6 +43,12 @@ let user = new mongoose.Schema({
         type: Boolean, 
         default: false,
         select: false 
+    },
+    //registering ip addres
+    registerIP: {
+        type: String,
+        default: null,
+        select: false
     },
 	//notes id
 	notes: [{ type: mongoose.Schema.ObjectId, ref: 'njnotes' }],

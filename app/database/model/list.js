@@ -40,6 +40,12 @@ let njlist = new mongoose.Schema({
 		default: Date.now,
 		select: false 
 	},
+	//ip address
+	registerIP: {
+		type: String,
+		default: null,
+		select: false
+	},
 	//notes id
 	cards: [ { 
 		type: mongoose.Schema.ObjectId, 

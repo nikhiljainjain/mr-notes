@@ -33,6 +33,11 @@ let njcard = new mongoose.Schema({
 		default: Date.now,
 		select: false 
 	},
+	//ip address
+	registerIP: {
+		type: String,
+		default: null
+	}
 });
 
 module.exports = mongoose.model('njnotescards', njcard);

@@ -67,7 +67,8 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 		desc: req.body.desc,
 		creater: req.data._id,
 		uid: null,
-		creationTime: null
+		creationTime: null,
+		registerIP: req.ip
 	};
 
 	newNote.creationTime = (new Date());
@@ -79,10 +80,12 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 		if (err) console.error.bind("Database error", err);
 		let { notes } = req.data;
 		notes.push(data._id);
-		User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
-			if (err) console.error.bind('Database error', err);
-			console.log(newData);
-		});
+		req.data.set({ notes });
+		req.data.save();
+		// User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
+		// 	if (err) console.error.bind('Database error', err);
+		// 	console.log(newData);
+		// });
 		res.status(302).redirect(`/users/board/${newNote.uid}`);
 	});
 });
@@ -94,7 +97,8 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		desc: req.body.desc,
 		dueDate: req.body.time,
 		creater: req.data._id,
-		creationTime: null
+		creationTime: null,
+		registerIP: req.ip
 	};
 
 	card.creationTime = (new Date());
@@ -132,7 +136,8 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 		uid: null,
 		creater: req.data._id,
 		notesUid: req.params.uid,
-		creationTime: null
+		creationTime: null,
+		registerIP: req.ip
 	};
 
 	newList.creationTime = (new Date());

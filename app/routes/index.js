@@ -2,12 +2,11 @@
 let express = require('express');
 let router = express.Router();
 let bcrypt = require('bcryptjs');
-let shortid = require('shortid');
 
 //self-made
-let { COOKIES_AGE, ERROR_MSG, validRes, ejsData } = require('../config');
 let User = require('../database/model/users');
-let { bodyDataValidCred, bodyDataValidJSON, checkURLDetailsPage, checkURLDetailsJSON } = require('../function');
+let { COOKIES_AGE, ERROR_MSG, validRes, ejsData, COOKIE_PROP } = require('../config');
+let { bodyDataValidCred, bodyDataValidJSON, jwtCreate } = require('../function');
 
 //home page
 router.get('/', (req, res)=>{
@@ -15,79 +14,127 @@ router.get('/', (req, res)=>{
 	res.render('index');
 });
 
-//login & signup page
+//rendering login & signup page
 router.get('/login-signup', (req, res)=>{
-	if (req.cookies.token != null && req.cookies.token != ''){
-		User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
-			if (err) console.error.bind("Database error", err);
-			if (userData){
-				req.session.regenerate((err)=>{
-					if (err) console.error.bind("Session error", err);
-					res.status(302).redirect("/users");
-				});
-			}else
-				res.render('login-signup', ejsData);
-		});
-	}else {
+	// if (req.cookies.token != (null || '')){
+	// 	console.log("req cookies login-signup", req.cookies);
+	// 	User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
+	// 		if (err) console.error.bind("Database error", err);
+	// 		console.log("user data", userData);
+	// 		if (userData){
+	// 			req.session.regenerate((err)=>{
+	// 				if (err) console.error.bind("Session error", err);
+	// 				res.status(302).redirect("/users");
+	// 			});
+	// 		}else{
+				
+	// 			res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
+	// 		}
+	// 	});
+	// }else {
         ejsData.msg = req.query.q;
 
 		//ejsData.msg = ((ejsData.msg === "Invalid credentials") || (ejsData.msg === "Password and Confirm password not matched")) ? ejsData.msg: null;
 
 		res.render('login-signup', ejsData);
-	}
+	//}
+});
+
+router.get('/login', (req, res)=>{
+	res.status(302).redirect("/login-signup");
 });
 
 //user login
-router.post('/login', bodyDataValidCred, (req, res)=>{
-	ERROR_MSG = 'Invalid credentials';
+router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	
-	let { email, password } = req.body;
+	//creating session variable to limit the login attempt
+	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
+		ERROR_MSG = "Try After 24hours";
+		//restricting user for 24 hour to login attempt
+		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+	}else{
+		ERROR_MSG = 'Invalid credentials';
 	
-	email = (email.trim()).toLowerCase();
-	let cookie = shortid.generate();
-	
-	User.findOneAndUpdate({ email }, { $set: { cookie }}, (err, user)=>{
-		if (err) console.error.bind('Database Error', err);
-		if (user){
-			//checking password
-			let passwordMatch = bcrypt.compareSync(password, user.password);
-			if (passwordMatch){
-				req.session.regenerate((err)=>{
-					if (err) console.error.bind("Session error", err);
-					res.cookie('token', cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
-				});
-			}else
+		let { email, password } = req.body;
+		
+		//initiating login attempts
+		if (!req.session.loginCount)
+			req.session.loginCount = 1;
+		else{
+			//increase login attempts
+			req.session.loginCount++;
+		}
+		
+		email = (email.trim()).toLowerCase();
+		//finding user in db
+		User.findOne({ email }, "password", (err, user)=>{
+			if (err) console.error.bind('Database Error', err);
+			if (user){
+				//checking password
+				if (bcrypt.compareSync(password, user.password)){
+					//setting cookies in db
+					user.set({ cookie: req.data.token });
+					user.save().then(()=>{
+						//generating new session
+						req.session.regenerate((err)=>{
+							console.log("req data", req.data);
+							//sending response
+							if (err) console.error.bind("Session error", err);
+							res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+						});
+					});
+				}else{
+					req.session.loginCount++;
+					res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+				}	
+			}else{
+				req.session.loginCount++;
 				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
-		}else
-			res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
-	});
+			}
+		});
+
+	}
+});
+
+
+router.get('/signup', (req, res)=>{
+	res.status(302).redirect("/login-signup");
 });
 
 //user registration
-router.post('/signup', bodyDataValidCred, (req, res)=>{
+router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
 	
-	let { fname, lname, email, password, cpassword } = req.body;
-	if (password === cpassword){
-		let user = {
-			name: ((fname +" "+ lname).toUpperCase()),
-			email: ((email.trim()).toLowerCase()),
-			password,
-			cookie: null
+	if (req.body.password == req.body.cpassword){
+		let newUser = {
+			name: ((req.body.fname +" "+ req.body.lname).toUpperCase()),
+			email: ((req.body.email.trim()).toLowerCase()),
+			password: req.body.password,
+			cookie: req.data.token,
+			registerIP: req.ip
 		};	
-		
-		user.password = bcrypt.hashSync(password);
-		
-		user.cookie = shortid.generate();
-		
-		User.create(user, (err)=>{
-			if (err) console.error.bind('Database error', err);
-			//to do -> error handling for error code 11000
-			req.session.regenerate((err)=>{
-				if (err) console.error.bind("Session error", err);
-				res.cookie('token', user.cookie, { maxAge: COOKIES_AGE, path: '/' }).status(302).redirect('/users');
-			});
+
+		//checking for existence of user		
+		User.findOne({ email: newUser.email }, (err, userExist)=>{
+			if (err) console.error.bind("DB error", err);
+			//if user exist then sending back to login page
+			if (userExist){
+				res.status(302).redirect(`/login-signup?q=User Already Exist`);
+			}else{
+				//hashing password
+				newUser.password = bcrypt.hashSync(password);
+				//creating new user for the data
+				newUser = new User(newUser);
+				newUser.save().then(()=>{
+					req.session.regenerate((err)=>{
+						if (err) console.error.bind("Session error", err);
+						//setting cookies
+						res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+					});
+				});
+			}
 		});
+		
 	}else
 		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 });

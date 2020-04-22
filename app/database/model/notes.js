@@ -39,6 +39,12 @@ let njnotes = new mongoose.Schema({
 		type: Date, 
 		default: Date.now 
 	},
+	//ip address
+	registerIP: {
+		type: String,
+		default: null,
+		select: false
+	},
 	//notes id
 	lists: [ 
 		{ 
