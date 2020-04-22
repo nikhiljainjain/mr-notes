@@ -4,8 +4,10 @@ let createError = require('http-errors');
 let shortid = require('shortid');
 
 let User = require("../database/model/users");
-let { invalidRes } = require('../config');
-let i;
+let { invalidRes, COOKIES_AGE } = require('../config');
+let i, flag;
+
+flag = true;
 
 //checking same origin of request and https protocol
 const checkURLDetailsPage = (req, res, next)=>{
@@ -30,12 +32,16 @@ const checkURLDetailsJSON = (req, res, next)=>{
 //data validation of login or signup page 
 const bodyDataValidCred = (req, res, next)=>{
 	for (i in req.body){
-		if (req.body[`${i}`] == ('' || null) || (i == "email" && validator.isEmail(req.body[`${i}`]))) {
+		if (req.body[`${i}`] == ('' || null) || (i == "email" && !validator.isEmail(req.body[`${i}`]))) {
 			res.status(302).redirect(`${req.path}/?q=Invalid User Details`);
+			flag = false;
 			break;
 		} 
 	}
-	next();
+	if(flag){
+		flag = true;
+		next();
+	}
 }; 
 
 //data validation 
@@ -43,12 +49,16 @@ const bodyDataValidJSON = (req, res, next)=>{
 	//console.log(req.path);
 	invalidRes.data = "Invalid Data";
 	for (i in req.body){
-		if (req.body[`${i}`] == ('' || null) || (i == "email" && validator.isEmail(req.body[`${i}`]))){
+		if (req.body[`${i}`] == ('' || null) || (i == "email" && !validator.isEmail(req.body[`${i}`]))){
 			res.json(invalidRes);
+			flag = false;
 			break;
 		}
 	} 
-	next();
+	if(flag){
+		flag = true;
+		next();
+	}
 }; 
 
 //user cookies validation
@@ -62,7 +72,7 @@ const cookieValid = (req, res, next) =>{
 			cookie = cookie.token;
 			/*.populate("notes")*/
 			User.findOne({cookie}).exec((err, data)=>{
-				if (err) throw console.error.bind(err);
+				if (err) console.error.bind(err);
 				if (data){
 					req.data = data;
 					//calling next process
@@ -101,7 +111,7 @@ const jwtCreate = (req, res, next) =>{
         token: null,
         jwt: null
     };
-	req.data.token = uuidv4();
+	req.data.token = shortid.generate();
     req.data.jwt = jwt.sign({ token: req.data.token }, process.env.JWT_SECRET, { expiresIn });
     next();
 };

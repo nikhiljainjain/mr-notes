@@ -16,28 +16,28 @@ router.get('/', (req, res)=>{
 
 //rendering login & signup page
 router.get('/login-signup', (req, res)=>{
-	// if (req.cookies.token != (null || '')){
-	// 	console.log("req cookies login-signup", req.cookies);
-	// 	User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
-	// 		if (err) console.error.bind("Database error", err);
-	// 		console.log("user data", userData);
-	// 		if (userData){
-	// 			req.session.regenerate((err)=>{
-	// 				if (err) console.error.bind("Session error", err);
-	// 				res.status(302).redirect("/users");
-	// 			});
-	// 		}else{
-				
-	// 			res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
-	// 		}
-	// 	});
-	// }else {
+	if (req.cookies.token != (null || '')){
+		console.log("req cookies login-signup", req.cookies);
+		User.findOne({ cookie: req.cookies.token }, "name", (err, userData)=>{
+			if (err) console.error.bind("Database error", err);
+			console.log("user data", userData);
+			if (userData){
+				req.session.regenerate((err)=>{
+					if (err) console.error.bind("Session error", err);
+					res.status(302).redirect("/users");
+				});
+			}else{
+
+				res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
+			}
+		});
+	}else {
         ejsData.msg = req.query.q;
 
 		//ejsData.msg = ((ejsData.msg === "Invalid credentials") || (ejsData.msg === "Password and Confirm password not matched")) ? ejsData.msg: null;
 
 		res.render('login-signup', ejsData);
-	//}
+	}
 });
 
 router.get('/login', (req, res)=>{
@@ -70,6 +70,7 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		User.findOne({ email }, "password", (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
 			if (user){
+				console.log(user);
 				//checking password
 				if (bcrypt.compareSync(password, user.password)){
 					//setting cookies in db

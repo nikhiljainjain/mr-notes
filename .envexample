@@ -3,3 +3,4 @@ MONGODB_URL=mongodb://localhost:27017/stored
 TESTDB_URL=mongodb://localhost:27017/test
 SESSION_SECRET=DEVHACK
 NODE_ENV=DEV
+JWT_SECRET=SOMETHING
