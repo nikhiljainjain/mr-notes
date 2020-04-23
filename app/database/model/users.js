@@ -38,6 +38,12 @@ let user = new mongoose.Schema({
         default: null,
         select: false 
     },
+    //email send
+    emailSend: {
+        type: Boolean,
+        default: false,
+        select: false
+    },
     //user verified
     verified: { 
         type: Boolean, 

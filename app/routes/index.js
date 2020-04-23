@@ -6,7 +6,8 @@ let bcrypt = require('bcryptjs');
 //self-made
 let User = require('../database/model/users');
 let { COOKIES_AGE, ERROR_MSG, validRes, ejsData, COOKIE_PROP } = require('../config');
-let { bodyDataValidCred, bodyDataValidJSON, jwtCreate } = require('../function');
+const { bodyDataValidCred, bodyDataValidJSON } = require('../function');
+const { jwtCreate } = require("../function/cookies"); 
 
 //home page
 router.get('/', (req, res)=>{
@@ -17,8 +18,11 @@ router.get('/', (req, res)=>{
 //rendering login & signup page
 router.get('/login-signup', (req, res)=>{
 	//taking query and display to front end
-	ejsData.msg = req.query.q;
-	req.query.q = null;
+	if (req.query.q){
+		ejsData.msg = req.query.q;
+		ejsData.color = (req.query.color) ? "green" : "red";
+		req.query.q = null;
+	}
 	res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
 });
 
@@ -49,7 +53,7 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		
 		email = (email.trim()).toLowerCase();
 		//finding user in db
-		User.findOne({ email }, "password", (err, user)=>{
+		User.findOne({ email }, "password verified", (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
 			if (user){
 				//console.log(user);
@@ -94,7 +98,8 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 			email: ((req.body.email.trim()).toLowerCase()),
 			password: req.body.password,
 			cookie: req.data.token,
-			registerIP: req.ip
+			registerIP: req.ip, 
+			verificationCode: null
 		};	
 
 		//checking for existence of user		
@@ -108,6 +113,7 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 				newUser.password = bcrypt.hashSync(password);
 				//creating new user for the data
 				newUser = new User(newUser);
+				//sending email to user and email verification process will start
 				newUser.save().then(()=>{
 					req.session.regenerate((err)=>{
 						if (err) console.error.bind("Session error", err);
