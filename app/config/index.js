@@ -24,7 +24,7 @@ let ejsData = {
 };
 
 //cookies age for 300 days
-const COOKIES_AGE = (1000*60*60*24*300);
+const COOKIES_AGE = (1000*60*60*24*400);
 
 //snack bar
 let ERROR_MSG = null;
@@ -33,7 +33,8 @@ let ERROR_MSG = null;
 const COOKIE_PROP = {
     maxAge: COOKIES_AGE,
     path: '/',
-    httpOnly: true
+    httpOnly: true,
+    secure: true
 };
 
 module.exports = { invalidRes, validRes, COOKIES_AGE, ERROR_MSG, ejsData, COOKIE_PROP };

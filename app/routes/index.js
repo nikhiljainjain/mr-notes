@@ -21,9 +21,16 @@ router.get('/login-signup', (req, res)=>{
 	if (req.query.q){
 		ejsData.msg = req.query.q;
 		ejsData.color = (req.query.color) ? "green" : "red";
+		ejsData.icon = (req.query.color) ? "check_circle":"cancel";
 		req.query.q = null;
 	}
-	res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
+
+	//removing token cookie if exist
+	if (req.cookies.token){
+		res.cookie("token", "", { maxAge: 0}).render('login-signup', ejsData);
+	}else{
+		res.render("login-signup", ejsData);
+	}
 });
 
 router.get('/login', (req, res)=>{
@@ -32,7 +39,6 @@ router.get('/login', (req, res)=>{
 
 //user login
 router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
-	
 	//creating session variable to limit the login attempt
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
 		ERROR_MSG = "Try After 24hours";
@@ -93,22 +99,24 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
 	
 	if (req.body.password == req.body.cpassword){
-		let newUser = {
-			name: ((req.body.fname +" "+ req.body.lname).toUpperCase()),
-			email: ((req.body.email.trim()).toLowerCase()),
-			password: req.body.password,
-			cookie: req.data.token,
-			registerIP: req.ip, 
-			verificationCode: null
-		};	
+		req.body.email = ((req.body.email.trim()).toLowerCase()); 	
 
 		//checking for existence of user		
-		User.findOne({ email: newUser.email }, (err, userExist)=>{
+		User.findOne({ email: req.body.email }, (err, userExist)=>{
 			if (err) console.error.bind("DB error", err);
 			//if user exist then sending back to login page
 			if (userExist){
-				res.status(302).redirect(`/login-signup?q=User Already Exist`);
+				ERROR_MSG = "User Already Exist";
+				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}&color=green`);
 			}else{
+				let newUser = {
+					name: ((req.body.fname +" "+ req.body.lname).toUpperCase()),
+					email: req.body.email,
+					password: req.body.password,
+					cookie: req.data.token,
+					registerIP: req.ip, 
+					verificationCode: null
+				};
 				//hashing password
 				newUser.password = bcrypt.hashSync(password);
 				//creating new user for the data
@@ -123,7 +131,6 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 				});
 			}
 		});
-		
 	}else
 		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 });

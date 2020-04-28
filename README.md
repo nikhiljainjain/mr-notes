@@ -1,5 +1,7 @@
 # Mr-Notes
 
+[![Build Status](https://travis-ci.org/nikhiljainjain/mr-notes.png?branch=master)](https://travis-ci.org/nikhiljainjain/mr-notes)
+
 This project was bootstrapped with [Expressjs Generator](https://expressjs.com/en/starter/generator.html).
 
 Live project available on [Mr Notes](https://www.mrnotes.me).
