@@ -134,12 +134,23 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }/*, (err, listData)=>{
-			if (err) throw err;
-			//console.log(listData);
-		}*/);
-		validRes.data.creater = null;
-		res.json(validRes);
+		List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, (err, listData)=>{
+			if (err || !listData){
+				if (err){
+					console.log("DB error", err);
+				}
+				invalidRes.data = 'DATA NOT FOUND';
+				res.json(invalidRes);
+			}else{
+				//saving object id of new card in list
+				listData.cards.push(data._id);
+				listData.save();
+
+				//sending response back to front end
+				validRes.data.creater = null;
+				res.json(validRes);
+			} 
+		});
 	});
 });
 

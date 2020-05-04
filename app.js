@@ -2,36 +2,46 @@
 
 //default package installed by expressjs generator
 require("dotenv/config");
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
-let app = express();
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const app = express();
 
 //package installed for this project
-let session = require('express-session');
-let expressSanitizer = require('express-sanitizer');
-let dosPrev = require('ddos');
+const session = require('express-session');
+const expressSanitizer = require('express-sanitizer');
+const helmet = require("helmet");
+const dosPrev = require('ddos');
+const MongoStore = require("connect-mongo")(session);
+
 
 //files made for this project
-let { COOKIES_AGE } = require('./app/config');
-let indexRouter = require('./app/routes/index');
-let usersRouter = require('./app/routes/users');
-let teamsRouter = require('./app/routes/teams');
-let database = require('./app/database/connect');
+const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, } = require('./app/config');
+const indexRouter = require('./app/routes/index');
+const usersRouter = require('./app/routes/users');
+const teamsRouter = require('./app/routes/teams');
+const database = require('./app/database/connect');
 
-//dos attack preventtion
+//dos attack preventtion configuration
 const noDos = new dosPrev({
 	burst: 15,
 	limit: 25,
 	maxCount: 35
 });
 
+//checking server is running in production env or dev
+const production_env = (process.env.NODE_ENV === 'production');
+
 //connecting to database
-database.connect();
+database.connect(production_env);
+
 //defining log method
-const logMethod = (process.env.NODE_ENV === 'PRODUCTION') ? 'combined' : 'dev';
+const logMethod =  production_env ? 'combined' : 'dev';
+
+//mongo store 
+const mongo_store_option =  production_env ? mongo_store_pro : mongo_store_dev;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -46,20 +56,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //read expressjs documentation
 app.disable('etag');
-app.disable('x-powered-by');
+app.use(helmet());
+app.use(noDos.express);
 
 //special config for this project
 app.use(noDos.express);
 app.use(expressSanitizer());
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    httpOnly: false,
-    path: '/',
+    name: "sessionId",
+    path: "/",
+    resave: true,
+    rolling: true,
     saveUninitialized: false,
-    cookie: {
-    	secure: false,
-    	maxAge: COOKIES_AGE,
+    store: new MongoStore(mongo_store_option),
+    cookie:{
+        maxAge: ONE_DAY_TIME_IN_MSEC,
+        path: "/",
+        sameSite: true,
+        httpOnly: true,
+        //in development or testing mode secure value will be false
+        secure: production_env,
+        domain: process.env.DOMAIN_NAME
     }
 }));
 

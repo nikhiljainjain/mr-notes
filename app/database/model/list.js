@@ -50,7 +50,13 @@ let njlist = new mongoose.Schema({
 	cards: [ { 
 		type: mongoose.Schema.ObjectId, 
 		ref: 'njnotescards'
-	} ]
+	} ],
+	//view status or archive
+	archive: {
+		type: Boolean,
+		default: false,
+		select: false
+	}
 });
 
 module.exports = mongoose.model('njnoteslists', njlist);

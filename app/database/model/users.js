@@ -14,6 +14,12 @@ let user = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    //gender of the user value should be either m or f
+    gender: {
+        type: String,
+        default: "M",
+        trim: true
+    },
 	//password
     password: { 
         type: String, 
@@ -57,7 +63,18 @@ let user = new mongoose.Schema({
         select: false
     },
 	//notes id
-	notes: [{ type: mongoose.Schema.ObjectId, ref: 'njnotes' }],
+	notes: [
+        { 
+            type: mongoose.Schema.ObjectId, 
+            ref: 'njnotes' 
+        }
+    ],
+    //active status of user or we are not premitted the user
+    activeStatus:{
+        type: Boolean, 
+        default: true,
+        select: false
+    }
 });
 
 module.exports = mongoose.model('njnotesusers', user);

@@ -5,7 +5,7 @@ dist: trusty
 services:
     - mongodb
 env: 
-    - NODE_ENV=ci PORT=3001
+    - NODE_ENV=ci PORT=3001 SESSION_SECRET=DEVHACK JWT_SECRET=UNKNOWN_STRING TESTDB_URL=mongodb://localhost:27017/test
 cache:
     directories:
         - node_modules

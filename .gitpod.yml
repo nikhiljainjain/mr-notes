@@ -1,3 +1,5 @@
+env: 
+	- NODE_ENV=dev PORT=3001 SESSION_SECRET=DEVHACK JWT_SECRET=UNKNOWN_STRING TESTDB_URL=mongodb://localhost:27017/test
 tasks:
   - init: npm install
     command: npm run dev
