@@ -1,7 +1,6 @@
 //visit npmjs website & search for package then you will documentation about the package
 
 //default package installed by expressjs generator
-require("dotenv/config");
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -10,6 +9,7 @@ const logger = require('morgan');
 const app = express();
 
 //package installed for this project
+require("dotenv/config");
 const session = require('express-session');
 const expressSanitizer = require('express-sanitizer');
 const helmet = require("helmet");
@@ -40,7 +40,7 @@ database.connect(production_env);
 //defining log method
 const logMethod =  production_env ? 'combined' : 'dev';
 
-//mongo store 
+//mongo store
 const mongo_store_option =  production_env ? mongo_store_pro : mongo_store_dev;
 
 // view engine setup
@@ -95,7 +95,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'DEV' ? err : {};
+    res.locals.error = !production_env ? err : {};
 
     // render the error page
     res.status(err.status || 500);
