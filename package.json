@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "connect-mongo": "^3.2.0",
     "cookie-parser": "~1.4.4",
     "ddos": "^0.2.1",
     "debug": "~2.6.9",
