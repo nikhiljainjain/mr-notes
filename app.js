@@ -22,6 +22,7 @@ const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, } = require('./a
 const indexRouter = require('./app/routes/index');
 const usersRouter = require('./app/routes/users');
 const teamsRouter = require('./app/routes/teams');
+const shareLinksRouter = require('./app/routes/shareLinks');
 const database = require('./app/database/connect');
 
 //dos attack preventtion configuration
@@ -85,6 +86,7 @@ app.use(session({
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/teams', teamsRouter);
+app.use('/shareLinked', shareLinksRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

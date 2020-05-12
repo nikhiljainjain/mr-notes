@@ -1,7 +1,9 @@
 //installed packages
 let express = require('express');
 let router = express.Router();
+
 let bcrypt = require('bcryptjs');
+let validator = require("validator");
 
 //self-made
 let User = require('../database/model/users');
@@ -44,6 +46,9 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		ERROR_MSG = "Try After 24hours";
 		//restricting user for 24 hour to login attempt
 		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+	}else if (!validator.isEmail(req.body.email)){
+		ERROR_MSG = "Invalid EmailId";
+		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else{
 		ERROR_MSG = 'Invalid credentials';
 	
@@ -58,10 +63,11 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		}
 		
 		email = (email.trim()).toLowerCase();
+
 		//finding user in db
 		User.findOne({ email }, "password verified", (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
-			if (user){
+			if (user.verified){
 				//console.log(user);
 				//checking password
 				if (bcrypt.compareSync(password, user.password)){
@@ -80,7 +86,12 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 					req.session.loginCount++;
 					res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 				}	
+			}else if (!user.verified){
+				//user not verified there email account
+				ERROR_MSG = 'Email not Verified';
+				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}else{
+				//user account not found
 				req.session.loginCount++;
 				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}
@@ -102,7 +113,7 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 		req.body.email = ((req.body.email.trim()).toLowerCase()); 	
 
 		//checking for existence of user		
-		User.findOne({ email: req.body.email }, (err, userExist)=>{
+		User.findOne({ email: req.body.email }, "verified", (err, userExist)=>{
 			if (err) console.error.bind("DB error", err);
 			//if user exist then sending back to login page
 			if (userExist){
@@ -126,7 +137,7 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 					req.session.regenerate((err)=>{
 						if (err) console.error.bind("Session error", err);
 						//setting cookies
-						res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+						res.status(302).redirect(`/login-signup?q=Check your mail box&code=green`);
 					});
 				});
 			}
