@@ -34,9 +34,9 @@ router.get('/', (req, res)=>{
 });
 
 //get the list & card
-router.get('/board/lists/cards/:uid', validId, (req, res)=>{
+router.get('/board/lists/cards/:notesUid', validId, (req, res)=>{
 	//in find query add attribute -> archive: false
-	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
+	List.find({ notesUid: req.params.notesUid }, "name cards archive uid").populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		data.forEach((i)=>{
 			i._id = null;

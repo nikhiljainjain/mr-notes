@@ -15,7 +15,7 @@ const expressSanitizer = require('express-sanitizer');
 const helmet = require("helmet");
 const dosPrev = require('ddos');
 const MongoStore = require("connect-mongo")(session);
-
+const flashMsg = require('flash');
 
 //files made for this project
 const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, } = require('./app/config');
@@ -61,6 +61,7 @@ app.use(helmet());
 app.use(noDos.express);
 
 //special config for this project
+app.use(flashMsg());
 app.use(noDos.express);
 app.use(expressSanitizer());
 app.use(session({

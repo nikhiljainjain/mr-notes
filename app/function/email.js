@@ -1,13 +1,14 @@
 //refer this link -> https://codeforgeek.com/send-e-mail-node-js/
 
 //installed packages
-const mailjet = require ('node-mailjet').connect(process.env.EMAIL_API_KEY, process.env.EMAIL_SECRET_KEY)
+const mailjet = require ('node-mailjet').connect(process.env.EMAIL_API_KEY, process.env.EMAIL_SECRET_KEY);
 
 //packages made for this project
-let User = require("../database/model/users");
+let EmailSent = require("../database/model/emailSent"); 
 
-const createEmailRequest = (name, email, subject, textContent, htmlContent)=>{
-    return mailjet.post("send", {'version': 'v3.1'})
+//sending email & save email log in database
+const sendAndSendEmail = (name, email, subject, textContent, htmlContent, purpose)=>{
+    const request =  mailjet.post("send", {'version': 'v3.1'})
         .request({ "Messages": [
             {
             "From": {
@@ -25,8 +26,27 @@ const createEmailRequest = (name, email, subject, textContent, htmlContent)=>{
             "HTMLPart": htmlContent,
             }
         ]
-    });
+	});
+	
+	let emailSentData = new EmailSent({
+		email,
+		purpose: "email verification",
+		success: null 
+	});
+
+	//sending email 
+	request.then((result) => {
+		console.log(result);
+		emailSentData.success = (result.body.Messages[0].Status == 'success');
+  	}).catch((err) => {
+		console.log(err.statusCode);
+		emailSentData.success = false;
+	});
+	 
+	//saving email data
+	emailSentData.save();
 }
+
 
 //function will call to send email to verify email
 const emailVerification = (name, email, verificationCode) =>{
@@ -45,14 +65,28 @@ const emailVerification = (name, email, verificationCode) =>{
 		<br>
 		<h3><b>Team Mr. Notes</b></h3>`;
 
-	const request = createEmailRequest(name, email, 'Email Verification', null, htmlContent);
+	const subject = "Email Verification";	
+	sendAndSendEmail(name, email, subject, null, htmlContent, subject.toLowerCase());
 
-	//sending email 
-	request.then((result) => {
-    	console.log(result.body)
-  	}).catch((err) => {
-    	console.log(err.statusCode)
-  	});
 }
 
-module.exports = { emailVerification };
+//sending email invitation for new member of team
+const memberInvitation = (name, email, invitatorName, specialCode, notesUid) => {
+	const htmlContent = `Hey ${name},
+		<br>
+		<br>
+		${invitatorName} invite you to join Team on Mr. Notes. 
+		<br>
+		<p><b>Please click the below given link to accept the request</b></p>
+		<br>
+		<a href="https://www.mrnotes.me/teams/invitation/${specialCode}/confirmation/${notesUid}">https://www.mrnotes.me/users/invitation/${specialCode}/confirmation/${notesUid}</a>	
+		<br>
+		<p><i>If the above link does not seem clickable, copy & paste the link in any web browser</i></p>
+		<br>
+		<h3><b>Team Mr. Notes</b></h3>`;
+
+	const subject = "Email Verification";	
+	sendAndSendEmail(name, email, subject, null, htmlContent, subject.toLowerCase());
+};
+
+module.exports = { emailVerification, memberInvitation };

@@ -171,8 +171,8 @@ router.post('/forget-password/code/:verificationCode', bodyDataValidJSON, (req, 
 });
 
 //email verification page
-router.get('/email/verification/:verifyCode', (req, res)=>{
-	User.findOne({ verificationCode: req.params.verifyCode }, "email password", (err, data)=>{
+router.get('/email/verification/:specialCode', (req, res)=>{
+	User.findOne({ verified: false, verificationCode: req.params.specialCode }, "email", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		ejsData.msg = (data) ? null: "Invalid URL";
 		res.render('email-verify', ejsData);
@@ -180,8 +180,24 @@ router.get('/email/verification/:verifyCode', (req, res)=>{
 });
 
 //email verification 
-router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res)=>{
-	res.json(validRes);
+router.post('/email/verification/:verifyCode', bodyDataValidCred, async (req, res)=>{
+	//checking email format
+	if (validator.isEmail(req.body.email)){
+		req.body.email = (req.body.email).toLowerCase();
+		let userData = await User.findOne({ verified: false, specialCode: req.params.specialCode, email: req.body.email });
+		
+		//checking if userdata exist & correct password entered by user
+		if (userData && bcrypt.compareSync(req.body.password, userData.password)){
+			userData.set({ verified: true, specialCode: null });
+			userData.save();
+			res.status(302).redirect('/users');
+		}else{
+			//flash invalid data
+			res.json(invalidRes);
+		}
+	}else{
+		res.json(invalidRes);
+	}
 });
 
 //logout user

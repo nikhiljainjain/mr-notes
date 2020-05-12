@@ -11,17 +11,12 @@ let emailSent = new mongoose.Schema({
     //for what email send to specific user
     purpose: {
         type: String,
-        default: "verification"
+        default: "email verification"
     },
     //if email sent successfully to the user
     success: {
         type: Boolean,
         default: true
-    },
-    //ip address request for the email use when request for signup
-    ipAddress: {
-        type: String,
-        default: null
     }
 },
 {

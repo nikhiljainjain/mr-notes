@@ -39,16 +39,10 @@ let user = new mongoose.Schema({
         select: false 
     },
     //email verification code (code valid for 48 hours after generation)
-    verificationCode: { 
+    specialCode: { 
         type: String, 
         default: null,
         select: false 
-    },
-    //email send
-    emailSend: {
-        type: Boolean,
-        default: false,
-        select: false
     },
     //user verified
     verified: { 

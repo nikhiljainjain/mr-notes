@@ -30,26 +30,20 @@ let njnotes = new mongoose.Schema({
 	//other members
 	members: [ 
 		{ 
-			//objectid of the user
-			memberId:{
-				type: mongoose.Schema.ObjectId, 
-				ref: 'njnotesusers'
-			},
-			//when requesting user accept the request
-			acceptTime:{
-				type: Date,
-				default: null
-			},
-			//creator requesting time for new user
-			requestTime: {
-				type: Date,
-				default: (new Date())
-			},
-			//user have accepted or not request for notes
-			acceptStatus: {
-				type: Boolean,
-				default: false
-			}
+			data: new mongoose.Schema({
+				//objectid of the user
+				memberId:{
+					type: mongoose.Schema.ObjectId, 
+					ref: 'njnotesusers'
+				},
+				//when requesting user accept the request
+				acceptStatus:{
+					type: Boolean,
+					default: true
+				}
+			},{
+				timestamps: true
+			})
 		} 
 	], 
 	//last login time
