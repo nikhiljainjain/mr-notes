@@ -4,12 +4,14 @@ let router = express.Router();
 
 let bcrypt = require('bcryptjs');
 let validator = require("validator");
+let randomString = require("randomstring");
 
 //self-made
 let User = require('../database/model/users');
 let { COOKIES_AGE, ERROR_MSG, validRes, ejsData, COOKIE_PROP } = require('../config');
 const { bodyDataValidCred, bodyDataValidJSON } = require('../function');
 const { jwtCreate } = require("../function/cookies"); 
+const { emailVerification } = require("../function/email");
 
 //home page
 router.get('/', (req, res)=>{
@@ -100,7 +102,6 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	}
 });
 
-
 router.get('/signup', (req, res)=>{
 	res.status(302).redirect("/login-signup");
 });
@@ -109,8 +110,9 @@ router.get('/signup', (req, res)=>{
 router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
 	
-	if (req.body.password == req.body.cpassword){
-		req.body.email = ((req.body.email.trim()).toLowerCase()); 	
+	//trim email & lowercase email
+	req.body.email = ((req.body.email.trim()).toLowerCase()); 
+	if ((req.body.password == req.body.cpassword) && validator.isEmail(req.body.email)){	
 
 		//checking for existence of user		
 		User.findOne({ email: req.body.email }, "verified", (err, userExist)=>{
@@ -125,15 +127,20 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 					email: req.body.email,
 					password: req.body.password,
 					cookie: req.data.token,
-					registerIP: req.ip, 
-					verificationCode: null
+					ipAddress: req.ip, 
+					specialCode: null
 				};
 				//hashing password
 				newUser.password = bcrypt.hashSync(password);
+				//genderating code for email
+				newUser.specialCode = randomString.generate(32);
+				//sending email to the user
+				emailVerification(newUser.name, newUser.email, newUser.specialCode);
 				//creating new user for the data
 				newUser = new User(newUser);
 				//sending email to user and email verification process will start
 				newUser.save().then(()=>{
+					//generating new session
 					req.session.regenerate((err)=>{
 						if (err) console.error.bind("Session error", err);
 						//setting cookies
@@ -172,7 +179,7 @@ router.post('/forget-password/code/:verificationCode', bodyDataValidJSON, (req, 
 
 //email verification page
 router.get('/email/verification/:specialCode', (req, res)=>{
-	User.findOne({ verified: false, verificationCode: req.params.specialCode }, "email", (err, data)=>{
+	User.findOne({ verified: false, specialCode: req.params.specialCode }, "email", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		ejsData.msg = (data) ? null: "Invalid URL";
 		res.render('email-verify', ejsData);

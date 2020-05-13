@@ -34,7 +34,7 @@ let njcard = new mongoose.Schema({
 		select: false 
 	},
 	//ip address
-	registerIP: {
+	ipAddress: {
 		type: String,
 		default: null,
 		select: false

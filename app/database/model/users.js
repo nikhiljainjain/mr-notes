@@ -7,6 +7,21 @@ let user = new mongoose.Schema({
         default: "Mr. X",
         trim: true, 
     },
+    //google id if login or signup do with google
+    googleId: {
+        type: String,
+        default: null
+    },
+    //login with linkedin 
+    linkedinId: {
+        type: String,
+        default: null
+    },
+    //github loing
+    githubId: {
+        type: String,
+        default: null
+    },
 	//email id
 	email: { 
         type: String, 
@@ -51,7 +66,7 @@ let user = new mongoose.Schema({
         select: false 
     },
     //registering ip addres
-    registerIP: {
+    ipAddress: {
         type: String,
         default: null,
         select: false

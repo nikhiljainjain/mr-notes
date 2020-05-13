@@ -89,7 +89,7 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 		creater: req.data._id,
 		uid: null,
 		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
 	newNote.creationTime = (new Date());
@@ -121,7 +121,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		dueDate: req.body.time,
 		creater: req.data._id,
 		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
 	card.creationTime = (new Date());
@@ -175,7 +175,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 		creater: req.data._id,
 		notesUid: req.params.uid,
 		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
 	//saving creation time

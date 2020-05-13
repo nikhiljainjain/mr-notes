@@ -52,7 +52,7 @@ let njnotes = new mongoose.Schema({
 		default: Date.now 
 	},
 	//ip address
-	registerIP: {
+	ipAddress: {
 		type: String,
 		default: null,
 		select: false
