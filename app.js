@@ -18,7 +18,7 @@ const MongoStore = require("connect-mongo")(session);
 
 
 //files made for this project
-const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, } = require('./app/config');
+const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, COOKIE_PROP } = require('./app/config');
 const indexRouter = require('./app/routes/index');
 const usersRouter = require('./app/routes/users');
 const teamsRouter = require('./app/routes/teams');
@@ -71,13 +71,8 @@ app.use(session({
     saveUninitialized: false,
     store: new MongoStore(mongo_store_option),
     cookie:{
-        maxAge: ONE_DAY_TIME_IN_MSEC,
-        path: "/",
-        sameSite: true,
-        httpOnly: true,
-        //in development or testing mode secure value will be false
-        secure: production_env,
-        domain: process.env.DOMAIN_NAME
+        ...COOKIE_PROP,
+        maxAge: ONE_DAY_TIME_IN_MSEC
     }
 }));
 
