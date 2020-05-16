@@ -38,12 +38,14 @@ router.get('/login', (req, res)=>{
 });
 
 //user login
-router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
+router.post('/login', bodyDataValidCred, jwtCreate, (req, res, next)=>{
+	console.log("Data=", req.data, "Cookies=", req.cookies, "Session=", req.session);
+
 	//creating session variable to limit the login attempt
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
 		ERROR_MSG = "Try After 24hours";
 		//restricting user for 24 hour to login attempt
-		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/400) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else{
 		ERROR_MSG = 'Invalid credentials';
 	
@@ -59,34 +61,28 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		
 		email = (email.trim()).toLowerCase();
 		//finding user in db
-		User.findOne({ email }, "password verified", (err, user)=>{
+		User.findOne({ email }, "password", (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
-			if (user){
-				//console.log(user);
-				//checking password
-				if (bcrypt.compareSync(password, user.password)){
-					//setting cookies in db
-					user.set({ cookie: req.data.token });
-					user.save().then(()=>{
-						//generating new session
-						req.session.regenerate((err)=>{
-							//console.log("req data", req.data);
-							//sending response
-							if (err) console.error.bind("Session error", err);
-							res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
-						});
+			console.log("User=", user);
+			if (user && bcrypt.compareSync(password, user.password)){
+				//setting cookies in db
+				user.set({ cookie: req.data.token });
+				user.save().then(()=>{
+					//generating new session
+					req.session.regenerate((err)=>{
+						//console.log("req data", req.data);
+						//sending response
+						if (err) console.error.bind("Session error", err);
+						res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
 					});
-				}else{
-					req.session.loginCount++;
-					res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
-				}	
+				});
 			}else{
 				req.session.loginCount++;
 				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}
 		});
-
 	}
+	console.log(process.env.DOMAIN_NAME, COOKIE_PROP);
 });
 
 

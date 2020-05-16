@@ -41,7 +41,7 @@ const COOKIE_PROP = {
     httpOnly: true,
     //secure will false if server running in dev or testing env
     secure: (process.env.NODE_ENV === 'production'),
-    sameSite: true,
+    //sameSite: true,
     domain: process.env.DOMAIN_NAME
 };
 
