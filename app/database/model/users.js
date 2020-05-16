@@ -7,6 +7,21 @@ let user = new mongoose.Schema({
         default: "Mr. X",
         trim: true, 
     },
+    //google id if login or signup do with google
+    googleId: {
+        type: String,
+        default: null
+    },
+    //login with linkedin 
+    linkedinId: {
+        type: String,
+        default: null
+    },
+    //github loing
+    githubId: {
+        type: String,
+        default: null
+    },
 	//email id
 	email: { 
         type: String, 
@@ -32,32 +47,20 @@ let user = new mongoose.Schema({
         default: null,
         select: false 
     },
-    //register time
-    registerTime: { 
-        type: Date, 
-        default: Date.now,
-        select: false 
-    },
     //email verification code (code valid for 48 hours after generation)
-    verificationCode: { 
+    specialCode: { 
         type: String, 
         default: null,
         select: false 
     },
-    //email send
-    emailSend: {
-        type: Boolean,
-        default: false,
-        select: false
-    },
     //user verified
     verified: { 
         type: Boolean, 
-        default: false,
+        default: true,
         select: false 
     },
     //registering ip addres
-    registerIP: {
+    ipAddress: {
         type: String,
         default: null,
         select: false
@@ -75,6 +78,8 @@ let user = new mongoose.Schema({
         default: true,
         select: false
     }
+},{
+    timestamps: true
 });
 
 module.exports = mongoose.model('njnotesusers', user);

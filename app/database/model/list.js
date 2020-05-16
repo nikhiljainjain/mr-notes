@@ -1,6 +1,13 @@
 let mongoose = require("mongoose");
 
 let njlist = new mongoose.Schema({
+	//setting color for list
+	color: {
+		type: String,
+		default: "purple",
+		trim: true,
+		lowercase: true
+	},
 	//notes uid
 	notesUid: { 
 		type: String, 
@@ -34,14 +41,8 @@ let njlist = new mongoose.Schema({
 		type: mongoose.Schema.ObjectId, 
 		ref: "njnotesuers" 
 	},
-	//creation time
-    creationTime: { 
-		type: Date, 
-		default: Date.now,
-		select: false 
-	},
 	//ip address
-	registerIP: {
+	ipAddress: {
 		type: String,
 		default: null,
 		select: false
@@ -57,6 +58,8 @@ let njlist = new mongoose.Schema({
 		default: false,
 		select: false
 	}
+},{
+    timestamps: true
 });
 
 module.exports = mongoose.model('njnoteslists', njlist);
