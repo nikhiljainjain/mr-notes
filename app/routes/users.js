@@ -20,11 +20,6 @@ router.get('/', (req, res)=>{
 	User.findById(req.data._id, "notes").populate("notes").sort("name").exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
 
-		// data.notes.forEach((i)=>{
-		// 	i._id = null;
-		// });
-		//console.log("Users data", data.notes.length, data.notes);
-
 		//checking if some query is sent or not
 		ejsData.msg = (req.query.q) ? req.query.q: null;
 		ejsData.notes = data.notes;
@@ -36,14 +31,10 @@ router.get('/', (req, res)=>{
 //get the list & card
 router.get('/board/lists/cards/:uid', validId, (req, res)=>{
 	//in find query add attribute -> archive: false
-	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
+	List.find({ notesUid: req.params.uid }, "name cards archive uid")
+		.populate("cards").exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
-		data.forEach((i)=>{
-			i._id = null;
-			i.cards.forEach((j)=>{
-				j._id = null;
-			});
-		});
+		//console.log(data);
 		validRes.data = data;
 		res.json(validRes);
 	});
@@ -55,24 +46,10 @@ router.get('/board/:uid', validId, (req, res)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork)){
-			let flag = false;
-
-			//checking if user have premission to this notes
-			for (i in req.data.notes){
-				if (i._id == data._id){
-					flag = true;
-				}
-			}
-
-			if (flag){
-				ejsData.uid = req.params.uid;
-				ejsData.user = req.data;
-				ejsData.name = data.name;
-				res.render("board", ejsData);
-			}else{
-				ERROR_MSG = "You haven't authorized to access notes";
-				res.status(302).redirect(`/users?q=${ERROR_MSG}`);
-			}
+			ejsData.uid = req.params.uid;
+			ejsData.user = req.data;
+			ejsData.name = data.name;
+			res.render("board", ejsData);
 		}
 		else{
 			ERROR_MSG = "Notes NOT FOUND";
@@ -160,7 +137,7 @@ router.get("/cards/:noteId/:listId", validId, (req, res)=>{
 	List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId },
 		 "cards").populate("cards").exec((err, listExist)=>{
 		if (err) console.error.bind("Database error", err);
-		console.log(listExist);
+		//console.log(listExist);
 		validRes.data = listExist.cards;
 		res.json(validRes);
 	});
