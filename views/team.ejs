@@ -39,6 +39,22 @@
 		<li><a href="#addMember" class="modal-trigger">Add Member<i class="material-icons left">group_add</i></a></li>
 		<li><a href="/logout">Logout<i class="material-icons left">exit_to_app</i></a></li>
 		<!-- ending navigation link -->
+		<li>
+			<div class="divider"></div>
+		</li>
+		<li>
+			<a href="#">
+				Members
+			<i class="material-icons left">
+				group
+			</i></a>
+		</li>
+		<li>
+			<div class="divider"></div>
+		</li>
+		<% members.forEach(i=>{ %>
+		<li><a href="#"><%= i.name %><i class="material-icons left">person</i></a></li>
+		<% }) %>
 	</ul>
 <main>
 <!-- Modal Structure -->

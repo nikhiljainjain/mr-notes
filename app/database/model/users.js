@@ -68,7 +68,7 @@ let user = new mongoose.Schema({
 	//notes id
 	notes: [
         { 
-            type: mongoose.Schema.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'njnotes' 
         }
     ],

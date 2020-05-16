@@ -38,8 +38,7 @@ router.get('/login', (req, res)=>{
 });
 
 //user login
-router.post('/login', bodyDataValidCred, jwtCreate, (req, res, next)=>{
-	console.log("Data=", req.data, "Cookies=", req.cookies, "Session=", req.session);
+router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 
 	//creating session variable to limit the login attempt
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
@@ -82,7 +81,6 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res, next)=>{
 			}
 		});
 	}
-	console.log(process.env.DOMAIN_NAME, COOKIE_PROP);
 });
 
 
