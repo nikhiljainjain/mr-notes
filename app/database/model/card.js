@@ -1,6 +1,13 @@
 let mongoose = require("mongoose");
 
 let njcard = new mongoose.Schema({
+	//setting color for card
+	color: {
+		type: String,
+		default: "purple",
+		trim: true,
+		lowercase: true
+	},
 	//unique id generator
 	uid: { 
 		type: String, 
@@ -27,18 +34,14 @@ let njcard = new mongoose.Schema({
 		ref: "njnotesusers",
 		select: false 
 	},
-	//last login time
-    creationTime: { 
-		type: Date, 
-		default: Date.now,
-		select: false 
-	},
 	//ip address
 	ipAddress: {
 		type: String,
 		default: null,
 		select: false
 	}
+},{
+    timestamps: true
 });
 
 module.exports = mongoose.model('njnotescards', njcard);

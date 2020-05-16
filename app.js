@@ -15,10 +15,9 @@ const expressSanitizer = require('express-sanitizer');
 const helmet = require("helmet");
 const dosPrev = require('ddos');
 const MongoStore = require("connect-mongo")(session);
-const flashMsg = require('flash');
 
 //files made for this project
-const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, } = require('./app/config');
+const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, ejsData } = require('./app/config');
 const indexRouter = require('./app/routes/index');
 const usersRouter = require('./app/routes/users');
 const teamsRouter = require('./app/routes/teams');
@@ -44,6 +43,9 @@ const logMethod =  production_env ? 'combined' : 'dev';
 //mongo store
 const mongo_store_option =  production_env ? mongo_store_pro : mongo_store_dev;
 
+//setting ejsdata msg value to null
+ejsData.msg = null;
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -61,7 +63,6 @@ app.use(helmet());
 app.use(noDos.express);
 
 //special config for this project
-app.use(flashMsg());
 app.use(noDos.express);
 app.use(expressSanitizer());
 app.use(session({

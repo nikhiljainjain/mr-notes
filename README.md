@@ -56,7 +56,7 @@ Open [Deployed Site](https://mrnotes.me) to view it in the browser.
 
 ### Backend code
 
-- [ ] Email verification process
+- [x] Email verification process
 - [ ] Forget password
 - [ ] Test script for every json responser
 - [ ] Data format validation 

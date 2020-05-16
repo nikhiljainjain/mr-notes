@@ -2,9 +2,11 @@ let mongoose = require("mongoose");
 
 let njSharedLinkVisitors = new mongoose.Schema({
 	//unique id generator
-	notesUid: { 
-		type: String, 
-		default: null 
+	shortLinkId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "shortlinks",
+        default: null,
+        require: true 
     },
     //ip address
     ipAddress: {

@@ -1,6 +1,13 @@
 let mongoose = require("mongoose");
 
 let njnotes = new mongoose.Schema({
+	//setting color for notes
+	color: {
+		type: String,
+		default: "purple",
+		trim: true,
+		lowercase: true
+	},
 	//unique id generator
 	uid: { 
 		type: String, 
@@ -46,11 +53,6 @@ let njnotes = new mongoose.Schema({
 			})
 		} 
 	], 
-	//last login time
-    creationTime: { 
-		type: Date, 
-		default: Date.now 
-	},
 	//ip address
 	ipAddress: {
 		type: String,
@@ -75,6 +77,8 @@ let njnotes = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	}
+},{
+    timestamps: true
 });
 
 module.exports = mongoose.model('njnotes', njnotes);

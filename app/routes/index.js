@@ -20,7 +20,7 @@ router.get('/', (req, res)=>{
 });
 
 //rendering login & signup page
-router.get('/login-signup', (req, res)=>{
+router.get('/login-signup', (req, res, next)=>{
 	//taking query and display to front end
 	if (req.query.q){
 		ejsData.msg = req.query.q;

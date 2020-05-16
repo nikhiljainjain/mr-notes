@@ -47,12 +47,6 @@ let user = new mongoose.Schema({
         default: null,
         select: false 
     },
-    //register time
-    registerTime: { 
-        type: Date, 
-        default: Date.now,
-        select: false 
-    },
     //email verification code (code valid for 48 hours after generation)
     specialCode: { 
         type: String, 
@@ -84,6 +78,8 @@ let user = new mongoose.Schema({
         default: true,
         select: false
     }
+},{
+    timestamps: true
 });
 
 module.exports = mongoose.model('njnotesusers', user);

@@ -150,7 +150,7 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 //get the list & card
 router.get('/board/lists/cards/:uid', validId, (req, res)=>{
 	//in find query add attribute -> archive: false
-	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
+	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		data.forEach((i)=>{
 			i._id = null;
@@ -201,13 +201,11 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
-		creater: req.data._id,
 		uid: null,
 		creationTime: null,
 		ipAddress: req.ip
 	};
 
-	newNote.creationTime = (new Date());
 	newNote.name = (newNote.name.charAt(0)).toUpperCase() + (newNote.name.slice(1));
 
 	newNote.uid = shortid.generate();
@@ -235,11 +233,9 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		desc: req.body.desc,
 		dueDate: req.body.time,
 		creater: req.data._id,
-		creationTime: null,
 		ipAddress: req.ip
 	};
 
-	card.creationTime = (new Date());
 	card.uid = shortid.generate();
 	//checking if date in valid format or not
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
@@ -260,7 +256,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 
 //list of all cards
 router.get("/cards/:noteId/:listId", validId, (req, res)=>{
-	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
+	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//remove _id from array of card before sending to response
 		validRes.data = data.cards;
@@ -275,11 +271,9 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 		uid: null,
 		creater: req.data._id,
 		notesUid: req.params.uid,
-		creationTime: null,
 		ipAddress: req.ip
 	};
 
-	newList.creationTime = (new Date());
 	newList.uid = shortid.generate();
 	//creating new list
 	List.create(newList, (err, listSave)=>{
