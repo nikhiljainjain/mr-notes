@@ -23,8 +23,8 @@ const cookieValid = (req, res, next) =>{
 				}else
 					res.status(302).redirect("/login-signup");		  
 			});
-		}catch(err){
-			res.json(invalidRes);
+		}catch(err){	
+			res.status(302).redirect("/login-signup");
 		}	
 	}else
 		res.status(302).redirect("/login-signup");
