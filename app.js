@@ -17,7 +17,7 @@ const dosPrev = require('ddos');
 const MongoStore = require("connect-mongo")(session);
 
 //files made for this project
-const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, ejsData } = require('./app/config');
+const { mongo_store_dev, COOKIE_PROP, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, ejsData } = require('./app/config');
 const indexRouter = require('./app/routes/index');
 const usersRouter = require('./app/routes/users');
 const teamsRouter = require('./app/routes/teams');
@@ -32,7 +32,7 @@ const noDos = new dosPrev({
 });
 
 //checking server is running in production env or dev
-const production_env = (process.env.NODE_ENV === 'production');
+const production_env = process.env.NODE_ENV === 'production';
 
 //connecting to database
 database.connect(production_env);
@@ -68,19 +68,13 @@ app.use(expressSanitizer());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     name: "sessionId",
-    path: "/",
     resave: true,
     rolling: true,
     saveUninitialized: false,
     store: new MongoStore(mongo_store_option),
     cookie:{
+        ...COOKIE_PROP,
         maxAge: ONE_DAY_TIME_IN_MSEC,
-        path: "/",
-        sameSite: true,
-        httpOnly: true,
-        //in development or testing mode secure value will be false
-        secure: production_env,
-        domain: process.env.DOMAIN_NAME
     }
 }));
 

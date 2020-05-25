@@ -2,10 +2,12 @@ let jwt = require("jsonwebtoken");
 let shortid = require('shortid');
 
 let User = require("../database/model/users");
-let { invalidRes, COOKIES_AGE } = require('../config');
+let { COOKIES_AGE, COOKIE_PROP } = require('../config');
 
 //user cookies validation
 const cookieValid = (req, res, next) =>{
+	console.log(req.cookies, req.session);
+
 	//extracting cookies from req parameter
   	let cookie = req.cookies.token;
 	if (cookie != null){
@@ -13,21 +15,37 @@ const cookieValid = (req, res, next) =>{
 			//token validation from jwt
 			cookie = jwt.verify(cookie, process.env.JWT_SECRET);
 			cookie = cookie.token;
-			/*.populate("notes")*/
-			User.findOne({cookie}).exec((err, data)=>{
-				if (err) console.error.bind(err);
-				if (data){
-					req.data = data;
-					//calling next process
-					next();
-				}else
-					res.status(302).redirect("/login-signup");		  
-			});
+
+			req.session.reload(async err=>{
+                if (err) console.log("Session error", err);
+            
+                //checking string already saved in session or not
+                if(req.session.cookieToken === cookie){
+                    //if save in session then retireve data user data and set on req.data
+                    req.data = req.session.user;
+                    next();
+                }else{
+                    //checking cookie value in db
+                    const userData = await User.findOne({cookie});
+
+                    console.log(req.cookies, userData, req.session);
+
+                    if(userData){
+                        //setting user data to request so it can use further no need of user fetch 
+                        req.session.cookieToken = cookie;
+                        req.session.user = userData;
+                        req.data = userData;
+                        next();
+                    }else{
+                        res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");		  
+                    }
+                }
+            });
 		}catch(err){
-			res.json(invalidRes);
+			res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");
 		}	
 	}else
-		res.status(302).redirect("/login-signup");
+		res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");
 };
 
 /**

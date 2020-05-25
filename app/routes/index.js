@@ -49,7 +49,7 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		//restricting user for 24 hour to login attempt
 		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else if (!validator.isEmail(req.body.email)){
-		ERROR_MSG = "Invalid EmailId";
+		ERROR_MSG = "Invalid Email Id";
 		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else{
 		ERROR_MSG = 'Invalid credentials';
@@ -76,8 +76,11 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 					//setting cookies in db
 					user.set({ cookie: req.data.token });
 					user.save().then(()=>{
+						req.session.cookieToken = req.data.token;
+						req.session.user = user;
+
 						//generating new session
-						req.session.regenerate((err)=>{
+						req.session.save((err)=>{
 							//console.log("req data", req.data);
 							//sending response
 							if (err) console.error.bind("Session error", err);
