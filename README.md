@@ -65,6 +65,9 @@ Open [Deployed Site](https://mrnotes.me) to view it in the browser.
 - [ ] Card transfer from one list to another list
 - [ ] Person adding new team member should be team creater
 - [ ] User profile updation
+- [ ] Google Oauth
+- [ ] Facebook Oauth
+- [ ] Linkedin Oauth
 
 ### Frontend page
 
