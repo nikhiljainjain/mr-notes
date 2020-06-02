@@ -84,41 +84,44 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 });
 
 
-router.get('/signup', (req, res)=>{
-	res.status(302).redirect("/login-signup");
-});
+router.get('/signup', (req, res)=>res.status(302).redirect("/login-signup"));
 
 //user registration
 router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
 	
 	if (req.body.password == req.body.cpassword){
-		req.body.email = ((req.body.email.trim()).toLowerCase()); 	
 
 		//checking for existence of user		
 		User.findOne({ email: req.body.email }, (err, userExist)=>{
+			console.log(userExist);
+
 			if (err) console.error.bind("DB error", err);
 			//if user exist then sending back to login page
 			if (userExist){
 				ERROR_MSG = "User Already Exist";
 				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}&color=green`);
 			}else{
+				delete req.body.cpassword
+
 				let newUser = {
-					name: ((req.body.fname +" "+ req.body.lname).toUpperCase()),
-					email: req.body.email,
-					password: req.body.password,
+					...req.body,
 					cookie: req.data.token,
 					registerIP: req.ip, 
 					verificationCode: null
 				};
 				//hashing password
-				newUser.password = bcrypt.hashSync(password);
+				newUser.password = bcrypt.hashSync(req.body.password);
 				//creating new user for the data
 				newUser = new User(newUser);
+
+				console.log(newUser);
+
 				//sending email to user and email verification process will start
 				newUser.save().then(()=>{
 					req.session.regenerate((err)=>{
 						if (err) console.error.bind("Session error", err);
+						console.log(req.data);
 						//setting cookies
 						res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
 					});

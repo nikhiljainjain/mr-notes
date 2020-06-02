@@ -6,6 +6,7 @@ let user = new mongoose.Schema({
         type: String, 
         default: "Mr. X",
         trim: true, 
+        uppercase: true
     },
     //google id if login or signup do with google
     googleId: {
@@ -26,6 +27,7 @@ let user = new mongoose.Schema({
 	email: { 
         type: String, 
         default: "example@email.com", 
+        lowercase: true,
         unique: true,
         trim: true
     },
@@ -33,7 +35,8 @@ let user = new mongoose.Schema({
     gender: {
         type: String,
         default: "M",
-        trim: true
+        trim: true,
+        uppercase: true
     },
 	//password
     password: { 
@@ -77,6 +80,17 @@ let user = new mongoose.Schema({
         type: Boolean, 
         default: true,
         select: false
+    },
+    //otp code genearted for
+    otp: {
+        number: {
+            type: Number,
+            default: 0
+        },
+        attempts: {
+            type: Number,
+            default: 1
+        }
     }
 },{
     timestamps: true

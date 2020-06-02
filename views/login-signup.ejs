@@ -57,16 +57,21 @@
 							<!-- registration form -->
 						<form class="col s12" action="/signup" method="post">
 							<div class="row">
-								<!-- input user first name -->
-								<div class="input-field col s6">
-								<input id="first_name" type="text" name="fname" class="validate" required />
-								<label for="first_name">First Name</label>
+								<!-- input user name -->
+								<div class="input-field col s12">
+								<input id="first_name" type="text" name="name" class="validate" required />
+								<label for="first_name">Name</label>
 								</div>
-								<!-- input user last name -->
-								<div class="input-field col s6">
-								<input id="last_name" type="text" class="validate" name="lname" required />
-								<label for="last_name">Last Name</label>
-								</div>
+								<!-- input user gender -->
+								  <div class="input-field col s12">
+									<select required="true" name="gender">
+									  <option value="" disabled selected>Select One....</option>
+									  <option value="M">Male</option>
+									  <option value="F">Female</option>
+									  <option value="O">Other</option>
+									</select>
+									<label>Gender</label>
+								  </div>
 							</div>
 							<div class="row">
 								<!-- input user email -->
@@ -78,12 +83,12 @@
 							</div>
 							<div class="row">
 								<!-- input password -->
-								<div class="input-field col s6">
+								<div class="input-field col s12">
 									<input id="password" type="password" minlength="6" maxlength="26" class="validate" name="password" required />
 									<label for="password">Password</label>
 								</div>
 								<!-- input confirm password -->
-								<div class="input-field col s6">
+								<div class="input-field col s12">
 									<input id="confirm-password" type="password" class="validate" minlength="6" maxlength="26" name="cpassword" required />
 									<label for="confirm-password">Confirm Password</label>
 								</div>
