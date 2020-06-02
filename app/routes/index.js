@@ -94,7 +94,7 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 
 		//checking for existence of user		
 		User.findOne({ email: req.body.email }, (err, userExist)=>{
-			console.log(userExist);
+			//console.log(userExist);
 
 			if (err) console.error.bind("DB error", err);
 			//if user exist then sending back to login page
@@ -115,13 +115,13 @@ router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
 				//creating new user for the data
 				newUser = new User(newUser);
 
-				console.log(newUser);
+				//console.log(newUser);
 
 				//sending email to user and email verification process will start
 				newUser.save().then(()=>{
 					req.session.regenerate((err)=>{
 						if (err) console.error.bind("Session error", err);
-						console.log(req.data);
+						//console.log(req.data);
 						//setting cookies
 						res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
 					});
