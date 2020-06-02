@@ -59,19 +59,9 @@
 							<div class="row">
 								<!-- input user name -->
 								<div class="input-field col s12">
-								<input id="first_name" type="text" name="name" class="validate" required />
-								<label for="first_name">Name</label>
+									<input id="first_name" type="text" name="name" class="validate" required />
+									<label for="first_name">Name</label>
 								</div>
-								<!-- input user gender -->
-								  <div class="input-field col s12">
-									<select required="true" name="gender">
-									  <option value="" disabled selected>Select One....</option>
-									  <option value="M">Male</option>
-									  <option value="F">Female</option>
-									  <option value="O">Other</option>
-									</select>
-									<label>Gender</label>
-								  </div>
 							</div>
 							<div class="row">
 								<!-- input user email -->
@@ -79,6 +69,18 @@
 									<input id="signup-email" type="email" class="validate" name="email" required />
 									<label for="signup-email">Email</label>
 									<!-- <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span> -->
+								</div>
+							</div>
+							<div class="row">
+								<!-- input user gender -->
+								<div class="input-field col s12">
+									<select name="gender" required>
+										<option value="">Select One....</option>
+										<option value="M">Male<i class="fa fa-mars"></i></option>
+										<option value="F">Female<i class="fa fa-venus right"></i></option>
+										<option value="O">Other</option>
+									</select>
+									<label>Gender</label>
 								</div>
 							</div>
 							<div class="row">
