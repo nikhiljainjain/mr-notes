@@ -6,7 +6,7 @@ let { invalidRes, COOKIES_AGE } = require('../config');
 
 //user cookies validation
 const cookieValid = (req, res, next) =>{
-	//console.log("COOKIE PART")
+	console.log("COOKIE PART", req.cookies);
 	//extracting cookies from req parameter
   	let cookie = req.cookies.token;
 	if (cookie != null){
@@ -14,10 +14,10 @@ const cookieValid = (req, res, next) =>{
 			//token validation from jwt
 			cookie = jwt.verify(cookie, process.env.JWT_SECRET);
 			cookie = cookie.token;
-			//console.log(cookie)
+			console.log("COOKIE", cookie);
 			/*.populate("notes")*/
 			User.findOne({cookie}).exec((err, data)=>{
-				console.log(data);
+				console.log("UserData=", data);
 				if (err) console.error.bind(err);
 				if (data){
 					req.data = data;
