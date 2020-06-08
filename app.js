@@ -65,7 +65,6 @@ app.use(expressSanitizer());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     name: "sessionId",
-    path: "/",
     resave: true,
     rolling: true,
     saveUninitialized: false,

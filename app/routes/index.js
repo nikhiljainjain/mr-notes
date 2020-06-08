@@ -39,7 +39,7 @@ router.get('/signup', (req, res)=>res.status(302).redirect("/login-signup"));
 router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	//creating session variable to limit the login attempt
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
-		ERROR_MSG = "Try After 24hours";
+		ERROR_MSG = "Try After 24Hours";
 		//restricting user for 24 hour to login attempt
 		return res.cookie('count', "dont", { maxAge: (COOKIES_AGE/400) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else{
@@ -55,23 +55,17 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 			req.session.loginCount++;
 		}
 		
-		email = (email.trim()).toLowerCase();
+		email = email.toLowerCase();
 		//finding user in db
-		User.findOne({ email }, "password", (err, user)=>{
+		User.findOne({ email }, "password", async (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
 			//console.log("User=", user);
 			if (user && bcrypt.compareSync(password, user.password)){
 				//setting cookies in db
 				user.set({ cookie: req.data.token });
-				user.save().then(()=>{
-					//generating new session
-					req.session.regenerate((err)=>{
-						//console.log("req data", req.data);
-						//sending response
-						if (err) console.error.bind("Session error", err);
-						return res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
-					});
-				});
+				await user.save()
+				//sending response
+				return res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
 			}else{
 				req.session.loginCount++;
 				return res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
