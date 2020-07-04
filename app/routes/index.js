@@ -14,10 +14,7 @@ const { jwtCreate } = require("../function/cookies");
 const { emailVerification } = require("../function/email");
 
 //home page
-router.get('/', (req, res)=>{
-	console.log(req.statusCode)
-	res.render('index');
-});
+router.get('/', (req, res)=>res.render('index'));
 
 //rendering login & signup page
 router.get('/login-signup', (req, res, next)=>{
@@ -37,9 +34,7 @@ router.get('/login-signup', (req, res, next)=>{
 	}
 });
 
-router.get('/login', (req, res)=>{
-	res.status(302).redirect("/login-signup");
-});
+router.get('/login', (req, res)=>res.status(302).redirect("/login-signup"));
 
 //user login
 router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
@@ -102,9 +97,7 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	}
 });
 
-router.get('/signup', (req, res)=>{
-	res.status(302).redirect("/login-signup");
-});
+router.get('/signup', (req, res)=>res.status(302).redirect("/login-signup"));
 
 //user registration
 router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
