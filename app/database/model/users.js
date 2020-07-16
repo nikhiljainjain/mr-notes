@@ -23,6 +23,21 @@ let user = new mongoose.Schema({
         type: String,
         default: null
     },
+    //google id if login or signup do with google
+    googleId: {
+        type: String,
+        default: null
+    },
+    //login with linkedin 
+    linkedinId: {
+        type: String,
+        default: null
+    },
+    //github loing
+    githubId: {
+        type: String,
+        default: null
+    },
 	//email id
 	email: { 
         type: String, 

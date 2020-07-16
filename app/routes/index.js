@@ -1,19 +1,23 @@
 //installed packages
 let express = require('express');
 let router = express.Router();
+
 let bcrypt = require('bcryptjs');
+let validator = require("validator");
+let randomString = require("randomstring");
 
 //self-made
 let User = require('../database/model/users');
 let { COOKIES_AGE, ERROR_MSG, validRes, ejsData, COOKIE_PROP } = require('../config');
 const { bodyDataValidCred, bodyDataValidJSON } = require('../function');
 const { jwtCreate } = require("../function/cookies"); 
+const { emailVerification } = require("../function/email");
 
 //home page
 router.get('/', (req, res)=>res.render('index'));
 
 //rendering login & signup page
-router.get('/login-signup', (req, res)=>{
+router.get('/login-signup', (req, res, next)=>{
 	//taking query and display to front end
 	if (req.query.q){
 		ejsData.msg = req.query.q;
@@ -41,7 +45,10 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
 		ERROR_MSG = "Try After 24Hours";
 		//restricting user for 24 hour to login attempt
-		return res.cookie('count', "dont", { maxAge: (COOKIES_AGE/400) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+	}else if (!validator.isEmail(req.body.email)){
+		ERROR_MSG = "Invalid Email Id";
+		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else{
 		ERROR_MSG = 'Invalid credentials';
 	
@@ -55,23 +62,48 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 			req.session.loginCount++;
 		}
 		
-		email = email.toLowerCase();
+		email = (email.trim()).toLowerCase();
+
 		//finding user in db
 		User.findOne({ email }, "password", async (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
-			//console.log("User=", user);
-			if (user && bcrypt.compareSync(password, user.password)){
-				//setting cookies in db
-				user.set({ cookie: req.data.token });
-				await user.save()
-				//sending response
-				return res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+			if (user.verified){
+				//console.log(user);
+				//checking password
+				if (bcrypt.compareSync(password, user.password)){
+					//setting cookies in db
+					user.set({ cookie: req.data.token });
+					user.save().then(()=>{
+						req.session.cookieToken = req.data.token;
+						req.session.user = user;
+
+						//generating new session
+						req.session.save((err)=>{
+							//console.log("req data", req.data);
+							//sending response
+							if (err) console.error.bind("Session error", err);
+							res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+						});
+					});
+				}else{
+					req.session.loginCount++;
+					res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+				}	
+			}else if (!user.verified){
+				//user not verified there email account
+				ERROR_MSG = 'Email not Verified';
+				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}else{
+				//user account not found
 				req.session.loginCount++;
 				return res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}
 		});
 	}
+});
+
+router.get('/signup', (req, res)=>{
+	res.status(302).redirect("/login-signup");
 });
 
 //user registration
@@ -134,8 +166,8 @@ router.post('/forget-password/code/:verificationCode', bodyDataValidJSON, (req, 
 });
 
 //email verification page
-router.get('/email/verification/:verifyCode', (req, res)=>{
-	User.findOne({ verificationCode: req.params.verifyCode }, "email password", (err, data)=>{
+router.get('/email/verification/:specialCode', (req, res)=>{
+	User.findOne({ verified: false, specialCode: req.params.specialCode }, "email", (err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		ejsData.msg = (data) ? null: "Invalid URL";
 		res.render('email-verify', ejsData);
@@ -143,8 +175,24 @@ router.get('/email/verification/:verifyCode', (req, res)=>{
 });
 
 //email verification 
-router.post('/email/verification/:verifyCode', bodyDataValidCred, (req, res)=>{
-	res.json(validRes);
+router.post('/email/verification/:verifyCode', bodyDataValidCred, async (req, res)=>{
+	//checking email format
+	if (validator.isEmail(req.body.email)){
+		req.body.email = (req.body.email).toLowerCase();
+		let userData = await User.findOne({ verified: false, specialCode: req.params.specialCode, email: req.body.email });
+		
+		//checking if userdata exist & correct password entered by user
+		if (userData && bcrypt.compareSync(req.body.password, userData.password)){
+			userData.set({ verified: true, specialCode: null });
+			userData.save();
+			res.status(302).redirect('/users');
+		}else{
+			//flash invalid data
+			res.json(invalidRes);
+		}
+	}else{
+		res.json(invalidRes);
+	}
 });
 
 //logout user

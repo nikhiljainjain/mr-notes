@@ -17,7 +17,7 @@ router.use(cookieValid);
 
 //user home
 router.get('/', (req, res)=>{
-	User.findById(req.data._id, "notes").populate("notes").sort("name").exec((err, data)=>{
+	User.findById(req.data._id, "notes").populate("notes").sort("name").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
 
 		//checking if some query is sent or not
@@ -29,7 +29,7 @@ router.get('/', (req, res)=>{
 });
 
 //get the list & card
-router.get('/board/lists/cards/:uid', validId, (req, res)=>{
+router.get('/board/lists/cards/:notesUid', validId, (req, res)=>{
 	//in find query add attribute -> archive: false
 	List.find({ notesUid: req.params.uid }, "name cards archive uid")
 		.populate("cards").exec((err, data)=>{
@@ -42,7 +42,7 @@ router.get('/board/lists/cards/:uid', validId, (req, res)=>{
 
 //inside board personal board only
 router.get('/board/:uid', validId, (req, res)=>{
-	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
+	Notes.findOne({ uid: req.params.uid }).select({ name: 1, teamWork: 1, _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork)){
@@ -65,11 +65,9 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 		desc: req.body.desc,
 		creater: req.data._id,
 		uid: null,
-		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	newNote.creationTime = (new Date());
 	newNote.name = (newNote.name.charAt(0)).toUpperCase() + (newNote.name.slice(1));
 
 	newNote.uid = shortid.generate();
@@ -97,11 +95,9 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		desc: req.body.desc,
 		dueDate: req.body.time,
 		creater: req.data._id,
-		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	card.creationTime = (new Date());
 	card.uid = shortid.generate();
 	//checking if date in valid format or not
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
@@ -135,7 +131,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 router.get("/cards/:noteId/:listId", validId, (req, res)=>{
 	//finding list belonging to particular notes
 	List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId },
-		 "cards").populate("cards").exec((err, listExist)=>{
+		 "cards").populate("cards").select({ _id: 0 }).exec((err, listExist)=>{
 		if (err) console.error.bind("Database error", err);
 		//console.log(listExist);
 		validRes.data = listExist.cards;
@@ -151,12 +147,9 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 		uid: null,
 		creater: req.data._id,
 		notesUid: req.params.uid,
-		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	//saving creation time
-	newList.creationTime = (new Date());
 	newList.uid = shortid.generate();
 	//creating new list
 	List.create(newList, (err, listSave)=>{
@@ -182,7 +175,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 //archive the card
 router.get("/card/archive/:uid", validId, (req, res)=>{
 	//finding card in the database
-	Card.findOne({ creater: req.data._id, uid: req.params.uid }, "archive", (err, cardExist)=>{
+	Card.findOne({ creater: req.data._id, uid: req.params.uid }).select({ archive: 1, _id: 0}).exec((err, cardExist)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking card exist or not in database and value should be false
 		if (cardExist && !cardExist.archive){

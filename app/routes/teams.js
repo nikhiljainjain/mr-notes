@@ -1,14 +1,68 @@
 //installed packages
 let express = require('express');
 let router = express.Router();
+let randomString = require('randomstring');
 let shortid = require('shortid');
 
 //self-made 
 let { invalidRes, validRes, ejsData } = require('../config');
 const { validId, bodyDataValidJSON } = require('../function');
 const { cookieValid } = require("../function/cookies");
+let { memberInvitation } = require("../function/email");
 let User = require('../database/model/users');
 let Notes = require('../database/model/notes');
+
+//user invitation page rendering
+router.get('/invitation/:specialCode/confirmation/:notesUid', async (req, res)=>{
+	//checking data in data 
+	const userData = await User.findOne({ specialCode: req.params.specialCode });
+	const notesData = await Notes.findOne({ uid: req.params.notesUid });
+
+	//both exist then page render for request accept
+	if (userData && notesData){
+		//saving data to session
+		req.session.userData = userData;
+		req.session.notesData = notesData; 
+
+		//embdding data for 
+		ejsData.specialCode = req.params.specialCode;
+		ejsData.notesUid = req.params.notesUid;
+
+		//saving data to session
+		req.session.save(err => {
+			if (err) console.error.bind("Session error", err);
+			res.render('userInvitation', ejsData);
+		});
+	}else{
+		//render 404 page
+		res.status(404).send("<h1>Page Not Found<br>Error 404</h1>");
+	}
+});
+
+//when user accept the request for the notes
+router.get('/invitation/:specialCode/confirmation/:notesUid/accept', async (req, res)=>{
+	let { userData, notesData } = req.session;
+
+	//both exist then page render for request accept
+	if (userData && notesData){
+		//saving notes id & null the special code after that save userdata
+		userData.notes.push(notesData._id);
+		userData.set({ specialCode: null });
+		userData.save();
+		
+		//pushing new member to notes
+		notesData.members.push({ membersId: userData._id });
+		notesData.save();
+
+		req.session.regenerate(err => {
+			if (err) console.error.bind("Session error", err);
+			res.status(302).redirect('/users');
+		});
+	}else{
+		//render 404 page
+		res.status(404).send("<h1>Page Not Found<br>Error 404</h1>");
+	}
+});
 
 //cookies validation
 router.use(cookieValid);
@@ -21,7 +75,7 @@ router.post('/create/board', bodyDataValidJSON, (req, res)=>{
 		creater: req.data._id,
 		teamWork: true,
 		uid: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	}; 
 
 	newNote.uid = shortid.generate();
@@ -63,7 +117,7 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 	Checking if adder email id isn't same of new member email id
 	*/
 	if (req.body.email !== req.data.email){
-		User.findOne({email: req.body.email}, (err, userData)=>{
+		User.findOne({ email: req.body.email }, "name", (err, userData)=>{
 			if (err) console.error.bind("Database error", err);
 			//console.log(userData);
 			if (userData){
@@ -72,11 +126,12 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 					if (err) console.error.bind("Database error", err);
 					//if notes exist then update on db
 					if (notesExist){
-						//notes members array
-						notesExist.members.push(userData._id);
-						notesExist.save();
-						//updating notes list to new member
-						userData.notes.push(notesExist._id);
+						const specialCode = randomString.generate(32);
+						//sending email to new member
+						memberInvitation(userData.name, userData.email, req.data.name, specialCode, req.params.uid);
+
+						//saving special code in user schema
+						userData.set({ specialCode });
 						userData.save();
 						res.json(validRes);
 					}else{
@@ -92,10 +147,12 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 });
 
 
+
+
 //get the list & card
 router.get('/board/lists/cards/:uid', validId, (req, res)=>{
 	//in find query add attribute -> archive: false
-	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").exec((err, data)=>{
+	List.find({ notesUid: req.params.uid }, "name cards archive uid").populate("cards").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("DB errror ", err);
 		data.forEach((i)=>{
 			i._id = null;
@@ -146,13 +203,11 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
-		creater: req.data._id,
 		uid: null,
 		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	newNote.creationTime = (new Date());
 	newNote.name = (newNote.name.charAt(0)).toUpperCase() + (newNote.name.slice(1));
 
 	newNote.uid = shortid.generate();
@@ -180,11 +235,9 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		desc: req.body.desc,
 		dueDate: req.body.time,
 		creater: req.data._id,
-		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	card.creationTime = (new Date());
 	card.uid = shortid.generate();
 	//checking if date in valid format or not
 	card.dueDate = (req.body.time != '') ? (new Date(req.body.time)):null;
@@ -205,7 +258,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 
 //list of all cards
 router.get("/cards/:noteId/:listId", validId, (req, res)=>{
-	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").exec((err, data)=>{
+	List.findOne({ notesUid: req.params.noteId, uid: req.params.listId }, "cards").populate("cards").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("Database error", err);
 		//remove _id from array of card before sending to response
 		validRes.data = data.cards;
@@ -220,11 +273,9 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 		uid: null,
 		creater: req.data._id,
 		notesUid: req.params.uid,
-		creationTime: null,
-		registerIP: req.ip
+		ipAddress: req.ip
 	};
 
-	newList.creationTime = (new Date());
 	newList.uid = shortid.generate();
 	//creating new list
 	List.create(newList, (err, listSave)=>{

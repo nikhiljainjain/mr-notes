@@ -16,12 +16,12 @@ const helmet = require("helmet");
 const dosPrev = require('ddos');
 const MongoStore = require("connect-mongo")(session);
 
-
 //files made for this project
-const { mongo_store_dev, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, COOKIE_PROP } = require('./app/config');
+const { mongo_store_dev, COOKIE_PROP, mongo_store_pro, ONE_DAY_TIME_IN_MSEC, ejsData } = require('./app/config');
 const indexRouter = require('./app/routes/index');
 const usersRouter = require('./app/routes/users');
 const teamsRouter = require('./app/routes/teams');
+const shareLinksRouter = require('./app/routes/shareLinks');
 const database = require('./app/database/connect');
 
 //dos attack preventtion configuration
@@ -32,7 +32,7 @@ const noDos = new dosPrev({
 });
 
 //checking server is running in production env or dev
-const production_env = (process.env.NODE_ENV === 'production');
+const production_env = process.env.NODE_ENV === 'production';
 
 //connecting to database
 database.connect(production_env);
@@ -42,6 +42,9 @@ const logMethod =  production_env ? 'combined' : 'dev';
 
 //mongo store
 const mongo_store_option =  production_env ? mongo_store_pro : mongo_store_dev;
+
+//setting ejsdata msg value to null
+ejsData.msg = null;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -79,6 +82,7 @@ app.use(session({
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/teams', teamsRouter);
+app.use('/shareLinked', shareLinksRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
