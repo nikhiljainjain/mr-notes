@@ -6,6 +6,22 @@ let user = new mongoose.Schema({
         type: String, 
         default: "Mr. X",
         trim: true, 
+        uppercase: true
+    },
+    //google id if login or signup do with google
+    googleId: {
+        type: String,
+        default: null
+    },
+    //login with linkedin 
+    linkedinId: {
+        type: String,
+        default: null
+    },
+    //github loing
+    githubId: {
+        type: String,
+        default: null
     },
     //google id if login or signup do with google
     googleId: {
@@ -26,6 +42,7 @@ let user = new mongoose.Schema({
 	email: { 
         type: String, 
         default: "example@email.com", 
+        lowercase: true,
         unique: true,
         trim: true
     },
@@ -33,7 +50,8 @@ let user = new mongoose.Schema({
     gender: {
         type: String,
         default: "M",
-        trim: true
+        trim: true,
+        uppercase: true
     },
 	//password
     password: { 
@@ -56,7 +74,7 @@ let user = new mongoose.Schema({
     //user verified
     verified: { 
         type: Boolean, 
-        default: false,
+        default: true,
         select: false 
     },
     //registering ip addres
@@ -68,7 +86,7 @@ let user = new mongoose.Schema({
 	//notes id
 	notes: [
         { 
-            type: mongoose.Schema.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'njnotes' 
         }
     ],
@@ -77,6 +95,17 @@ let user = new mongoose.Schema({
         type: Boolean, 
         default: true,
         select: false
+    },
+    //otp code genearted for
+    otp: {
+        number: {
+            type: Number,
+            default: 0
+        },
+        attempts: {
+            type: Number,
+            default: 1
+        }
     }
 },{
     timestamps: true

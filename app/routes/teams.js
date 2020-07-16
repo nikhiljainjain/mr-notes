@@ -95,13 +95,15 @@ router.post('/create/board', bodyDataValidJSON, (req, res)=>{
 
 //inside board
 router.get('/board/:uid', validId, (req, res)=>{
-	Notes.findOne({ uid: req.params.uid }, "name teamWork", (err, data)=>{
+	Notes.findOne({ uid: req.params.uid }, "name teamWork").populate("members").exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
+
 		//checking if board really a team board or not
 		if (data && data.teamWork){
 			ejsData.uid = req.params.uid;
 			ejsData.user = req.data;
 			ejsData.name = data.name;
+			ejsData.members = data.members;
 			res.render("team", ejsData);
 		}
 		else

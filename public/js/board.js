@@ -60,6 +60,7 @@ function showList(name, uid){
 
 function listLoader() {
 	$.get(`/users/board/lists/cards/${uid}`).done((res)=>{
+		console.log(res);
 		res.data.forEach((i)=>{
 			//loading list
 			showList(i.name, i.uid);

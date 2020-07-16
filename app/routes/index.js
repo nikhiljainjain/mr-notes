@@ -14,10 +14,7 @@ const { jwtCreate } = require("../function/cookies");
 const { emailVerification } = require("../function/email");
 
 //home page
-router.get('/', (req, res)=>{
-	console.log(req.statusCode)
-	res.render('index');
-});
+router.get('/', (req, res)=>res.render('index'));
 
 //rendering login & signup page
 router.get('/login-signup', (req, res, next)=>{
@@ -37,15 +34,16 @@ router.get('/login-signup', (req, res, next)=>{
 	}
 });
 
-router.get('/login', (req, res)=>{
-	res.status(302).redirect("/login-signup");
-});
+router.get('/login', (req, res)=>res.status(302).redirect("/login-signup"));
+
+router.get('/signup', (req, res)=>res.status(302).redirect("/login-signup"));
+
 
 //user login
 router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 	//creating session variable to limit the login attempt
 	if (req.cookies.count || (req.session.loginCount && req.session.loginCount > 5)){
-		ERROR_MSG = "Try After 24hours";
+		ERROR_MSG = "Try After 24Hours";
 		//restricting user for 24 hour to login attempt
 		res.cookie('count', "dont", { maxAge: (COOKIES_AGE/300) }).status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 	}else if (!validator.isEmail(req.body.email)){
@@ -67,7 +65,7 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 		email = (email.trim()).toLowerCase();
 
 		//finding user in db
-		User.findOne({ email }, "password verified", (err, user)=>{
+		User.findOne({ email }, "password", async (err, user)=>{
 			if (err) console.error.bind('Database Error', err);
 			if (user.verified){
 				//console.log(user);
@@ -98,10 +96,9 @@ router.post('/login', bodyDataValidCred, jwtCreate, (req, res)=>{
 			}else{
 				//user account not found
 				req.session.loginCount++;
-				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+				return res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 			}
 		});
-
 	}
 });
 
@@ -110,57 +107,47 @@ router.get('/signup', (req, res)=>{
 });
 
 //user registration
-router.post('/signup', bodyDataValidCred, jwtCreate, (req, res)=>{
+router.post('/signup', bodyDataValidCred, jwtCreate, async (req, res)=>{
 	ERROR_MSG = "Password and Confirm Password are not same";
-	
-	//trim email & lowercase email
-	req.body.email = ((req.body.email.trim()).toLowerCase()); 
-	if ((req.body.password == req.body.cpassword) && validator.isEmail(req.body.email)){	
+	//console.log(req.body, req.ip);
+	if (req.body.password == req.body.cpassword){
 
-		//checking for existence of user		
-		User.findOne({ email: req.body.email }, "verified", (err, userExist)=>{
-			if (err) console.error.bind("DB error", err);
-			//if user exist then sending back to login page
-			if (userExist){
+		try{
+			delete req.body.cpassword
+
+			let newUser = {
+				...req.body,
+				cookie: req.data.token,
+				ipAddress: req.ip, 
+				verificationCode: null
+			};
+			//hashing password
+			newUser.password = bcrypt.hashSync(req.body.password);
+			//creating new user for the data
+			newUser = new User(newUser);
+
+			//console.log(newUser, req.data);
+
+			//sending email to user and email verification process will start
+			await newUser.save();
+			return res.cookie('token', req.data.jwt, COOKIE_PROP).status(302).redirect('/users');
+			
+		}catch(err){
+			console.log("ERROR", err);
+			if(err.code == 11000){
 				ERROR_MSG = "User Already Exist";
-				res.status(302).redirect(`/login-signup?q=${ERROR_MSG}&color=green`);
+				return res.redirect(`/login-signup?q=${ERROR_MSG}&color=green`);
 			}else{
-				let newUser = {
-					name: ((req.body.fname +" "+ req.body.lname).toUpperCase()),
-					email: req.body.email,
-					password: req.body.password,
-					cookie: req.data.token,
-					ipAddress: req.ip, 
-					specialCode: null
-				};
-				//hashing password
-				newUser.password = bcrypt.hashSync(password);
-				//genderating code for email
-				newUser.specialCode = randomString.generate(32);
-				//sending email to the user
-				emailVerification(newUser.name, newUser.email, newUser.specialCode);
-				//creating new user for the data
-				newUser = new User(newUser);
-				//sending email to user and email verification process will start
-				newUser.save().then(()=>{
-					//generating new session
-					req.session.regenerate((err)=>{
-						if (err) console.error.bind("Session error", err);
-						//setting cookies
-						res.status(302).redirect(`/login-signup?q=Check your mail box&code=green`);
-					});
-				});
+				ERROR_MSG = "SOMETHING HAPPENING WRONG";
+				return res.redirect(`/login-signup?q=${ERROR_MSG}`);
 			}
-		});
+		}
 	}else
-		res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
+		return res.status(302).redirect(`/login-signup?q=${ERROR_MSG}`);
 });
 
 //forget password page
-router.get('/forget-password', (req, res)=>{
-	//need to implement
-	res.render("forget-password", ejsData);
-});
+router.get('/forget-password', (req, res)=>res.render("forget-password", ejsData));
 
 router.post('/forget-password', bodyDataValidJSON, (req, res)=>{
 	//prcoess forget password
@@ -172,9 +159,7 @@ router.post('/forget-password', bodyDataValidJSON, (req, res)=>{
 	res.json(validRes);
 });
 
-router.get('/forget-password/code/:verificationCode', (req, res)=>{
-	res.render('new-password', ejsData);
-});
+router.get('/forget-password/code/:verificationCode', (req, res)=>res.render('new-password', ejsData));
 
 router.post('/forget-password/code/:verificationCode', bodyDataValidJSON, (req, res)=>{
 	res.json(validRes);

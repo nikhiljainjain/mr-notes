@@ -74,7 +74,7 @@ app.use(session({
     store: new MongoStore(mongo_store_option),
     cookie:{
         ...COOKIE_PROP,
-        maxAge: ONE_DAY_TIME_IN_MSEC,
+        maxAge: ONE_DAY_TIME_IN_MSEC
     }
 }));
 

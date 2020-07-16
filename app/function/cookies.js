@@ -2,50 +2,47 @@ let jwt = require("jsonwebtoken");
 let shortid = require('shortid');
 
 let User = require("../database/model/users");
-let { COOKIES_AGE, COOKIE_PROP } = require('../config');
+let { invalidRes, COOKIES_AGE, COOKIE_PROP } = require('../config');
 
 //user cookies validation
-const cookieValid = (req, res, next) =>{
-	console.log(req.cookies, req.session);
-
+const cookieValid = async (req, res, next) =>{
+	//console.log(req.session, req.cookies);
 	//extracting cookies from req parameter
-  	let cookie = req.cookies.token;
+	//checking token in headers for app
+    let cookie = req.cookies.token || req.headers.token;
+      
 	if (cookie != null){
-		try{
-			//token validation from jwt
-			cookie = jwt.verify(cookie, process.env.JWT_SECRET);
-			cookie = cookie.token;
-
-			req.session.reload(async err=>{
-                if (err) console.log("Session error", err);
+        //try catch defined for jwt error  if something wrong happened with jwt
+        try{
+            //token validation from jwt
+            cookie = jwt.verify(cookie, process.env.JWT_SECRET);
+            cookie = cookie.token;
             
-                //checking string already saved in session or not
-                if(req.session.cookieToken === cookie){
-                    //if save in session then retireve data user data and set on req.data
-                    req.data = req.session.user;
+            //console.log(req.data, req.session, req.cookies);
+
+            if(req.session.cookieToken === cookie){
+                req.data = req.session.user;
+                next();
+            }else{
+                const userData = await User.findOne({cookie});
+
+                //console.log(req.cookies, userData, req.session);
+
+                if(userData){
+                    req.session.cookieToken = cookie;
+                    req.session.user = userData;
+                    req.data = userData;
                     next();
                 }else{
-                    //checking cookie value in db
-                    const userData = await User.findOne({cookie});
-
-                    console.log(req.cookies, userData, req.session);
-
-                    if(userData){
-                        //setting user data to request so it can use further no need of user fetch 
-                        req.session.cookieToken = cookie;
-                        req.session.user = userData;
-                        req.data = userData;
-                        next();
-                    }else{
-                        res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");		  
-                    }
+                    res.status(403).cookie('token', null, COOKIE_PROP).redirect('/login-signup');
                 }
-            });
-		}catch(err){
-			res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");
-		}	
-	}else
-		res.status(403).cookie('token', null, COOKIE_PROP).redirect("/login-signup");
+            }
+        }catch(err){
+            res.status(302).cookie('token', null, COOKIE_PROP).redirect('/login-signup');
+        }
+	}else{
+		res.status(403).cookie('token', null, COOKIE_PROP).redirect('/login-signup');
+	}
 };
 
 /**

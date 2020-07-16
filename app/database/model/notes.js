@@ -36,21 +36,10 @@ let njnotes = new mongoose.Schema({
 	},
 	//other members
 	members: [ 
-		{ 
-			data: new mongoose.Schema({
-				//objectid of the user
-				memberId:{
-					type: mongoose.Schema.ObjectId, 
-					ref: 'njnotesusers'
-				},
-				//when requesting user accept the request
-				acceptStatus:{
-					type: Boolean,
-					default: true
-				}
-			},{
-				timestamps: true
-			})
+		{
+			type: mongoose.Schema.Types.ObjectId, 
+			ref: 'njnotesusers',
+			default: null				
 		} 
 	], 
 	//ip address
