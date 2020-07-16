@@ -23,21 +23,6 @@ let user = new mongoose.Schema({
         type: String,
         default: null
     },
-    //google id if login or signup do with google
-    googleId: {
-        type: String,
-        default: null
-    },
-    //login with linkedin 
-    linkedinId: {
-        type: String,
-        default: null
-    },
-    //github loing
-    githubId: {
-        type: String,
-        default: null
-    },
 	//email id
 	email: { 
         type: String, 
@@ -53,28 +38,10 @@ let user = new mongoose.Schema({
         trim: true,
         uppercase: true
     },
-	//password
-    password: { 
-        type: String, 
-        default: null,
-        select: false 
-    },
     //cookie
     cookie: { 
         type: String, 
         default: null,
-        select: false 
-    },
-    //email verification code (code valid for 48 hours after generation)
-    specialCode: { 
-        type: String, 
-        default: null,
-        select: false 
-    },
-    //user verified
-    verified: { 
-        type: Boolean, 
-        default: true,
         select: false 
     },
     //registering ip addres
@@ -99,12 +66,23 @@ let user = new mongoose.Schema({
     //otp code genearted for
     otp: {
         number: {
-            type: Number,
-            default: 0
+            type: String,
+            default: null,
+            trim: true
         },
         attempts: {
             type: Number,
-            default: 1
+            default: 0
+        },
+        medium: {
+            type: String,
+            default: "EMAIL",
+            trim: true,
+            uppercase: true
+        },
+        lastAttempt: {
+            type: Date,
+            default: null
         }
     }
 },{

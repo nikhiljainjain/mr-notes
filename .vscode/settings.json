@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "Cookie cherker system"
+        "Cookie cherker system",
+        "login"
     ]
 }

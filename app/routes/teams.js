@@ -72,7 +72,7 @@ router.post('/create/board', bodyDataValidJSON, (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
-		creater: req.data._id,
+		creater: res.locals._id,
 		teamWork: true,
 		uid: null,
 		ipAddress: req.ip
@@ -82,10 +82,10 @@ router.post('/create/board', bodyDataValidJSON, (req, res)=>{
 	
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		let { notes } = req.data;
+		let { notes } = res.locals;
 		notes.push(data._id);
-		req.data.set({ notes });
-		req.data.save().then(()=>{
+		res.locals.set({ notes });
+		res.locals.save().then(()=>{
 			res.status(302).redirect(`/teams/board/${newNote.uid}`);
 		}).catch((err)=>{
 			res.status(302).redirect("/users");
@@ -101,7 +101,7 @@ router.get('/board/:uid', validId, (req, res)=>{
 		//checking if board really a team board or not
 		if (data && data.teamWork){
 			ejsData.uid = req.params.uid;
-			ejsData.user = req.data;
+			ejsData.user = res.locals;
 			ejsData.name = data.name;
 			ejsData.members = data.members;
 			res.render("team", ejsData);
@@ -116,7 +116,7 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 	/*
 	Checking if adder email id isn't same of new member email id
 	*/
-	if (req.body.email !== req.data.email){
+	if (req.body.email !== res.locals.email){
 		User.findOne({ email: req.body.email }, "name", (err, userData)=>{
 			if (err) console.error.bind("Database error", err);
 			//console.log(userData);
@@ -128,7 +128,7 @@ router.post('/add/member/:uid', validId, bodyDataValidJSON, (req, res)=>{
 					if (notesExist){
 						const specialCode = randomString.generate(32);
 						//sending email to new member
-						memberInvitation(userData.name, userData.email, req.data.name, specialCode, req.params.uid);
+						memberInvitation(userData.name, userData.email, res.locals.name, specialCode, req.params.uid);
 
 						//saving special code in user schema
 						userData.set({ specialCode });
@@ -174,7 +174,7 @@ router.get('/board/:uid', validId, (req, res)=>{
 			let flag = false;
 
 			//checking if user have premission to this notes 
-			for (i in req.data.notes){
+			for (i in res.locals.notes){
 				if (i._id == data._id){
 					flag = true;
 					break;
@@ -183,7 +183,7 @@ router.get('/board/:uid', validId, (req, res)=>{
 
 			if (flag){
 				ejsData.uid = req.params.uid;
-				ejsData.user = req.data;
+				ejsData.user = res.locals;
 				ejsData.name = data.name;
 				res.render("board", ejsData);
 			}else{
@@ -214,13 +214,13 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	//console.log(newNote);
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		//extracting notes list from req.data
-		let { notes } = req.data;
+		//extracting notes list from res.locals
+		let { notes } = res.locals;
 		notes.push(data._id);
 		//saving new notes _id to notes array of user schema of the user
-		req.data.set({ notes });
-		req.data.save();
-		// User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
+		res.locals.set({ notes });
+		res.locals.save();
+		// User.findByIdAndUpdate(res.locals._id, {$set: {notes}}, (err, newData)=>{
 		// 	if (err) console.error.bind('Database error', err);
 		// 	console.log(newData);
 		// });
@@ -234,7 +234,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		uid: null,
 		desc: req.body.desc,
 		dueDate: req.body.time,
-		creater: req.data._id,
+		creater: res.locals._id,
 		ipAddress: req.ip
 	};
 
@@ -247,7 +247,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOneAndUpdate({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }/*, (err, listData)=>{
+		List.findOneAndUpdate({ creater: res.locals._id, notesUid: req.params.noteId, uid: req.params.listId }, { $push: { cards: data._id } }/*, (err, listData)=>{
 			if (err) throw err;
 			//console.log(listData);
 		}*/);
@@ -271,7 +271,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 	let newList = {
 		name: (req.body.name).trim(),
 		uid: null,
-		creater: req.data._id,
+		creater: res.locals._id,
 		notesUid: req.params.uid,
 		ipAddress: req.ip
 	};
@@ -280,7 +280,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, async (req, res)=>{
 	//creating new list
 	List.create(newList, (err, listSave)=>{
 		if (err) console.error.bind("Database error", err);
-		//creater: req.data._id,
+		//creater: res.locals._id,
 		Notes.findOne({ uid: newList.notesUid }, (err, notesExist)=>{
 			if (err) console.error.bind("DB error", err);
 			if (notesExist){

@@ -17,13 +17,13 @@ router.use(cookieValid);
 
 //user home
 router.get('/', (req, res)=>{
-	User.findById(req.data._id, "notes").populate("notes").sort("name").select({ _id: 0 }).exec((err, data)=>{
+	User.findById(res.locals._id, "notes").populate("notes").sort("name").select({ _id: 0 }).exec((err, data)=>{
 		if (err) console.error.bind("DB error", err);
 
 		//checking if some query is sent or not
 		ejsData.msg = (req.query.q) ? req.query.q: null;
 		ejsData.notes = data.notes;
-		ejsData.user = req.data;
+		ejsData.user = res.locals;
 		res.render('home', ejsData);
 	});
 });
@@ -47,7 +47,7 @@ router.get('/board/:uid', validId, (req, res)=>{
 		//generate get query if 'if' condition fail
 		if (data && !(data.teamWork)){
 			ejsData.uid = req.params.uid;
-			ejsData.user = req.data;
+			ejsData.user = res.locals;
 			ejsData.name = data.name;
 			res.render("board", ejsData);
 		}
@@ -63,7 +63,7 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	let newNote = {
 		name: req.body.name,
 		desc: req.body.desc,
-		creater: req.data._id,
+		creater: res.locals._id,
 		uid: null,
 		ipAddress: req.ip
 	};
@@ -74,13 +74,13 @@ router.post('/new/board', bodyDataValidJSON, (req, res)=>{
 	//console.log(newNote);
 	Notes.create(newNote, (err, data)=>{
 		if (err) console.error.bind("Database error", err);
-		//extracting notes list from req.data
-		let { notes } = req.data;
+		//extracting notes list from res.locals
+		let { notes } = res.locals;
 		notes.push(data._id);
 		//saving new notes _id to notes array of user schema of the user
-		req.data.set({ notes });
-		req.data.save();
-		// User.findByIdAndUpdate(req.data._id, {$set: {notes}}, (err, newData)=>{
+		res.locals.set({ notes });
+		res.locals.save();
+		// User.findByIdAndUpdate(res.locals._id, {$set: {notes}}, (err, newData)=>{
 		// 	if (err) console.error.bind('Database error', err);
 		// 	console.log(newData);
 		// });
@@ -94,7 +94,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 		uid: null,
 		desc: req.body.desc,
 		dueDate: req.body.time,
-		creater: req.data._id,
+		creater: res.locals._id,
 		ipAddress: req.ip
 	};
 
@@ -107,7 +107,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 	Card.create(card, (err, data)=>{
         //console.log(data);
 		if (err) console.error.bind("New card creation DB error", err);
-		List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId }, (err, listData)=>{
+		List.findOne({ creater: res.locals._id, notesUid: req.params.noteId, uid: req.params.listId }, (err, listData)=>{
 			if (err || !listData){
 				if (err){
 					console.log("DB error", err);
@@ -130,7 +130,7 @@ router.post("/new/card/:noteId/:listId", validId, bodyDataValidJSON, async (req,
 //list of all cards
 router.get("/cards/:noteId/:listId", validId, (req, res)=>{
 	//finding list belonging to particular notes
-	List.findOne({ creater: req.data._id, notesUid: req.params.noteId, uid: req.params.listId },
+	List.findOne({ creater: res.locals._id, notesUid: req.params.noteId, uid: req.params.listId },
 		 "cards").populate("cards").select({ _id: 0 }).exec((err, listExist)=>{
 		if (err) console.error.bind("Database error", err);
 		//console.log(listExist);
@@ -145,7 +145,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 	let newList = {
 		name: (req.body.name).trim(),
 		uid: null,
-		creater: req.data._id,
+		creater: res.locals._id,
 		notesUid: req.params.uid,
 		ipAddress: req.ip
 	};
@@ -154,8 +154,8 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 	//creating new list
 	List.create(newList, (err, listSave)=>{
 		if (err) console.error.bind("Database error", err);
-		//creater: req.data._id,
-		Notes.findOne({ creater: req.data._id, uid: newList.notesUid }, (err, notesExist)=>{
+		//creater: res.locals._id,
+		Notes.findOne({ creater: res.locals._id, uid: newList.notesUid }, (err, notesExist)=>{
 			if (err) console.error.bind("DB error", err);
 			if (notesExist){
 				//sending back data in response
@@ -175,7 +175,7 @@ router.post('/new/list/:uid', validId, bodyDataValidJSON, (req, res)=>{
 //archive the card
 router.get("/card/archive/:uid", validId, (req, res)=>{
 	//finding card in the database
-	Card.findOne({ creater: req.data._id, uid: req.params.uid }).select({ archive: 1, _id: 0}).exec((err, cardExist)=>{
+	Card.findOne({ creater: res.locals._id, uid: req.params.uid }).select({ archive: 1, _id: 0}).exec((err, cardExist)=>{
 		if (err) console.error.bind("DB error", err);
 		//checking card exist or not in database and value should be false
 		if (cardExist && !cardExist.archive){
@@ -187,6 +187,27 @@ router.get("/card/archive/:uid", validId, (req, res)=>{
 			res.json(invalidRes);
 		}
     });
+});
+
+//logout user
+router.get('/logout', (req, res)=>{
+    if (req.cookies.token != null && req.cookies.token != ""){
+        User.findOneAndUpdate({ cookie: req.cookies.token }, { $set: { cookie: null }}, (err, data)=>{
+            if (err) console.error.bind("Database error", err);
+            //console.log(data, req.cookies);
+            req.session.regenerate((err)=>{
+                if (err) console.error.bind("Session error", err);
+                if (data){
+                    ejsData.msg = "Logout Successfully";
+                    ejsData.icon = "check_circle";
+                    ejsData.color = "green";
+                }
+                res.cookie('token', '', { maxAge: 0 }).render('login-signup', ejsData);
+            });
+        });
+    }else{
+        res.render('login-signup', ejsData);
+    }
 });
 
 module.exports = router;

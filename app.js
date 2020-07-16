@@ -9,7 +9,7 @@ const logger = require('morgan');
 const app = express();
 
 //package installed for this project
-require("dotenv/config");
+require("dotenv").config();
 const session = require('express-session');
 const expressSanitizer = require('express-sanitizer');
 const helmet = require("helmet");
@@ -85,9 +85,7 @@ app.use('/teams', teamsRouter);
 app.use('/shareLinked', shareLinksRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    next(createError(404));
-});
+app.use((req, res, next)=>next(createError(404)));
 
 // error handler
 app.use(function(err, req, res, next) {

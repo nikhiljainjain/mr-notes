@@ -13,11 +13,11 @@
     <!-- display toast message -->
 <% if (msg){ %>
     <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
-        M.toast({
-            html: `<i class="material-icons left <%= color %>-text"><%= icon %></i><%= msg %>`, 
-            displayLength: 5000
-        })
-    });
+        document.addEventListener('DOMContentLoaded', ()=>{
+            M.toast({
+                html: `<i class="material-icons left <%= color %>-text"><%= icon %></i><%= msg %>`, 
+                displayLength: 5000
+            })
+        });
     </script>
 <% } %>

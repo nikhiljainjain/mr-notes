@@ -1,0 +1,35 @@
+<% include ./partial/logo-navbar.ejs %>
+	<div class="container">
+		<div class="section">
+			<!-- <div class="container"> -->
+				<h3 class="purple-text center-align"><b>Login</b></h3>
+				<div class="divider"></div>
+				<div class="section">
+					<!-- login form -->
+					<div class="row">
+						<form class="col s12" action="/verify/otp" method="post">
+						<div class="row">
+							<!-- email input -->
+							<div class="input-field col s12">
+								<input id="email" type="email" class="validate" name="email" required />
+								<label for="email">OTP</label>
+								<!-- <span class="helper-text" data-error="invalid email" data-success="right" style="font-size: 20px"></span> -->
+							</div>
+						</div>
+						<!-- submission button -->
+							<div class="row container">
+								<div class="col s12 center">
+									<!-- <div class="container"> -->
+										<button class="waves-effect waves-light btn-large purple" type="submit"><i class="material-icons left">person</i><span style="font-family: 'Baloo 2', cursive;">Login</span></button>
+									<!-- </div> -->
+								</div>
+							
+							</div>
+						</form>
+				</div>
+				<!-- </div> -->
+			</div>
+		</div>
+	</div>		
+	<br>
+<% include ./partial/footer.ejs %>
