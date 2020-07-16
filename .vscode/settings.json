@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "DOCS"
+        "DOCS",
+        "routes/index.js"
     ]
 }
