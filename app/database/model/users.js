@@ -84,6 +84,11 @@ let user = new mongoose.Schema({
             type: Date,
             default: null
         }
+    },
+    inviteFriendUid:{
+        type: String,
+        default: null,
+        trim: true
     }
 },{
     timestamps: true

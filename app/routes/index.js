@@ -44,31 +44,32 @@ router.post("/login", bodyDataValidCred, jwtCreate, async (req, res) => {
 		let userRecord = await User.findOne({ email });
 
 		//The user does not exist
-		if (!userRecord){
-			//new User object
-			let newUser = new User({ email });
-			newUser.inviteFriendUid = inviteFriendUidGenerator();
-			userRecord = await newUser.save();
-		} 
+		// if (!userRecord){
+		// 	//new User object
+		// 	let newUser = new User({ email });
+		// 	newUser.inviteFriendUid = inviteFriendUidGenerator();
+		// 	userRecord = await newUser.save();
+		// } 
 
-		//generating randomstring for token
-		userRecord.cookie = res.locals.token;
+		// //generating randomstring for token
+		// userRecord.cookie = res.locals.token;
 
-		//genearting otp for email verification
-		userRecord.set({ otp:{
-			number : otpGeneration(),
-			medium : "EMAIL",
-			attempts: 0,	
-			lastAttempt : Date.now()
-		}});
+		// //genearting otp for email verification
+		// userRecord.set({ otp:{
+		// 	number : otpGeneration(),
+		// 	medium : "EMAIL",
+		// 	attempts: 0,	
+		// 	lastAttempt : Date.now()
+		// }});
 
-		req.session = userRecord;
+		// req.session = userRecord;
 
-		sendOTPEmail(userRecord);
-		await userRecord.save();
+		// sendOTPEmail(userRecord);
+		// await userRecord.save();
 
 		res.locals.msg = "We have Sent OTP to Your Account";
-		return res.cookie("token", res.locals.jwt, COOKIE_PROP).render("otp", res.locals);
+		//return res.cookie("token", res.locals.jwt, COOKIE_PROP)
+		res.render("otp", res.locals);
 	}catch(error){
 	  	loadErrorPage(error, res);
   	}
