@@ -26,7 +26,7 @@
     "node-mailjet": "^3.3.1",
     "randomstring": "^1.1.5",
     "shortid": "^2.2.15",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
